@@ -1,5 +1,7 @@
 package hs_mannheim.pattern_interaction_model;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -12,9 +14,18 @@ import java.net.Socket;
 
 public class Server extends AsyncTask<String, String, String> {
 
+    private final Context mContext;
+
+    public final static String ACTION_DATA_RECEIVED = "hs_mannheim.pattern_interaction_model.DATA_RECEIVED";
+
+    public Server(Context context) {
+        this.mContext = context;
+    }
+
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+
         Log.d("UXID", "Received String via Network:" + s);
 
     }
@@ -29,6 +40,12 @@ public class Server extends AsyncTask<String, String, String> {
             String string = fromStream(inputstream);
 
             serverSocket.close();
+            new Server(mContext).execute();
+
+            Intent intent= new Intent(ACTION_DATA_RECEIVED);
+            intent.putExtra("data", string);
+
+            mContext.sendBroadcast(intent);
 
             return string;
 

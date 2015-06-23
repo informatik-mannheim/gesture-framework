@@ -140,6 +140,7 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
 
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = address;
+        config.groupOwnerIntent = 15;
 
         final WifiDirectActivity activity = this;
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {

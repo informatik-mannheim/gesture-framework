@@ -93,14 +93,14 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements IC
         // After the group negotiation, we can determine the group owner.
         if (info.groupFormed && info.isGroupOwner) {
             Log.d("UXID", "Starting file server");
-            new Server().execute();
+            new Server(mApplicationContext).execute();
 
             // Do whatever tasks are specific to the group owner.
             // One common case is creating a server thread and accepting
             // incoming connections.
         } else if (info.groupFormed) {
-            Log.d("UXID", "Starting client stuff");
-            new Client().sendString(info.groupOwnerAddress, 8888);
+            Log.d("UXID", "I am the client");
+            //new Client().sendString(info.groupOwnerAddress, 8888);
             // The other device acts as the client. In this case,
             // you'll want to create a client thread that connects to the group
             // owner.

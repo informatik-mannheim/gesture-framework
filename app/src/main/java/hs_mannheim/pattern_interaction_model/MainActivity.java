@@ -4,13 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.WifiP2pDeviceList;
-import android.net.wifi.p2p.WifiP2pManager;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,6 +15,9 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
+    private BroadcastReceiver mBroadcastReceiver;
+    private IntentFilter mIntentFilter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +25,16 @@ public class MainActivity extends ActionBarActivity {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction(Server.ACTION_DATA_RECEIVED);
+
+        this.mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Toast.makeText(context, intent.getStringExtra("data"), Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     @Override
@@ -50,8 +59,25 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(mBroadcastReceiver, mIntentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
+    }
+
     public void startWifiDirectActivity(View view) {
         Intent intent = new Intent(this, WifiDirectActivity.class);
         startActivity(intent);
+    }
+
+    public void send(View view) {
+        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
+        new Client(applicationContext.getP2pinfo().groupOwnerAddress, 8888).execute();
     }
 }

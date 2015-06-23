@@ -1,5 +1,7 @@
 package hs_mannheim.pattern_interaction_model;
 
+import android.os.AsyncTask;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -7,8 +9,18 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class Client {
-    public void sendString(InetAddress host, int port) {
+public class Client extends AsyncTask<Void, Void, Void> {
+
+    private InetAddress host;
+    private int port;
+
+    public Client(InetAddress host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
+    @Override
+    protected Void doInBackground(Void... params) {
         Socket socket = new Socket();
 
         try {
@@ -39,5 +51,7 @@ public class Client {
                 }
             }
         }
+
+        return null;
     }
 }

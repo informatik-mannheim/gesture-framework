@@ -9,14 +9,19 @@ import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import hs_mannheim.pattern_interaction_model.Gestures.GestureDetector;
+import hs_mannheim.pattern_interaction_model.Gestures.Swipe;
 
-public class MainActivity extends ActionBarActivity {
+
+public class MainActivity extends ActionBarActivity implements Swipe.SwipeEventListener {
 
     private BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mIntentFilter;
+    private Swipe mSwipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,9 @@ public class MainActivity extends ActionBarActivity {
                 Toast.makeText(context, intent.getStringExtra("data"), Toast.LENGTH_SHORT).show();
             }
         };
+
+        mSwipe = new Swipe();
+        mSwipe.attachToView(findViewById(R.id.layout_main), this);
     }
 
     @Override
@@ -71,6 +79,12 @@ public class MainActivity extends ActionBarActivity {
         unregisterReceiver(mBroadcastReceiver);
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
+
+    }
+
     public void startWifiDirectActivity(View view) {
         Intent intent = new Intent(this, WifiDirectActivity.class);
         startActivity(intent);
@@ -79,5 +93,10 @@ public class MainActivity extends ActionBarActivity {
     public void send(View view) {
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         new Client(applicationContext.getP2pinfo().groupOwnerAddress, 8888).execute();
+    }
+
+    @Override
+    public void onSwipeDetected(Swipe.SwipeEvent event) {
+        Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
     }
 }

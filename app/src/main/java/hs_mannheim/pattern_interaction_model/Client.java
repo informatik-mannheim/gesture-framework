@@ -9,14 +9,21 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import hs_mannheim.pattern_interaction_model.Model.OnTransferDoneListener;
+
 public class Client extends AsyncTask<String, Void, Void> {
 
     private InetAddress host;
     private int port;
+    private OnTransferDoneListener listener;
 
     public Client(InetAddress host, int port) {
         this.host = host;
         this.port = port;
+    }
+
+    public void registerOnPostExecuteListener(OnTransferDoneListener listener) {
+        this.listener = listener;
     }
 
     @Override
@@ -40,10 +47,12 @@ public class Client extends AsyncTask<String, Void, Void> {
 
             outputStream.close();
 
+            listener.onTransferSuccess();
+
         } catch (FileNotFoundException e) {
-            //catch logic
+            listener.onTransferFailure();
         } catch (IOException e) {
-            //catch logic
+            listener.onTransferFailure();
         } finally {
             if (socket != null) {
                 if (socket.isConnected()) {

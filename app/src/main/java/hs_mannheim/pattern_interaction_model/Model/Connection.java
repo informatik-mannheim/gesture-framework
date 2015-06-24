@@ -18,9 +18,12 @@ public class Connection implements IConnection {
         return true; // for now
     }
 
+
     @Override
-    public void transfer(String data) {
+    public void transfer(String data, OnTransferDoneListener listener) {
         InteractionApplication applicationContext = (InteractionApplication) mApplicationContext;
-        new Client(applicationContext.getP2pinfo().groupOwnerAddress, 8888).execute(data);
+        Client client = new Client(applicationContext.getP2pinfo().groupOwnerAddress, 8888);
+        client.registerOnPostExecuteListener(listener);
+        client.execute(data);
     }
 }

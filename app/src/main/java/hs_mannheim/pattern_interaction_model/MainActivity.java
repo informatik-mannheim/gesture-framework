@@ -13,15 +13,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-import hs_mannheim.pattern_interaction_model.Gestures.GestureDetector;
-import hs_mannheim.pattern_interaction_model.Gestures.Swipe;
+import hs_mannheim.pattern_interaction_model.Gestures.SwipeDetector;
 
 
-public class MainActivity extends ActionBarActivity implements Swipe.SwipeEventListener {
+public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener {
 
     private BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mIntentFilter;
-    private Swipe mSwipe;
+    private SwipeDetector mSwipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class MainActivity extends ActionBarActivity implements Swipe.SwipeEventL
             }
         };
 
-        mSwipe = new Swipe();
+        mSwipe = new SwipeDetector();
         mSwipe.attachToView(findViewById(R.id.layout_main), this);
     }
 
@@ -96,7 +95,7 @@ public class MainActivity extends ActionBarActivity implements Swipe.SwipeEventL
     }
 
     @Override
-    public void onSwipeDetected(Swipe.SwipeEvent event) {
+    public void onSwipeDetected(SwipeDetector.SwipeEvent event) {
         Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
     }
 }

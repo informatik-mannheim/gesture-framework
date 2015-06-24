@@ -17,6 +17,9 @@ import hs_mannheim.pattern_interaction_model.Gestures.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeDirectionConstraint;
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeDurationConstraint;
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeOrientationConstraint;
+import hs_mannheim.pattern_interaction_model.Model.Connection;
+import hs_mannheim.pattern_interaction_model.Model.InteractionContext;
+import hs_mannheim.pattern_interaction_model.Model.Selection;
 
 
 public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener {
@@ -42,14 +45,14 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
             }
         };
 
-        registerSwipeListener();
+        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Transfer me"), new Connection(getApplicationContext()));
     }
 
-    private void registerSwipeListener() {
-        new SwipeDetector()
+    private SwipeDetector registerSwipeListener() {
+        return new SwipeDetector()
                 .addConstraint(new SwipeDirectionConstraint(SwipeDetector.Direction.HORIZONTAL))
                 .addConstraint(new SwipeDurationConstraint(250))
-                .addConstraint(new SwipeOrientationConstraint(SwipeDetector.Orientation.EAST))
+                .addConstraint(new SwipeOrientationConstraint(SwipeDetector.Orientation.WEST))
                 .attachToView(findViewById(R.id.layout_main), this);
     }
 
@@ -107,6 +110,5 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     @Override
     public void onSwipeDetected(SwipeDetector.SwipeEvent event) {
         Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
-        send(null);
     }
 }

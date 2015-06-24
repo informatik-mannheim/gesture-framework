@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class Client extends AsyncTask<Void, Void, Void> {
+public class Client extends AsyncTask<String, Void, Void> {
 
     private InetAddress host;
     private int port;
@@ -20,7 +20,7 @@ public class Client extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    protected Void doInBackground(String... params) {
         if (this.host == null) {
             return null;
         }
@@ -36,7 +36,7 @@ public class Client extends AsyncTask<Void, Void, Void> {
              * of the socket. This data will be retrieved by the server device.
              */
             OutputStream outputStream = socket.getOutputStream();
-            outputStream.write("Test".getBytes());
+            outputStream.write(params[0].getBytes());
 
             outputStream.close();
 

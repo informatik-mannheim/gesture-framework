@@ -5,13 +5,16 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-public class SwipeDetector implements View.OnTouchListener {
+import hs_mannheim.pattern_interaction_model.Model.GestureDetector;
+
+public class SwipeDetector extends GestureDetector implements View.OnTouchListener{
 
     private final ArrayList<SwipeConstraint> mSwipeConstraints;
     private Point mStart;
     private SwipeEventListener mSwipeListener;
 
     public SwipeDetector() {
+
         this.mSwipeConstraints = new ArrayList<>();
     }
 
@@ -20,9 +23,10 @@ public class SwipeDetector implements View.OnTouchListener {
         return this;
     }
 
-    public void attachToView(View view, SwipeEventListener listener) {
+    public SwipeDetector attachToView(View view, SwipeEventListener listener) {
         view.setOnTouchListener(this);
         mSwipeListener = listener;
+        return this;
     }
 
     @Override
@@ -50,6 +54,7 @@ public class SwipeDetector implements View.OnTouchListener {
         }
 
         mSwipeListener.onSwipeDetected(swipeEvent);
+        super.onGestureDetected();
 
         return true;
     }

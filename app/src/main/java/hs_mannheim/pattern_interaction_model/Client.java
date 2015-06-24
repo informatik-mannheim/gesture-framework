@@ -21,6 +21,10 @@ public class Client extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
+        if (this.host == null) {
+            return null;
+        }
+
         Socket socket = new Socket();
 
         try {

@@ -14,13 +14,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeDetector;
+import hs_mannheim.pattern_interaction_model.Gestures.SwipeDirectionConstraint;
+import hs_mannheim.pattern_interaction_model.Gestures.SwipeDurationConstraint;
+import hs_mannheim.pattern_interaction_model.Gestures.SwipeOrientationConstraint;
 
 
 public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener {
 
     private BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mIntentFilter;
-    private SwipeDetector mSwipe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +42,17 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
             }
         };
 
-        mSwipe = new SwipeDetector();
-        mSwipe.attachToView(findViewById(R.id.layout_main), this);
+        registerSwipeListener();
     }
+
+    private void registerSwipeListener() {
+        new SwipeDetector()
+                .addConstraint(new SwipeDirectionConstraint(SwipeDetector.Direction.HORIZONTAL))
+                .addConstraint(new SwipeDurationConstraint(250))
+                .addConstraint(new SwipeOrientationConstraint(SwipeDetector.Orientation.EAST))
+                .attachToView(findViewById(R.id.layout_main), this);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,5 +107,6 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     @Override
     public void onSwipeDetected(SwipeDetector.SwipeEvent event) {
         Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
+        send(null);
     }
 }

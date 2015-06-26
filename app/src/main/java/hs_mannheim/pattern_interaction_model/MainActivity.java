@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
@@ -11,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeDetector;
@@ -26,11 +28,15 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
 
     private BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mIntentFilter;
+    public final static String MODEL = Build.MODEL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TextView header = (TextView) findViewById(R.id.tvHeaderMain);
+        header.setText(MODEL);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -45,7 +51,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
             }
         };
 
-        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Transfer me"), new Connection(getApplicationContext()));
+        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Send me"), new Connection(getApplicationContext()));
     }
 
     private SwipeDetector registerSwipeListener() {
@@ -97,11 +103,6 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
 
     }
 
-    public void startWifiDirectActivity(View view) {
-        Intent intent = new Intent(this, WifiDirectActivity.class);
-        startActivity(intent);
-    }
-
     public void send(View view) {
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         new Client(applicationContext.getP2pinfo().groupOwnerAddress, 8888).execute();
@@ -111,4 +112,13 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     public void onSwipeDetected(SwipeDetector.SwipeEvent event) {
         Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
     }
+
+    public void startBluetoothActivity(View view) {
+        startActivity(new Intent(this, BluetoothActivity.class));
+    }
+
+    public void startWifiDirectActivity(View view) {
+        startActivity(new Intent(this, WifiDirectActivity.class));
+    }
+
 }

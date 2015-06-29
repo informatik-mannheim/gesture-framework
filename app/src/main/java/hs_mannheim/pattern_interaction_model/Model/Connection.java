@@ -18,7 +18,7 @@ public class Connection implements IConnection {
         return true; // for now
     }
 
-
+/*
     @Override
     public void transfer(String data, OnTransferDoneListener listener) {
         InteractionApplication applicationContext = (InteractionApplication) mApplicationContext;
@@ -26,7 +26,7 @@ public class Connection implements IConnection {
         client.registerOnPostExecuteListener(listener);
         client.execute(data);
     }
-
+*/
     @Override
     public void transfer(String data) {
 

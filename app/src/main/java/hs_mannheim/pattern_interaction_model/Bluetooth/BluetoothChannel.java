@@ -19,7 +19,6 @@ import java.util.UUID;
 import hs_mannheim.pattern_interaction_model.MainActivity;
 import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.Model.IConnection;
-import hs_mannheim.pattern_interaction_model.Model.OnTransferDoneListener;
 
 public class BluetoothChannel implements IConnection {
 
@@ -82,10 +81,6 @@ public class BluetoothChannel implements IConnection {
 
     public boolean isConnected() {
         return this.isConnected;
-    }
-
-    public void transfer(String data, OnTransferDoneListener listener) {
-        transfer(data);
     }
 
     public void transfer (String message) {

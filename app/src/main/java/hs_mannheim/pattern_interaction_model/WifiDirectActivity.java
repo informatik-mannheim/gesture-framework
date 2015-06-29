@@ -2,11 +2,13 @@ package hs_mannheim.pattern_interaction_model;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -19,10 +21,18 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.WifiDirect.WifiDirectChannel;
 
-public class WifiDirectActivity extends ActionBarActivity implements WifiActivity, AdapterView.OnItemClickListener {
+
+public class WifiDirectActivity extends ActionBarActivity implements WifiActivity, AdapterView.OnItemClickListener, ConnectionListener {
+
+    private String TAG = "[WifiDirectActivity]";
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
@@ -31,6 +41,7 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
     private IntentFilter mIntentFilter;
 
     private String connectedToAddress;
+    private WifiDirectChannel mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,36 +50,33 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
 
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
-        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this, (InteractionApplication) this.getApplicationContext());
 
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        this.mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                onPeersChanged();
+            }
+        };
+
+        this.mConnection = new WifiDirectChannel(mManager, mChannel, this);
+        this.mConnection.register(this);
+
     }
 
+    private void onPeersChanged() {
+        Log.d(TAG, "New peers discovered");
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_wifi_direct, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (mManager != null) {
+            mManager.requestPeers(mChannel, new WifiP2pManager.PeerListListener() {
+                @Override
+                public void onPeersAvailable(WifiP2pDeviceList peers) {
+                    listDevices(peers);
+                }
+            });
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void discoverPeers(View view) {
@@ -133,29 +141,26 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final String address = ((TextView) view).getText().toString().split("@")[1];
-        connect(address);
+        Log.d(TAG, "Connecting to " + address);
+        this.mConnection.connect(address);
     }
 
-    private void connect(final String address) {
+    @Override
+    public void onConnectionLost() {
+        Toast.makeText(this, "Connection lost", Toast.LENGTH_SHORT).show();
+    }
 
-        WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = address;
-        config.groupOwnerIntent = 15;
+    @Override
+    public void onConnectionEstablished() {
+        Toast.makeText(this, "Connection established", Toast.LENGTH_SHORT).show();
+    }
 
-        final WifiDirectActivity activity = this;
-        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                activity.setConnectedDevice(address);
+    @Override
+    public void onDataReceived(String data) {
+        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
+    }
 
-                Log.d("UXID", "Connected to other device");
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                Log.d("UXID", "Failed to connect");
-                //failure logic
-            }
-        });
+    public void sendStuff(View view) {
+        this.mConnection.transfer("TeST");
     }
 }

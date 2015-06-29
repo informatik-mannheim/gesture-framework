@@ -12,9 +12,9 @@ import android.util.Log;
 
 import java.net.InetAddress;
 
-public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements
-        WifiP2pManager.GroupInfoListener,
-        WifiP2pManager.ConnectionInfoListener {
+import hs_mannheim.pattern_interaction_model.Model.IConnection;
+
+public class WiFiDirectBroadcastReceiver {
 
     private final InteractionApplication mApplicationContext;
     private WifiP2pManager mManager;
@@ -30,7 +30,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements
         this.mApplicationContext = applicationContext;
     }
 
-    @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
@@ -74,8 +73,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements
         NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
         if (networkInfo.isConnected()) {
-            mManager.requestConnectionInfo(mChannel, this);
-            mManager.requestGroupInfo(mChannel, this);
+            //mManager.requestConnectionInfo(mChannel, this);
+            //mManager.requestGroupInfo(mChannel, this);
             Log.d("UXID", "Connection State changed: connected");
         } else {
             mActivity.setConnectedDevice(null);
@@ -83,31 +82,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements
         }
     }
 
-    @Override
-    public void onConnectionInfoAvailable(final WifiP2pInfo info) {
-        mApplicationContext.setP2pinfo(info);
-
-        // InetAddress from WifiP2pInfo struct.
-        InetAddress groupOwnerAddress = info.groupOwnerAddress;
-
-        // After the group negotiation, we can determine the group owner.
-        if (info.groupFormed && info.isGroupOwner) {
-            Log.d("UXID", "Starting file server");
-            new Server(mApplicationContext).execute();
-
-            // Do whatever tasks are specific to the group owner.
-            // One common case is creating a server thread and accepting
-            // incoming connections.
-        } else if (info.groupFormed) {
-            Log.d("UXID", "I am the client");
-            //new Client().sendString(info.groupOwnerAddress, 8888);
-            // The other device acts as the client. In this case,
-            // you'll want to create a client thread that connects to the group
-            // owner.
-        }
-    }
-
-    @Override
     public void onGroupInfoAvailable(WifiP2pGroup group) {
         mActivity.notify(group.getClientList().toString());
         mActivity.notify("Connected to group: " + group.getNetworkName() + "(group owner: " + group.isGroupOwner() + ")");

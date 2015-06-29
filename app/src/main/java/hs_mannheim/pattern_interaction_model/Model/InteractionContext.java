@@ -2,7 +2,7 @@ package hs_mannheim.pattern_interaction_model.Model;
 
 import android.util.Log;
 
-public class InteractionContext implements GestureDetector.GestureEventListener, OnTransferDoneListener, ConnectionListener {
+public class InteractionContext implements GestureDetector.GestureEventListener, ConnectionListener {
     private final GestureDetector mGestureDetector;
     private final Selection mSelection;
     private final IConnection mConnection;
@@ -31,17 +31,7 @@ public class InteractionContext implements GestureDetector.GestureEventListener,
 
     @Override
     public void onGestureDetected() {
-        mConnection.transfer(mSelection.getData(), this);
-    }
-
-    @Override
-    public void onTransferSuccess() {
-        Log.d("Interaction Context", "transfer success");
-    }
-
-    @Override
-    public void onTransferFailure() {
-        Log.d("Interaction Context", "transfer failure");
+        mConnection.transfer(mSelection.getData());
     }
 
     @Override

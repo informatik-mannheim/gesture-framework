@@ -12,45 +12,46 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
+
 public class Server extends AsyncTask<String, String, String> {
 
-    private final Context mContext;
-
     public final static String ACTION_DATA_RECEIVED = "hs_mannheim.pattern_interaction_model.DATA_RECEIVED";
+    private static final String TAG = "[WifiP2P Server]";
+    private final int mPort;
+    private final AsyncResponse response;
 
-    public Server(Context context) {
-        this.mContext = context;
+    public Server(int port, AsyncResponse response) {
+        this.mPort = port;
+        this.response = response;
     }
+
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-
-        Log.d("UXID", "Received String via Network:" + s);
-
+        this.response.processFinish(s);
+        Log.d(TAG, "Received String via Network:" + s);
     }
 
     @Override
     protected String doInBackground(String... params) {
+        Log.d(TAG, "Server started");
+
         try {
-            ServerSocket serverSocket = new ServerSocket(8888);
+            ServerSocket serverSocket = new ServerSocket(mPort);
             Socket client = serverSocket.accept();
 
             InputStream inputstream = client.getInputStream();
             String string = fromStream(inputstream);
 
             serverSocket.close();
-            new Server(mContext).execute();
-
-            Intent intent= new Intent(ACTION_DATA_RECEIVED);
-            intent.putExtra("data", string);
-
-            mContext.sendBroadcast(intent);
+            new Server(mPort, this.response).execute();
 
             return string;
 
         } catch (IOException e) {
-            Log.e("UXID", e.getMessage());
+            Log.e(TAG, e.getMessage());
             return null;
         }
     }

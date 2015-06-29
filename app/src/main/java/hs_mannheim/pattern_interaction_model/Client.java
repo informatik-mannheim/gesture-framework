@@ -1,6 +1,7 @@
 package hs_mannheim.pattern_interaction_model;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,57 +10,59 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import hs_mannheim.pattern_interaction_model.Model.OnTransferDoneListener;
-
 public class Client extends AsyncTask<String, Void, Void> {
 
+    private static final String TAG = "[WifiP2P Client]";
     private InetAddress host;
     private int port;
-    private OnTransferDoneListener listener;
 
     public Client(InetAddress host, int port) {
         this.host = host;
         this.port = port;
     }
 
-    public void registerOnPostExecuteListener(OnTransferDoneListener listener) {
-        this.listener = listener;
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        Log.d(TAG, "Pre Execute");
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        super.onPostExecute(aVoid);
+        Log.d(TAG, "Post Execute");
     }
 
     @Override
     protected Void doInBackground(String... params) {
-        if (this.host == null) {
-            return null;
-        }
-
+        Log.d(TAG, "start sending");
         Socket socket = new Socket();
 
         try {
+            Log.d(TAG, "Socket bound");
             socket.bind(null);
             socket.connect((new InetSocketAddress(host, port)), 500);
-
+            Log.d(TAG, "Connected");
             /**
              * Create a byte stream from a JPEG file and pipe it to the output stream
              * of the socket. This data will be retrieved by the server device.
              */
             OutputStream outputStream = socket.getOutputStream();
             outputStream.write(params[0].getBytes());
-
+            Log.d(TAG, "Sent stuff successfully");
             outputStream.close();
 
-            listener.onTransferSuccess();
-
         } catch (FileNotFoundException e) {
-            listener.onTransferFailure();
+            Log.e(TAG, "Error");
         } catch (IOException e) {
-            listener.onTransferFailure();
+            Log.e(TAG, "Error");
         } finally {
             if (socket != null) {
                 if (socket.isConnected()) {
                     try {
                         socket.close();
                     } catch (IOException e) {
-                        //catch logic
+                        Log.d(TAG, "ERROR");
                     }
                 }
             }

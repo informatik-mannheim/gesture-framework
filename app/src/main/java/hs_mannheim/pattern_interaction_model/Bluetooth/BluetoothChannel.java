@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -18,10 +19,16 @@ import java.util.UUID;
 import hs_mannheim.pattern_interaction_model.MainActivity;
 
 public class BluetoothChannel {
+
+    private final int MSG_DATA_RECEIVED = 0x0A;
+    private final int MSG_CONNECTION_ESTABLISHED = 0x0B;
+    private final int MSG_CONNECTION_LOST = 0x0C;
+
     private final String TAG = "[BluetoothChannel]";
     private final UUID MY_UUID = UUID.fromString("0566981a-1c02-11e5-9a21-1697f925ec7b");
-    private BluetoothDevice mConnectedDevice;
 
+    private final Handler mHandler;
+    private BluetoothDevice mConnectedDevice;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothListener mListener;
 
@@ -31,10 +38,32 @@ public class BluetoothChannel {
     public BluetoothChannel(BluetoothAdapter bluetoothAdapter, BluetoothListener listener) {
         this.mBluetoothAdapter = bluetoothAdapter;
         mListener = listener;
+        mHandler = createListenerHandler();
     }
 
-    public BluetoothDevice getConnectedDevice() {
-        return this.isConnected() ? this.mConnectedDevice : null;
+    private Handler createListenerHandler() {
+        return new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message message) {
+                switch(message.what) {
+                    case MSG_DATA_RECEIVED:
+                        mListener.onDataReceived((String) message.obj);
+                        break;
+                    case MSG_CONNECTION_ESTABLISHED:
+                        mListener.onConnectionEstablished();
+                        break;
+                    case MSG_CONNECTION_LOST:
+                        mListener.onConnectionLost();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+    }
+
+    public String getConnectedDevice() {
+        return this.isConnected() ? this.mConnectedDevice.getAddress() : "";
     }
 
     public boolean isConnected() {
@@ -51,6 +80,8 @@ public class BluetoothChannel {
     }
 
     public void connect(String address) {
+        if(isConnected()) return;
+
         BluetoothDevice deviceToConnect = mBluetoothAdapter.getRemoteDevice(address);
         this.mConnectedDevice = deviceToConnect;
 
@@ -67,19 +98,24 @@ public class BluetoothChannel {
 
     private void receive(String data) {
         Log.d(TAG, "Data received: " + data);
-        this.mListener.onDataReceived(data);
+        mHandler.obtainMessage(MSG_DATA_RECEIVED, data).sendToTarget();
     }
 
     private void connected(ConnectedThread connectionThread) {
         isConnected = true;
         this.mConnectionThread = connectionThread;
-        mListener.onConnectionEstablished();
+        mHandler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
     }
 
 
+    private void disconnected() {
+        this.isConnected = false;
+        this.mConnectionThread = null;
+        mHandler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
+    }
+
     public void close() {
         this.mConnectionThread.cancel();
-        this.mListener.onConnectionLost();
     }
 
     private class ConnectThread extends Thread {
@@ -180,6 +216,9 @@ public class BluetoothChannel {
         }
     }
 
+    /**
+     * Thread that runs on both client and server device to send and receive data through streams.
+     */
     private class ConnectedThread extends Thread {
         private final BluetoothSocket mmSocket;
         private BluetoothChannel mChannel;
@@ -212,13 +251,19 @@ public class BluetoothChannel {
                 try {
                     mChannel.receive(stdIn.readLine());
                 } catch (IOException e) {
-                    Log.d(TAG, "IO Exception!");
+                    Log.d(TAG, "IO Exception: " + e.getMessage());
+                    this.cancel();
+
                     break;
                 }
             }
         }
 
-        /* Call this from the main activity to send data to the remote device */
+
+        /**
+         * Write data to socket through output stream.
+         * @param bytes to send
+         */
         public void write(byte[] bytes) {
             try {
                 mmOutStream.write(bytes);
@@ -227,13 +272,17 @@ public class BluetoothChannel {
             }
         }
 
-        /* Call this from the main activity to shutdown the connection */
+        /**
+         * Close the socket and notify the channel about it.
+         */
         public void cancel() {
             try {
                 mmSocket.close();
+                mChannel.disconnected();
             } catch (IOException e) {
                 Log.e(TAG, "Error closing client connection");
             }
         }
     }
+
 }

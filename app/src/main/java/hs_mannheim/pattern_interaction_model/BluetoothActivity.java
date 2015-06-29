@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
@@ -35,7 +38,6 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     private Button mStartDiscoveryButton;
     private ListView mDevicesList;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +58,8 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
+        mBluetoothChannel = new BluetoothChannel(mBluetoothAdapter, this);
+
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, devices);
         mDevicesList.setAdapter(mArrayAdapter);
         mDevicesList.setOnItemClickListener(this);
@@ -70,24 +74,6 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
         registerReceiver(mReceiver, filter);
     }
 
-    /*
-        private List<String> findPairedDevices() {
-            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-            // If there are paired devices
-
-            ArrayList<String> devices = new ArrayList<>();
-
-            if (pairedDevices.size() > 0) {
-                // Loop through paired devices
-                for (BluetoothDevice device : pairedDevices) {
-                    // Add the name and address to an array adapter to show in a ListView
-                    mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                }
-            }
-
-            return devices;
-        }
-    */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -120,10 +106,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String device = mArrayAdapter.getItem(position);
-        String address = device.split("\n")[1];
-
-        mBluetoothChannel = new BluetoothChannel(mBluetoothAdapter, this);
+        String address = mArrayAdapter.getItem(position).split("\n")[1];
         mBluetoothChannel.connect(address);
     }
 
@@ -134,14 +117,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     }
 
     private void showToast(final String message) {
-        final Context ctx = this;
-
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ctx, message, Toast.LENGTH_SHORT).show();
-            }
-        });
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -166,7 +142,12 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
                 String deviceDescription = device.getName() + "\n" + device.getAddress();
+
+                if(device.getAddress().equals(mBluetoothChannel.getConnectedDevice())) {
+                    deviceDescription += " [CONNECTED]";
+                }
 
                 Log.d(TAG, String.format("Device discovered: %s", device.getName()));
 

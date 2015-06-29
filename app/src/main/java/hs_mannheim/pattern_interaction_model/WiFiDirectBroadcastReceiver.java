@@ -12,7 +12,7 @@ import android.util.Log;
 
 import java.net.InetAddress;
 
-public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements IConnection,
+public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements
         WifiP2pManager.GroupInfoListener,
         WifiP2pManager.ConnectionInfoListener {
 
@@ -112,8 +112,4 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver implements IC
         mActivity.notify(group.getClientList().toString());
         mActivity.notify("Connected to group: " + group.getNetworkName() + "(group owner: " + group.isGroupOwner() + ")");
     }
-
-
-
-
 }

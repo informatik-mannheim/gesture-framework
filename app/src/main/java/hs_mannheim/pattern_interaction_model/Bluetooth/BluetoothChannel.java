@@ -17,8 +17,11 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import hs_mannheim.pattern_interaction_model.MainActivity;
+import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.Model.IConnection;
+import hs_mannheim.pattern_interaction_model.Model.OnTransferDoneListener;
 
-public class BluetoothChannel {
+public class BluetoothChannel implements IConnection {
 
     private final int MSG_DATA_RECEIVED = 0x0A;
     private final int MSG_CONNECTION_ESTABLISHED = 0x0B;
@@ -30,14 +33,21 @@ public class BluetoothChannel {
     private final Handler mHandler;
     private BluetoothDevice mConnectedDevice;
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothListener mListener;
+    private ConnectionListener mListener;
 
     private boolean isConnected = false;
     private ConnectedThread mConnectionThread;
 
-    public BluetoothChannel(BluetoothAdapter bluetoothAdapter, BluetoothListener listener) {
+    public BluetoothChannel(BluetoothAdapter bluetoothAdapter, ConnectionListener listener) {
         this.mBluetoothAdapter = bluetoothAdapter;
         mListener = listener;
+        mHandler = createListenerHandler();
+    }
+
+
+    public BluetoothChannel(BluetoothAdapter bluetoothAdapter) {
+        this.mBluetoothAdapter = bluetoothAdapter;
+        mListener = null;
         mHandler = createListenerHandler();
     }
 
@@ -62,6 +72,10 @@ public class BluetoothChannel {
         };
     }
 
+    public void register(ConnectionListener listener) {
+        this.mListener = listener;
+    }
+
     public String getConnectedDevice() {
         return this.isConnected() ? this.mConnectedDevice.getAddress() : "";
     }
@@ -70,13 +84,14 @@ public class BluetoothChannel {
         return this.isConnected;
     }
 
-    public boolean write(String message) {
+    public void transfer(String data, OnTransferDoneListener listener) {
+        transfer(data);
+    }
+
+    public void transfer (String message) {
         if(isConnected) {
             mConnectionThread.write(message.getBytes());
-            return true;
         }
-
-        return false;
     }
 
     public void connect(String address) {
@@ -128,7 +143,7 @@ public class BluetoothChannel {
 
             try {
                 // MY_UUID is the app's UUID string, also used by the server code
-                tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
+                tmp = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException e) {
                 Log.d(TAG, "Could not connect");
             }
@@ -258,7 +273,6 @@ public class BluetoothChannel {
                 }
             }
         }
-
 
         /**
          * Write data to socket through output stream.

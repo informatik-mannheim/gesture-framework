@@ -7,9 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,15 +19,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import hs_mannheim.pattern_interaction_model.Bluetooth.BluetoothChannel;
-import hs_mannheim.pattern_interaction_model.Bluetooth.BluetoothListener;
+import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.Model.IConnection;
 
 
-public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, BluetoothListener {
+public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, ConnectionListener {
     private final String TAG = "[BluetoothActivity]";
     private int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothChannel mBluetoothChannel;
+    private IConnection mConnection;
     private BroadcastReceiver mReceiver;
     private ArrayList<String> devices = new ArrayList<>();
     private ArrayAdapter<String> mArrayAdapter;
@@ -58,7 +56,8 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
 
-        mBluetoothChannel = new BluetoothChannel(mBluetoothAdapter, this);
+        mConnection = ((InteractionApplication)getApplicationContext()).getInteractionContext().getConnection();
+        mConnection.register(this);
 
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, devices);
         mDevicesList.setAdapter(mArrayAdapter);
@@ -107,12 +106,12 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String address = mArrayAdapter.getItem(position).split("\n")[1];
-        mBluetoothChannel.connect(address);
+        mConnection.connect(address);
     }
 
     public void sendHallo(View view) {
-        if(mBluetoothChannel.isConnected()) {
-            mBluetoothChannel.write("Hallo!\n");
+        if (mConnection.isConnected()) {
+            mConnection.transfer("Hallo!\n");
         }
     }
 
@@ -122,7 +121,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
 
     @Override
     public void onConnectionEstablished() {
-        showToast("Connected to " + mBluetoothChannel.getConnectedDevice());
+        showToast("Connected to " + ((BluetoothChannel) mConnection).getConnectedDevice());
     }
 
     @Override
@@ -145,7 +144,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
 
                 String deviceDescription = device.getName() + "\n" + device.getAddress();
 
-                if(device.getAddress().equals(mBluetoothChannel.getConnectedDevice())) {
+                if (device.getAddress().equals(((BluetoothChannel) mConnection).getConnectedDevice())) {
                     deviceDescription += " [CONNECTED]";
                 }
 

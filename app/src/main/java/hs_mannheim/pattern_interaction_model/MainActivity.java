@@ -1,5 +1,6 @@
 package hs_mannheim.pattern_interaction_model;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -15,26 +17,32 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import hs_mannheim.pattern_interaction_model.Bluetooth.BluetoothChannel;
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeDirectionConstraint;
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeDurationConstraint;
 import hs_mannheim.pattern_interaction_model.Gestures.SwipeOrientationConstraint;
 import hs_mannheim.pattern_interaction_model.Model.Connection;
+import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.Model.InteractionContext;
 import hs_mannheim.pattern_interaction_model.Model.Selection;
 
 
-public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener {
+public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, ConnectionListener {
 
     private BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mIntentFilter;
     public final static String MODEL = Build.MODEL;
+    private final String TAG = "[Main Activity]";
+
+    private TextView dataArea;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        dataArea = (TextView) findViewById(R.id.tvDataArea);
         TextView header = (TextView) findViewById(R.id.tvHeaderMain);
         header.setText(MODEL);
 
@@ -51,7 +59,11 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
             }
         };
 
-        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Send me"), new Connection(getApplicationContext()));
+        //InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Send me"), new Connection(getApplicationContext()));
+        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(dataArea.getText().toString() + "\n"), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
+        interactionContext.registerConnectionListener(this);
+        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
+        applicationContext.setInteractionContext(interactionContext);
     }
 
     private SwipeDetector registerSwipeListener() {
@@ -62,50 +74,19 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
                 .attachToView(findViewById(R.id.layout_main), this);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @Override
     protected void onResume() {
+        Log.d(TAG, "Resuming");
         super.onResume();
         registerReceiver(mBroadcastReceiver, mIntentFilter);
+        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
+        applicationContext.getInteractionContext().registerConnectionListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mBroadcastReceiver);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
-
-    }
-
-    public void send(View view) {
-        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
-        new Client(applicationContext.getP2pinfo().groupOwnerAddress, 8888).execute();
     }
 
     @Override
@@ -121,4 +102,18 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         startActivity(new Intent(this, WifiDirectActivity.class));
     }
 
+    @Override
+    public void onConnectionLost() {
+
+    }
+
+    @Override
+    public void onConnectionEstablished() {
+
+    }
+
+    @Override
+    public void onDataReceived(String data) {
+        Toast.makeText(this, "Data received in MAIN: " + data, Toast.LENGTH_SHORT).show();
+    }
 }

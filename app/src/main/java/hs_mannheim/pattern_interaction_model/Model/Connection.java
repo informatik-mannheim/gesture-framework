@@ -26,4 +26,19 @@ public class Connection implements IConnection {
         client.registerOnPostExecuteListener(listener);
         client.execute(data);
     }
+
+    @Override
+    public void transfer(String data) {
+
+    }
+
+    @Override
+    public void register(ConnectionListener listener) {
+
+    }
+
+    @Override
+    public void connect(String address) {
+
+    }
 }

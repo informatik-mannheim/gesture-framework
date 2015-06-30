@@ -4,45 +4,34 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class Client extends AsyncTask<String, Void, Void> {
+public class Client extends AsyncTask<Void, Void, Void> {
 
     private static final String TAG = "[WifiP2P Client]";
     private InetAddress host;
     private int port;
+    private WifiDirectChannel _channel;
 
-    public Client(InetAddress host, int port) {
+    public Client(InetAddress host, int port, WifiDirectChannel channel) {
         this.host = host;
         this.port = port;
+        this._channel = channel;
     }
 
     @Override
-    protected Void doInBackground(String... params) {
-        Socket socket = new Socket();
+    protected Void doInBackground(Void... params) {
+        Log.d(TAG, "Client started");
 
         try {
-            socket.bind(null);
-            socket.connect((new InetSocketAddress(host, port)), 500);
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(this.host, this.port), 1000);
 
-            OutputStream outputStream = socket.getOutputStream();
-            outputStream.write(params[0].getBytes());
-
-            outputStream.close();
-
+            new ConnectedThread(socket, _channel).start();
         } catch (IOException e) {
-            Log.e(TAG, "Error");
-        } finally {
-            if (socket.isConnected()) {
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    Log.d(TAG, "ERROR");
-                }
-            }
+            Log.e(TAG, "Error writing to client socket.");
         }
 
         return null;

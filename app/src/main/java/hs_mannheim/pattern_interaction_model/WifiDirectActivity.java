@@ -56,7 +56,6 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
 
         this.mConnection = new WifiDirectChannel(mManager, mChannel, this);
         this.mConnection.register(this);
-
     }
 
     private void onPeersChanged() {
@@ -76,10 +75,12 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
+                Log.d(TAG, "Peer discovery successful.");
             }
 
             @Override
             public void onFailure(int reason) {
+                Log.d(TAG, "Peer discovery failed.");
             }
         });
     }
@@ -135,6 +136,7 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final String address = ((TextView) view).getText().toString().split("@")[1];
         Log.d(TAG, "Connecting to " + address);
+
         this.mConnection.connect(address);
     }
 
@@ -154,6 +156,6 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
     }
 
     public void sendStuff(View view) {
-        this.mConnection.transfer("TeST");
+        this.mConnection.transfer("TeST\n");
     }
 }

@@ -58,7 +58,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         };
 
         //InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Send me"), new Connection(getApplicationContext()));
-        InteractionContext interactionContext = new InteractionContext(registerBumpListener(), new Selection(dataArea.getText().toString() + "\n"), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
+        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(dataArea.getText().toString() + "\n"), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
         interactionContext.registerConnectionListener(this);
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.setInteractionContext(interactionContext);

@@ -23,7 +23,7 @@ import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
 
-public class WifiDirectActivity extends ActionBarActivity implements WifiActivity, AdapterView.OnItemClickListener, ConnectionListener {
+public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, ConnectionListener {
 
     private String TAG = "[WifiDirectActivity]";
 
@@ -33,7 +33,6 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
 
     private IntentFilter mIntentFilter;
 
-    private String connectedToAddress;
     private WifiDirectChannel mConnection;
 
     @Override
@@ -99,38 +98,18 @@ public class WifiDirectActivity extends ActionBarActivity implements WifiActivit
         unregisterReceiver(mReceiver);
     }
 
-
-    @Override
-    public void notify(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void listDevices(WifiP2pDeviceList peers) {
         ArrayList<String> strings = new ArrayList<>();
 
         ListView lv = (ListView) findViewById(R.id.listView);
 
-        for(WifiP2pDevice device : peers.getDeviceList()) {
-
-            if(connectedToAddress != null && connectedToAddress.equals(device.deviceAddress)) {
-                strings.add(device.deviceName + "@" + device.deviceAddress + "(CONNECTED)");
-            }
-            else {
-                strings.add(device.deviceName + "@" + device.deviceAddress);
-            }
+        for (WifiP2pDevice device : peers.getDeviceList()) {
+            strings.add(device.deviceName + "@" + device.deviceAddress);
         }
 
         lv.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, strings));
-
         lv.setOnItemClickListener(this);
     }
-
-    @Override
-    public void setConnectedDevice(String address) {
-        this.connectedToAddress = address;
-    }
-
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

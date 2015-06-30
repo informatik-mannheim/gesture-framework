@@ -25,6 +25,7 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstrai
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
 import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
+import hs_mannheim.pattern_interaction_model.model.Payload;
 import hs_mannheim.pattern_interaction_model.model.Selection;
 import hs_mannheim.pattern_interaction_model.wifidirect.Server;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
@@ -59,7 +60,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
             }
         };
 
-        createInteractionContext2();
+        createInteractionContext();
     }
 
     private void createInteractionContext() {
@@ -131,7 +132,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     }
 
     @Override
-    public void onDataReceived(String data) {
-        Toast.makeText(this, "Data received in MAIN: " + data, Toast.LENGTH_SHORT).show();
+    public void onDataReceived(Payload data) {
+        Toast.makeText(this, "Data received in MAIN: " + data.toString(), Toast.LENGTH_SHORT).show();
     }
 }

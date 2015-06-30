@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.Payload;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
 
@@ -130,11 +131,11 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     }
 
     @Override
-    public void onDataReceived(String data) {
-        Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
+    public void onDataReceived(Payload data) {
+        Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show();
     }
 
     public void sendStuff(View view) {
-        this.mConnection.transfer("TeST\n");
+        this.mConnection.transfer(new Payload("DATA", "TeST\n"));
     }
 }

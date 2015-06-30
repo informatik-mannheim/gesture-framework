@@ -16,6 +16,7 @@ import android.util.Log;
 
 import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
+import hs_mannheim.pattern_interaction_model.model.Payload;
 
 public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         WifiP2pManager.ConnectionInfoListener {
@@ -52,7 +53,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_DATA_RECEIVED:
-                        mListener.onDataReceived((String) message.obj);
+                        mListener.onDataReceived((Payload) message.obj);
                         break;
                     case MSG_CONNECTION_ESTABLISHED:
                         mListener.onConnectionEstablished();
@@ -68,11 +69,11 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     }
 
     @Override
-    public void transfer(String data) {
-        Log.d(TAG, "Sending " + data);
+    public void transfer(Payload payload) {
+        Log.d(TAG, "Sending " + payload);
 
         if (this.isConnected()) {
-            this.mConnectionThread.write(data.getBytes());
+            this.mConnectionThread.write(payload.toString().getBytes());
         }
     }
 
@@ -144,8 +145,8 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         _handler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
     }
 
-    public void receive(String data) {
-        _handler.obtainMessage(MSG_DATA_RECEIVED, data).sendToTarget();
+    public void receive(Object data) {
+        _handler.obtainMessage(MSG_DATA_RECEIVED, (String) data).sendToTarget();
         Log.d(TAG, "Data received: " + data);
     }
 

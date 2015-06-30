@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Handler;
 import android.os.Looper;
+
 import android.os.Message;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 import hs_mannheim.pattern_interaction_model.MainActivity;
 import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
+import hs_mannheim.pattern_interaction_model.model.Payload;
 
 public class BluetoothChannel implements IConnection {
 
@@ -42,7 +44,7 @@ public class BluetoothChannel implements IConnection {
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_DATA_RECEIVED:
-                        mListener.onDataReceived((String) message.obj);
+                        mListener.onDataReceived((Payload) message.obj);
                         break;
                     case MSG_CONNECTION_ESTABLISHED:
                         mListener.onConnectionEstablished();
@@ -69,9 +71,9 @@ public class BluetoothChannel implements IConnection {
         return this.isConnected;
     }
 
-    public void transfer(String message) {
+    public void transfer(Payload message) {
         if (isConnected) {
-            mConnectionThread.write(message.getBytes());
+            mConnectionThread.write(message);
         }
     }
 
@@ -92,7 +94,7 @@ public class BluetoothChannel implements IConnection {
         }
     }
 
-    public void receive(String data) {
+    public void receive(Payload data) {
         Log.d(TAG, "Data received: " + data);
         mHandler.obtainMessage(MSG_DATA_RECEIVED, data).sendToTarget();
     }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import hs_mannheim.pattern_interaction_model.bluetooth.BluetoothChannel;
 import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
+import hs_mannheim.pattern_interaction_model.model.Payload;
 
 
 public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, ConnectionListener {
@@ -111,7 +112,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
 
     public void sendHallo(View view) {
         if (mConnection.isConnected()) {
-            mConnection.transfer("Hallo!\n");
+            mConnection.transfer(new Payload("TYPE", "Hallo!\n"));
         }
     }
 
@@ -125,8 +126,8 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     }
 
     @Override
-    public void onDataReceived(String data) {
-        showToast("Data received: " + data);
+    public void onDataReceived(Payload data) {
+        showToast("Data received: " + data.toString());
     }
 
     @Override

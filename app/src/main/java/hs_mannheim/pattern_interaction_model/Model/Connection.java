@@ -25,7 +25,7 @@ public class Connection implements IConnection {
     }
 */
     @Override
-    public void transfer(String data) {
+    public void transfer(Payload payload) {
 
     }
 

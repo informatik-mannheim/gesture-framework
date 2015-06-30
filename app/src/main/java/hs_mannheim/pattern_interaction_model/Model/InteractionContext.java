@@ -28,7 +28,7 @@ public class InteractionContext implements GestureDetector.GestureEventListener,
 
     @Override
     public void onGestureDetected() {
-        mConnection.transfer(mSelection.getData());
+        mConnection.transfer(new Payload("DATA", mSelection.getData()));
     }
 
     @Override
@@ -37,7 +37,7 @@ public class InteractionContext implements GestureDetector.GestureEventListener,
     }
 
     @Override
-    public void onDataReceived(String data) {
+    public void onDataReceived(Payload data) {
 
     }
 

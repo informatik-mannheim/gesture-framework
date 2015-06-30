@@ -9,8 +9,10 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 
-public class BumpDetector implements SensorEventListener, IBumpDetector {
+
+public class BumpDetector extends GestureDetector implements SensorEventListener {
 
     private final String _label = "BDETECT";
     private final int _samplingRate = 100;
@@ -27,27 +29,22 @@ public class BumpDetector implements SensorEventListener, IBumpDetector {
     private ArrayList<Sample> _samples = new ArrayList<>();
 
     private Threshold mThreshold;
-    private BumpEventListener mIBumpListener;
+
 
     public BumpDetector(SensorManager sensorManager, Threshold threshold) {
         this._sensorManager = sensorManager;
         _accelerometer = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         this.mThreshold = threshold;
         System.out.println(_samples.size());
+        this.startMonitoring();
     }
 
-    @Override
-    public void registerListener(BumpEventListener listener) {
-        mIBumpListener = listener;
-    }
-
-    @Override
     public void setThreshold(Threshold threshold) {
         this.mThreshold = threshold;
         Log.d(_label, "Threshold set to: " + threshold.toString());
     }
 
-    @Override
+
     public void startMonitoring(int delayInMillis) {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -57,14 +54,13 @@ public class BumpDetector implements SensorEventListener, IBumpDetector {
         }, delayInMillis);
     }
 
-    @Override
+
     public void startMonitoring() {
         Log.d(_label, "register");
         _samples.clear();
         _sensorManager.registerListener(this, _accelerometer, _samplingRate);
     }
 
-    @Override
     public void stopMonitoring() {
         Log.d(_label, "unregister");
         _sensorManager.unregisterListener(this, _accelerometer);
@@ -113,7 +109,7 @@ public class BumpDetector implements SensorEventListener, IBumpDetector {
     }
 
     private void fireBumpEvent() {
-        mIBumpListener.onBump(_samples);
+        this.onGestureDetected();
     }
 
     @Override

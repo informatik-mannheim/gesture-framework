@@ -6,6 +6,6 @@ public class Delta extends Sample {
     }
 
     public boolean exceedsThreshold(Threshold threshold) {
-        return this.x > threshold.x && this.y > threshold.y && this.z > threshold.z;
+        return this.x > threshold.getX() && this.y > threshold.getY() && this.z > threshold.getZ();
     }
 }

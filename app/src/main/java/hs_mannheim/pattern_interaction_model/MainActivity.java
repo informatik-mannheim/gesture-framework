@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.pattern_interaction_model.bluetooth.BluetoothChannel;
+import hs_mannheim.pattern_interaction_model.gesture.bump.BumpDetector;
+import hs_mannheim.pattern_interaction_model.gesture.bump.Threshold;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDirectionConstraint;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
@@ -55,10 +58,14 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         };
 
         //InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Send me"), new Connection(getApplicationContext()));
-        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(dataArea.getText().toString() + "\n"), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
+        InteractionContext interactionContext = new InteractionContext(registerBumpListener(), new Selection(dataArea.getText().toString() + "\n"), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
         interactionContext.registerConnectionListener(this);
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.setInteractionContext(interactionContext);
+    }
+
+    private BumpDetector registerBumpListener() {
+        return new BumpDetector((SensorManager) getSystemService(SENSOR_SERVICE), Threshold.LOW);
     }
 
     private SwipeDetector registerSwipeListener() {

@@ -18,9 +18,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import hs_mannheim.pattern_interaction_model.Bluetooth.BluetoothChannel;
-import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
-import hs_mannheim.pattern_interaction_model.Model.IConnection;
+import hs_mannheim.pattern_interaction_model.bluetooth.BluetoothChannel;
+import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.IConnection;
 
 
 public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, ConnectionListener {

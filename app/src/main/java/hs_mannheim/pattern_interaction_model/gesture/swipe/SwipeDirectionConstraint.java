@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.Gestures;
+package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
 public class SwipeDirectionConstraint implements SwipeConstraint {
 

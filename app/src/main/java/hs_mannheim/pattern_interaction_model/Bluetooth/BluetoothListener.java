@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.Bluetooth;
+package hs_mannheim.pattern_interaction_model.bluetooth;
 
 public interface BluetoothListener {
     void onConnectionEstablished();

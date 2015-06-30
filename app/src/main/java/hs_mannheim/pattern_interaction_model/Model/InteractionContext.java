@@ -1,6 +1,4 @@
-package hs_mannheim.pattern_interaction_model.Model;
-
-import android.util.Log;
+package hs_mannheim.pattern_interaction_model.model;
 
 public class InteractionContext implements GestureDetector.GestureEventListener, ConnectionListener {
     private final GestureDetector mGestureDetector;

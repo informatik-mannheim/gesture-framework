@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.Model;
+package hs_mannheim.pattern_interaction_model.model;
 
 public abstract class GestureDetector {
 

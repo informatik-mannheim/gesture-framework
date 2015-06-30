@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.WifiDirect;
+package hs_mannheim.pattern_interaction_model.wifidirect;
 
 
 import android.content.BroadcastReceiver;
@@ -13,11 +13,9 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import hs_mannheim.pattern_interaction_model.AsyncResponse;
-import hs_mannheim.pattern_interaction_model.Client;
-import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
-import hs_mannheim.pattern_interaction_model.Model.IConnection;
-import hs_mannheim.pattern_interaction_model.Server;
+import hs_mannheim.pattern_interaction_model.bluetooth.AsyncResponse;
+import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.IConnection;
 
 public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         WifiP2pManager.ConnectionInfoListener,

@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.Bluetooth;
+package hs_mannheim.pattern_interaction_model.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -17,8 +17,8 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 import hs_mannheim.pattern_interaction_model.MainActivity;
-import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
-import hs_mannheim.pattern_interaction_model.Model.IConnection;
+import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.IConnection;
 
 public class BluetoothChannel implements IConnection {
 

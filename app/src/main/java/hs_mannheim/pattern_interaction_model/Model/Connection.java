@@ -1,9 +1,6 @@
-package hs_mannheim.pattern_interaction_model.Model;
+package hs_mannheim.pattern_interaction_model.model;
 
 import android.content.Context;
-
-import hs_mannheim.pattern_interaction_model.Client;
-import hs_mannheim.pattern_interaction_model.InteractionApplication;
 
 public class Connection implements IConnection {
 

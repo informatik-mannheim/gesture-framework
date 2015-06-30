@@ -1,7 +1,5 @@
-package hs_mannheim.pattern_interaction_model;
+package hs_mannheim.pattern_interaction_model.wifidirect;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -12,7 +10,7 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.bluetooth.AsyncResponse;
 
 public class Server extends AsyncTask<String, String, String> {
 
@@ -46,7 +44,7 @@ public class Server extends AsyncTask<String, String, String> {
             String string = fromStream(inputstream);
 
             serverSocket.close();
-            new Server(mPort, this.response).execute();
+            new Server(mPort, this.response).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             return string;
 

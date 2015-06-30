@@ -10,22 +10,19 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import hs_mannheim.pattern_interaction_model.Bluetooth.BluetoothChannel;
-import hs_mannheim.pattern_interaction_model.Gestures.SwipeDetector;
-import hs_mannheim.pattern_interaction_model.Gestures.SwipeDirectionConstraint;
-import hs_mannheim.pattern_interaction_model.Gestures.SwipeDurationConstraint;
-import hs_mannheim.pattern_interaction_model.Gestures.SwipeOrientationConstraint;
-import hs_mannheim.pattern_interaction_model.Model.Connection;
-import hs_mannheim.pattern_interaction_model.Model.ConnectionListener;
-import hs_mannheim.pattern_interaction_model.Model.InteractionContext;
-import hs_mannheim.pattern_interaction_model.Model.Selection;
+import hs_mannheim.pattern_interaction_model.bluetooth.BluetoothChannel;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDirectionConstraint;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
+import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.InteractionContext;
+import hs_mannheim.pattern_interaction_model.model.Selection;
+import hs_mannheim.pattern_interaction_model.wifidirect.Server;
 
 
 public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, ConnectionListener {
@@ -35,14 +32,12 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     public final static String MODEL = Build.MODEL;
     private final String TAG = "[Main Activity]";
 
-    private TextView dataArea;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dataArea = (TextView) findViewById(R.id.tvDataArea);
+        TextView dataArea = (TextView) findViewById(R.id.tvDataArea);
         TextView header = (TextView) findViewById(R.id.tvHeaderMain);
         header.setText(MODEL);
 

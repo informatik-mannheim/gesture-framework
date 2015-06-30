@@ -1,34 +1,38 @@
 package hs_mannheim.pattern_interaction_model.model;
 
 public class InteractionContext implements GestureDetector.GestureEventListener, ConnectionListener {
-    private final GestureDetector mGestureDetector;
-    private final Selection mSelection;
-    private final IConnection mConnection;
+    private final GestureDetector _gestureDetector;
+    private final Selection _selection;
+    private final IConnection _connection;
 
     public InteractionContext(GestureDetector gestureDetector,
                               Selection selection,
                               IConnection connection) {
 
-        mGestureDetector = gestureDetector;
-        mSelection = selection;
-        mConnection = connection;
+        _gestureDetector = gestureDetector;
+        _selection = selection;
+        _connection = connection;
 
         // as a default, let this be the client for all listening.
-        mConnection.register(this);
-        mGestureDetector.registerGestureEventListener(this);
+        _connection.register(this);
+        _gestureDetector.registerGestureEventListener(this);
     }
 
     public IConnection getConnection() {
-        return this.mConnection;
+        return this._connection;
     }
 
     public void registerConnectionListener(ConnectionListener listener) {
-        this.mConnection.register(listener);
+        this._connection.register(listener);
+    }
+
+    public void updateSelection(Payload data) {
+        _selection.updateSelection(data);
     }
 
     @Override
     public void onGestureDetected() {
-        mConnection.transfer(new Payload("DATA", mSelection.getData()));
+        _connection.transfer(_selection.getData());
     }
 
     @Override

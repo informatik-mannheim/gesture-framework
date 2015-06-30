@@ -11,8 +11,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,12 +34,13 @@ import hs_mannheim.pattern_interaction_model.wifidirect.Server;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
 
-public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, ConnectionListener {
+public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, ConnectionListener, TextWatcher {
 
     private BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mIntentFilter;
     public final static String MODEL = Build.MODEL;
     private final String TAG = "[Main Activity]";
+    private EditText _messageText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,8 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
 
         TextView dataArea = (TextView) findViewById(R.id.tvDataArea);
         TextView header = (TextView) findViewById(R.id.tvHeaderMain);
+        _messageText = (EditText) findViewById(R.id.etMessage);
+        _messageText.addTextChangedListener(this);
         header.setText(MODEL);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -64,7 +70,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     }
 
     private void createInteractionContext() {
-        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Swipe!" + "\n"), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
+        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(new Payload("DATA", "swipe default")), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
         interactionContext.registerConnectionListener(this);
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.setInteractionContext(interactionContext);
@@ -75,7 +81,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         WifiP2pManager wifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         WifiP2pManager.Channel channel = wifiP2pManager.initialize(this, getMainLooper(), null);
 
-        InteractionContext interactionContext = new InteractionContext(registerBumpListener(), new Selection("Bump!" + "\n"), new WifiDirectChannel(wifiP2pManager, channel, getApplicationContext()));
+        InteractionContext interactionContext = new InteractionContext(registerBumpListener(), new Selection(new Payload("DATA", "bump default")), new WifiDirectChannel(wifiP2pManager, channel, getApplicationContext()));
         interactionContext.registerConnectionListener(this);
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.setInteractionContext(interactionContext);
@@ -134,5 +140,20 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     @Override
     public void onDataReceived(Payload data) {
         Toast.makeText(this, "Data received in MAIN: " + data.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+
+    @Override
+    public void afterTextChanged(Editable s) {
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Payload("DATA", s.toString()));
     }
 }

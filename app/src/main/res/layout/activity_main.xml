@@ -40,5 +40,14 @@
         android:layout_alignEnd="@+id/btnWifi"
         android:textSize="60dp" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/etMessage"
+        android:layout_below="@+id/tvHeaderMain"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="69dp"
+        android:layout_alignEnd="@+id/tvDataArea" />
+
 
 </RelativeLayout>

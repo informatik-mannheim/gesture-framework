@@ -27,8 +27,6 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private final IntentFilter mIntentFilter;
     private final Handler _handler;
 
-    private WifiP2pInfo connectedDeviceInfo = null;
-
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
 
@@ -41,7 +39,6 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         this.mChannel = channel;
 
         mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Server.ACTION_DATA_RECEIVED);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
 
         context.registerReceiver(this, mIntentFilter);
@@ -53,7 +50,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         return new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message message) {
-                switch(message.what) {
+                switch (message.what) {
                     case MSG_DATA_RECEIVED:
                         mListener.onDataReceived((String) message.obj);
                         break;
@@ -72,7 +69,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public void transfer(String data) {
-        Log.d(TAG, "Sending " + data + " to " + connectedDeviceInfo.groupOwnerAddress);
+        Log.d(TAG, "Sending " + data);
 
         if (this.isConnected()) {
             this.mConnectionThread.write(data.getBytes());
@@ -86,6 +83,8 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public void connect(String address) {
+        if (isConnected()) return;
+
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = address;
         config.groupOwnerIntent = 15;
@@ -110,7 +109,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction().equals(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)) {
+        if (intent.getAction().equals(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)) {
             onConnectionChanged(intent, context);
         }
     }
@@ -129,8 +128,6 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
-        this.connectedDeviceInfo = info;
-
         if (info.groupFormed && info.isGroupOwner) { // group owner starts the server
             Log.d(TAG, "SERVER");
             new Server(8090, this).execute();

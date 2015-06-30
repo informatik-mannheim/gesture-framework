@@ -9,16 +9,6 @@ public class InteractionApplication extends Application {
 
     private InteractionContext mInteractionContext;
 
-    private WifiP2pInfo p2pinfo;
-
-    public WifiP2pInfo getP2pinfo() {
-        return p2pinfo;
-    }
-
-    public void setP2pinfo(WifiP2pInfo p2pinfo) {
-        this.p2pinfo = p2pinfo;
-    }
-
     public InteractionContext getInteractionContext() {
         return mInteractionContext;
     }

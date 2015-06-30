@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.SensorManager;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -26,6 +27,7 @@ import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
 import hs_mannheim.pattern_interaction_model.model.Selection;
 import hs_mannheim.pattern_interaction_model.wifidirect.Server;
+import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
 
 public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, ConnectionListener {
@@ -57,8 +59,22 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
             }
         };
 
-        //InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Send me"), new Connection(getApplicationContext()));
-        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(dataArea.getText().toString() + "\n"), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
+        createInteractionContext2();
+    }
+
+    private void createInteractionContext() {
+        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection("Swipe!" + "\n"), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
+        interactionContext.registerConnectionListener(this);
+        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
+        applicationContext.setInteractionContext(interactionContext);
+    }
+
+    private void createInteractionContext2() {
+
+        WifiP2pManager wifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        WifiP2pManager.Channel channel = wifiP2pManager.initialize(this, getMainLooper(), null);
+
+        InteractionContext interactionContext = new InteractionContext(registerBumpListener(), new Selection("Bump!" + "\n"), new WifiDirectChannel(wifiP2pManager, channel, getApplicationContext()));
         interactionContext.registerConnectionListener(this);
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.setInteractionContext(interactionContext);

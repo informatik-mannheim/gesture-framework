@@ -16,7 +16,6 @@ public class InteractionContext implements GestureDetector.GestureEventListener,
         // as a default, let this be the client for all listening.
         mConnection.register(this);
         mGestureDetector.registerGestureEventListener(this);
-
     }
 
     public IConnection getConnection() {

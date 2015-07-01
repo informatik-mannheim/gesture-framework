@@ -1,10 +1,8 @@
 package hs_mannheim.pattern_interaction_model;
 
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.hardware.SensorManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
@@ -13,7 +11,6 @@ import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,41 +27,25 @@ import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
 import hs_mannheim.pattern_interaction_model.model.Payload;
 import hs_mannheim.pattern_interaction_model.model.Selection;
-import hs_mannheim.pattern_interaction_model.wifidirect.Server;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
 
 public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, ConnectionListener, TextWatcher {
 
-    private BroadcastReceiver mBroadcastReceiver;
-    private IntentFilter mIntentFilter;
     public final static String MODEL = Build.MODEL;
-    private final String TAG = "[Main Activity]";
-    private EditText _messageText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView dataArea = (TextView) findViewById(R.id.tvDataArea);
         TextView header = (TextView) findViewById(R.id.tvHeaderMain);
-        _messageText = (EditText) findViewById(R.id.etMessage);
-        _messageText.addTextChangedListener(this);
+        ((EditText) findViewById(R.id.etMessage)).addTextChangedListener(this);
+
         header.setText(MODEL);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(Server.ACTION_DATA_RECEIVED);
-
-        this.mBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Toast.makeText(context, intent.getStringExtra("data"), Toast.LENGTH_SHORT).show();
-            }
-        };
 
         createInteractionContext();
     }
@@ -76,6 +57,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         applicationContext.setInteractionContext(interactionContext);
     }
 
+    @SuppressWarnings("unused")
     private void createInteractionContext2() {
 
         WifiP2pManager wifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
@@ -101,17 +83,10 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "Resuming");
         super.onResume();
-        registerReceiver(mBroadcastReceiver, mIntentFilter);
+
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.getInteractionContext().registerConnectionListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(mBroadcastReceiver);
     }
 
     @Override

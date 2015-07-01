@@ -10,11 +10,10 @@ import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 public class SwipeDetector extends GestureDetector implements View.OnTouchListener{
 
     private final ArrayList<SwipeConstraint> mSwipeConstraints;
-    private Point mStart;
     private SwipeEventListener mSwipeListener;
+    private Point mStart;
 
     public SwipeDetector() {
-
         this.mSwipeConstraints = new ArrayList<>();
     }
 
@@ -59,8 +58,7 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
         return true;
     }
 
-
-    class Point {
+    public class Point {
         private float x;
         private float y;
         private long time;
@@ -109,31 +107,11 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     }
 
     public enum Direction {
-        HORIZONTAL("Horizontal"), VERTICAL("Vertical");
-
-        private final String fieldDescription;
-
-        private Direction(String value) {
-            fieldDescription = value;
-        }
-
-        public String getFieldDescription() {
-            return fieldDescription;
-        }
+        HORIZONTAL, VERTICAL
     }
 
     public enum Orientation {
-        NORTH("North"), WEST("West"), SOUTH("South"), EAST("East");
-
-        private final String fieldDescription;
-
-        private Orientation(String value) {
-            fieldDescription = value;
-        }
-
-        public String getFieldDescription() {
-            return fieldDescription;
-        }
+        NORTH, WEST, SOUTH, EAST
     }
 
     public class SwipeEvent {

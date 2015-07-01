@@ -12,16 +12,16 @@ import java.net.Socket;
 public class ConnectedThread extends Thread {
     private final String TAG = "[WifiP2P ConnectedThread]";
 
-    private final Socket _socket;
-    private final WifiDirectChannel _channel;
+    private final Socket mSocket;
+    private final WifiDirectChannel mChannel;
 
-    private final InputStream _inStream;
-    private final OutputStream _outStream;
+    private final InputStream mInStream;
+    private final OutputStream mOutStream;
 
     public ConnectedThread(Socket socket, WifiDirectChannel channel) {
         Log.d(TAG, "Connected Thread started");
-        _socket = socket;
-        _channel = channel;
+        mSocket = socket;
+        mChannel = channel;
 
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
@@ -33,18 +33,18 @@ public class ConnectedThread extends Thread {
             Log.e(TAG, "Could not acquire streams from socket");
         }
 
-        _inStream = tmpIn;
-        _outStream = tmpOut;
+        mInStream = tmpIn;
+        mOutStream = tmpOut;
 
-        _channel.connected(this);
+        mChannel.connected(this);
     }
 
     public void run() {
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(_inStream));
+        BufferedReader stdIn = new BufferedReader(new InputStreamReader(mInStream));
 
         while (true) {
             try {
-                _channel.receive(stdIn.readLine());
+                mChannel.receive(stdIn.readLine());
             } catch (IOException e) {
                 Log.d(TAG, "IO Exception: " + e.getMessage());
                 this.cancel();
@@ -61,8 +61,8 @@ public class ConnectedThread extends Thread {
      */
     public void write(byte[] bytes) {
         try {
-            _outStream.write(bytes);
-            //_outStream.flush();
+            mOutStream.write(bytes);
+            //mOutStream.flush();
         } catch (IOException e) {
             Log.e(TAG, "Error sending data to remote device");
         }
@@ -73,8 +73,8 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
-            _socket.close();
-            _channel.disconnected();
+            mSocket.close();
+            mChannel.disconnected();
         } catch (IOException e) {
             Log.e(TAG, "Error closing client connection");
         }

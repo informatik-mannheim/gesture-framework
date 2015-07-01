@@ -11,12 +11,12 @@ public class ConnectThread extends Thread {
     private final String TAG = "[Bluetooth Connect Thread]";
 
     private final BluetoothSocket _socket;
-    private final BluetoothChannel _channel;
-    private final BluetoothAdapter _bluetoothAdapter;
+    private final BluetoothChannel mChannel;
+    private final BluetoothAdapter mBluetoothAdapter;
 
     public ConnectThread(BluetoothDevice device, BluetoothChannel channel, BluetoothAdapter bluetoothAdapter) {
-        _bluetoothAdapter = bluetoothAdapter;
-        _channel = channel;
+        mBluetoothAdapter = bluetoothAdapter;
+        mChannel = channel;
 
         BluetoothSocket tmp = null;
 
@@ -31,7 +31,7 @@ public class ConnectThread extends Thread {
 
     public void run() {
         // Cancel discovery because it will slow down the connection
-        _bluetoothAdapter.cancelDiscovery();
+        mBluetoothAdapter.cancelDiscovery();
 
         try {
             // block
@@ -44,7 +44,7 @@ public class ConnectThread extends Thread {
             return;
         }
 
-        new ConnectedThread(_socket, _channel).start();
+        new ConnectedThread(_socket, mChannel).start();
     }
 
     /**

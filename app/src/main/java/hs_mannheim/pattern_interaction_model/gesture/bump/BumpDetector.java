@@ -4,108 +4,94 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
 
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 
-
 public class BumpDetector extends GestureDetector implements SensorEventListener {
 
-    private final String _label = "BDETECT";
-    private final int _samplingRate = 100;
-    private static Object _lockobj = new Object();
+    private final static Object mLockObj = new Object();
+    private final int M_SAMPLING_RATE = 100;
 
-    private final Sensor _accelerometer;
-    private SensorManager _sensorManager;
+    private final String TAG = "[BumpDetector]";
 
-    private boolean _recording = false;
+    private final Sensor mAccelerometer;
+    private SensorManager mSensorManager;
 
-    private Sample _currentSample = new Sample(0.0, 0.0, 0.0, 0);
-    private Sample _previousSample = new Sample(0.0, 0.0, 0.0, 0);
+    private boolean mRecording = false;
 
-    private ArrayList<Sample> _samples = new ArrayList<>();
+    private Sample mCurrentSample = new Sample(0.0, 0.0, 0.0, 0);
+    private Sample mPreviousSample = new Sample(0.0, 0.0, 0.0, 0);
+
+    private ArrayList<Sample> mSamples = new ArrayList<>();
 
     private Threshold mThreshold;
 
-
     public BumpDetector(SensorManager sensorManager, Threshold threshold) {
-        this._sensorManager = sensorManager;
-        _accelerometer = _sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.mSensorManager = sensorManager;
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         this.mThreshold = threshold;
-        System.out.println(_samples.size());
+        System.out.println(mSamples.size());
         this.startMonitoring();
     }
 
     public void setThreshold(Threshold threshold) {
         this.mThreshold = threshold;
-        Log.d(_label, "Threshold set to: " + threshold.toString());
     }
-
-
-    public void startMonitoring(int delayInMillis) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startMonitoring();
-            }
-        }, delayInMillis);
-    }
-
 
     public void startMonitoring() {
-        Log.d(_label, "register");
-        _samples.clear();
-        _sensorManager.registerListener(this, _accelerometer, _samplingRate);
+        Log.d(TAG, "start monitoring");
+        mSamples.clear();
+        mSensorManager.registerListener(this, mAccelerometer, M_SAMPLING_RATE);
     }
 
     public void stopMonitoring() {
-        Log.d(_label, "unregister");
-        _sensorManager.unregisterListener(this, _accelerometer);
+        Log.d(TAG, "stop monitoring");
+        mSensorManager.unregisterListener(this, mAccelerometer);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        synchronized (_lockobj) {
+        synchronized (mLockObj) {
             Sample newData = new Sample(event.values, event.timestamp);
-            new HighpassFilter().applyTo(newData, _currentSample);
-            Delta delta = _currentSample.delta(_previousSample);
-            if (delta.exceedsThreshold(mThreshold) && !_recording) {
-                _samples.add(_currentSample.clone());
-                _recording = true;
-                Log.d(_label, "Started recording.");
-            } else if (_recording) {
-                if (_samples.size() < 31) {
-                    _samples.add(_currentSample.clone());
+            new HighpassFilter().applyTo(newData, mCurrentSample);
+            Delta delta = mCurrentSample.delta(mPreviousSample);
+            if (delta.exceedsThreshold(mThreshold) && !mRecording) {
+                mSamples.add(mCurrentSample.clone());
+                mRecording = true;
+                Log.d(TAG, "start recording");
+            } else if (mRecording) {
+                if (mSamples.size() < 31) {
+                    mSamples.add(mCurrentSample.clone());
                 } else {
                     stopMonitoring();
-                    _recording = false;
+                    mRecording = false;
                     checkForBump();
                 }
             }
         }
-        _previousSample = _currentSample.clone();
+        mPreviousSample = mCurrentSample.clone();
     }
 
     private void checkForBump() {
         if (isBump()) {
-            Log.d(_label, "Bump detected!");
+            Log.d(TAG, "Bump detected!");
             fireBumpEvent();
         } else {
-            Log.d(_label, "False alarm.");
+            Log.d(TAG, "False alarm.");
         }
 
         startMonitoring();
     }
 
     private boolean isBump() {
-        Log.d(_label, "Checking for Bump...");
-        int minPeaks = _samples.size() - 10;
-        int maxPeaks = _samples.size() - 2;
+        Peaks peaks = Peaks.readFrom(mSamples);
+        int minPeaks = mSamples.size() - 10;
+        int maxPeaks = mSamples.size() - 2;
 
-        return Peaks.readFrom(_samples).between(minPeaks, maxPeaks);
+        return peaks.between(minPeaks, maxPeaks);
     }
 
     private void fireBumpEvent() {

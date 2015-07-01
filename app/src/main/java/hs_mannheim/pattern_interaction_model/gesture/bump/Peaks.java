@@ -41,8 +41,8 @@ public class Peaks {
     }
 
     public boolean between(int minPeaks, int maxPeaks) {
-        return x >= minPeaks && x <= maxPeaks &&
-                y >= minPeaks && y <= maxPeaks &&
-                z >= minPeaks && z <= maxPeaks;
+        return (x >= minPeaks && x <= maxPeaks) &&
+                (y >= minPeaks && y <= maxPeaks) &&
+                (z >= minPeaks && z <= maxPeaks);
     }
 }

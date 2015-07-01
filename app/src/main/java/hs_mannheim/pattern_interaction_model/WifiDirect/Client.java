@@ -9,15 +9,14 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class Client extends AsyncTask<Void, Void, Void> {
-
-    private static final String TAG = "[WifiP2P Client]";
-    private InetAddress host;
-    private int port;
+    private final String TAG = "[WifiP2P Client]";
+    private InetAddress _host;
+    private int _port;
     private WifiDirectChannel _channel;
 
     public Client(InetAddress host, int port, WifiDirectChannel channel) {
-        this.host = host;
-        this.port = port;
+        this._host = host;
+        this._port = port;
         this._channel = channel;
     }
 
@@ -27,7 +26,7 @@ public class Client extends AsyncTask<Void, Void, Void> {
 
         try {
             Socket socket = new Socket();
-            socket.connect(new InetSocketAddress(this.host, this.port), 1000);
+            socket.connect(new InetSocketAddress(this._host, this._port), 1000);
 
             new ConnectedThread(socket, _channel).start();
         } catch (IOException e) {

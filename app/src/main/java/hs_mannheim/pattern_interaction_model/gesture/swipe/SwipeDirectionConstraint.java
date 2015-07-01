@@ -1,7 +1,6 @@
 package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
 public class SwipeDirectionConstraint implements SwipeConstraint {
-
     private final SwipeDetector.Direction mDirection;
 
     public SwipeDirectionConstraint(SwipeDetector.Direction direction) {

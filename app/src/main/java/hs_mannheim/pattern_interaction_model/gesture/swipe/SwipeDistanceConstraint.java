@@ -1,5 +1,6 @@
 package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
+@SuppressWarnings("unused")
 public class SwipeDistanceConstraint implements SwipeConstraint {
 
     private float mMaxDistance;

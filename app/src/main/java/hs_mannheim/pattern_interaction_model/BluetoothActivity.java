@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -26,16 +27,16 @@ import hs_mannheim.pattern_interaction_model.model.Payload;
 
 public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, ConnectionListener {
     private final String TAG = "[BluetoothActivity]";
-    private int REQUEST_ENABLE_BT = 1;
+    private int REQUEST_ENABLE_BT = 0xfe;
 
     private BluetoothAdapter mBluetoothAdapter;
     private IConnection mConnection;
-    private BroadcastReceiver mReceiver;
+    private BroadcastReceiver _receiver;
     private ArrayList<String> devices = new ArrayList<>();
     private ArrayAdapter<String> mArrayAdapter;
 
     private Button mStartDiscoveryButton;
-    private ListView mDevicesList;
+    private IntentFilter _intentFilter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +44,28 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
         setContentView(R.layout.activity_bluetooth);
 
         mStartDiscoveryButton = (Button) findViewById(R.id.btnStartDiscovery);
-        mDevicesList = (ListView) findViewById(R.id.lvBluetoothDevices);
-
-
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        checkBluetoothAvailability();
+
+        mConnection = ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection();
+        mConnection.register(this);
+
+        mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, devices);
+
+        ListView devicesList = (ListView) findViewById(R.id.lvBluetoothDevices);
+        devicesList.setAdapter(mArrayAdapter);
+        devicesList.setOnItemClickListener(this);
+
+        _intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        _receiver = new BluetoothDeviceFoundReceiver();
+    }
+
+    private void checkBluetoothAvailability() {
         if (mBluetoothAdapter == null) {
-            // Device does not support Bluetooth
+            TextView warning = new TextView(this);
+            warning.setText("Device does not support Bluetooth.");
+            setContentView(warning);
         }
 
         if (!mBluetoothAdapter.isEnabled()) {
@@ -56,38 +73,19 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
-
-        mConnection = ((InteractionApplication)getApplicationContext()).getInteractionContext().getConnection();
-        mConnection.register(this);
-
-        mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, devices);
-        mDevicesList.setAdapter(mArrayAdapter);
-        mDevicesList.setOnItemClickListener(this);
-
-        registerBroadcastReceiver();
-    }
-
-    private void registerBroadcastReceiver() {
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-
-        mReceiver = new BluetoothDeviceFoundReceiver();
-        registerReceiver(mReceiver, filter);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK && requestCode == REQUEST_ENABLE_BT) {
+        boolean bluetoothEnabled = (resultCode == RESULT_OK && requestCode == REQUEST_ENABLE_BT);
+
+        if (bluetoothEnabled) {
             mStartDiscoveryButton.setEnabled(true);
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onResume();
-        unregisterReceiver(mReceiver);
-    }
 
     private void makeDiscoverable() {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
@@ -133,6 +131,24 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     @Override
     public void onConnectionLost() {
         showToast("Connection lost");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(_receiver, _intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(_receiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onResume();
+        unregisterReceiver(_receiver);
     }
 
     class BluetoothDeviceFoundReceiver extends BroadcastReceiver {

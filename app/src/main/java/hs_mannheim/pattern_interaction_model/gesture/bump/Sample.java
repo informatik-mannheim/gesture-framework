@@ -14,11 +14,11 @@ public class Sample implements Cloneable {
         if(values.length != 3) {
             throw new IllegalArgumentException("values must have a length of 3");
         }
+
         this.x = values[0];
         this.y = values[1];
         this.z = values[2];
         this.timestamp = timestamp;
-
     }
 
     public Sample(double x, double y, double z) {

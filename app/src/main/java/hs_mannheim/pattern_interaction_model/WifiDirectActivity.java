@@ -23,18 +23,15 @@ import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.Payload;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
-
 public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, ConnectionListener {
-
     private String TAG = "[WifiDirectActivity]";
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
     private BroadcastReceiver mReceiver;
+    private WifiDirectChannel mConnection;
 
     private IntentFilter mIntentFilter;
-
-    private WifiDirectChannel mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,14 +82,12 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
         });
     }
 
-    /* register the broadcast receiver with the intent values to be matched */
     @Override
     protected void onResume() {
         super.onResume();
         registerReceiver(mReceiver, mIntentFilter);
     }
 
-    /* unregister the broadcast receiver */
     @Override
     protected void onPause() {
         super.onPause();
@@ -110,6 +105,10 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
 
         lv.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, strings));
         lv.setOnItemClickListener(this);
+    }
+
+    public void sendStuff(View view) {
+        this.mConnection.transfer(new Payload("DATA", "TeST\n"));
     }
 
     @Override
@@ -133,9 +132,5 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     @Override
     public void onDataReceived(Payload data) {
         Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show();
-    }
-
-    public void sendStuff(View view) {
-        this.mConnection.transfer(new Payload("DATA", "TeST\n"));
     }
 }

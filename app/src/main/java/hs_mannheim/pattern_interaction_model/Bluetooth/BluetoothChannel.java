@@ -33,7 +33,7 @@ public class BluetoothChannel implements IConnection {
     private ConnectedThread mConnectionThread;
 
     public BluetoothChannel(BluetoothAdapter bluetoothAdapter) {
-        this.mBluetoothAdapter = bluetoothAdapter;
+        mBluetoothAdapter = bluetoothAdapter;
         mListener = null;
         mHandler = createListenerHandler();
     }
@@ -80,17 +80,16 @@ public class BluetoothChannel implements IConnection {
     public void connect(String address) {
         if (isConnected()) return;
 
-        BluetoothDevice deviceToConnect = mBluetoothAdapter.getRemoteDevice(address);
-        this.mConnectedDevice = deviceToConnect;
+        mConnectedDevice = mBluetoothAdapter.getRemoteDevice(address);
 
-        Log.d(TAG, String.format("Device to connect to: %s", deviceToConnect));
+        Log.d(TAG, String.format("Device to connect to: %s", mConnectedDevice));
 
         if (MainActivity.MODEL.equals("Nexus 4")) {
             Log.d(TAG, "Connecting as server.");
             new AcceptThread(this, mBluetoothAdapter).start();
         } else {
             Log.d(TAG, "Connecting as client.");
-            new ConnectThread(deviceToConnect, this, mBluetoothAdapter).start();
+            new ConnectThread(mConnectedDevice, this, mBluetoothAdapter).start();
         }
     }
 

@@ -42,6 +42,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
 
+        //TODO: This crashes when containing activity is paused
         context.registerReceiver(this, mIntentFilter);
 
         this._handler = createListenerHandler();

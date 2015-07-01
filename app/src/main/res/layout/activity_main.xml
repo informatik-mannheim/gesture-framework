@@ -49,5 +49,15 @@
         android:layout_marginTop="69dp"
         android:layout_alignEnd="@+id/tvDataArea" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stitch"
+        android:id="@+id/btnStitch"
+        android:layout_below="@+id/tvDataArea"
+        android:layout_alignEnd="@+id/btnBluetooth"
+        android:layout_marginTop="67dp"
+        android:onClick="startStitchView" />
+
 
 </RelativeLayout>

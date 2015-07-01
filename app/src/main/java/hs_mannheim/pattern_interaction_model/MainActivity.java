@@ -22,6 +22,7 @@ import hs_mannheim.pattern_interaction_model.gesture.bump.Threshold;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDirectionConstraint;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
 import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
@@ -75,9 +76,9 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
 
     private SwipeDetector registerSwipeListener() {
         return new SwipeDetector()
-                .addConstraint(new SwipeDirectionConstraint(SwipeDetector.Direction.HORIZONTAL))
+                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
                 .addConstraint(new SwipeDurationConstraint(250))
-                .addConstraint(new SwipeOrientationConstraint(SwipeDetector.Orientation.WEST))
+                .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST))
                 .attachToView(findViewById(R.id.layout_main), this);
     }
 
@@ -90,7 +91,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     }
 
     @Override
-    public void onSwipeDetected(SwipeDetector.SwipeEvent event) {
+    public void onSwipeDetected(SwipeEvent event) {
         Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
     }
 
@@ -130,5 +131,9 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     @Override
     public void afterTextChanged(Editable s) {
         ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Payload("DATA", s.toString()));
+    }
+
+    public void startStitchView(View view) {
+        startActivity(new Intent(this, StitchView.class));
     }
 }

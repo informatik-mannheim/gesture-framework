@@ -148,7 +148,6 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     @Override
     protected void onDestroy() {
         super.onResume();
-        unregisterReceiver(_receiver);
     }
 
     class BluetoothDeviceFoundReceiver extends BroadcastReceiver {

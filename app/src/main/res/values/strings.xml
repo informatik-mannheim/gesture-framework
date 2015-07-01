@@ -8,5 +8,7 @@
     <string name="title_activity_wi_fi_direct">WiFiDirectActivity</string>
     <string name="title_activity_wifi_direct">WifiDirectActivity</string>
     <string name="title_activity_bluetooth">BluetoothActivity</string>
+    <string name="title_activity_stitch_view">StitchView</string>
+    <string name="tvStitchHeader">Stitch Test</string>
 
 </resources>

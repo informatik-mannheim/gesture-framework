@@ -1,13 +1,13 @@
 package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
 public class SwipeDirectionConstraint implements SwipeConstraint {
-    private final SwipeDetector.Direction mDirection;
+    private final SwipeEvent.Direction mDirection;
 
-    public SwipeDirectionConstraint(SwipeDetector.Direction direction) {
+    public SwipeDirectionConstraint(SwipeEvent.Direction direction) {
         this.mDirection = direction;
     }
 
-    public boolean isValid(SwipeDetector.SwipeEvent event) {
+    public boolean isValid(SwipeEvent event) {
         return event.getDirection().equals(mDirection);
     }
 }

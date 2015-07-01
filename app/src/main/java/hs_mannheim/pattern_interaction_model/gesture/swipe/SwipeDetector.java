@@ -11,7 +11,7 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
     private final ArrayList<SwipeConstraint> mSwipeConstraints;
     private SwipeEventListener mSwipeListener;
-    private Point mStart;
+    private TouchPoint mStart;
 
     public SwipeDetector() {
         this.mSwipeConstraints = new ArrayList<>();
@@ -42,11 +42,11 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     }
 
     private void handle_down(MotionEvent event) {
-        mStart = new Point(event);
+        mStart = new TouchPoint(event);
     }
 
     private boolean handle_up(MotionEvent event) {
-        SwipeEvent swipeEvent = new SwipeEvent(mStart, new Point(event));
+        SwipeEvent swipeEvent = new SwipeEvent(mStart, new TouchPoint(event));
 
         for (SwipeConstraint constraint : mSwipeConstraints) {
             if (!constraint.isValid(swipeEvent)) return false;
@@ -56,101 +56,6 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
         super.onGestureDetected();
 
         return true;
-    }
-
-    public class Point {
-        private float x;
-        private float y;
-        private long time;
-
-        public Point(MotionEvent event) {
-            setX(event.getX());
-            setY(event.getY());
-            setTime(event.getEventTime());
-        }
-
-        public long getTime() {
-            return time;
-        }
-
-        private void setTime(long time) {
-            this.time = time;
-        }
-
-        public float getX() {
-            return x;
-        }
-
-        private void setX(float x) {
-            this.x = x;
-        }
-
-        public float getY() {
-            return y;
-        }
-
-        private void setY(float y) {
-            this.y = y;
-        }
-
-        private float deltaX(Point other) {
-            return getX() - other.getX();
-        }
-
-        private float deltaY(Point other) {
-            return getY() - other.getY();
-        }
-
-        private float distanceTo(Point other) {
-            return (float) Math.sqrt(Math.pow(deltaX(other), 2) + Math.pow(deltaY(other), 2));
-        }
-    }
-
-    public enum Direction {
-        HORIZONTAL, VERTICAL
-    }
-
-    public enum Orientation {
-        NORTH, WEST, SOUTH, EAST
-    }
-
-    public class SwipeEvent {
-        private final Point mStart;
-        private final Point mEnd;
-        private final float mDeltaX;
-        private final float mDeltaY;
-
-        public SwipeEvent(Point start, Point end) {
-            this.mStart = start;
-            this.mEnd = end;
-            this.mDeltaX = end.deltaX(start);
-            this.mDeltaY = end.deltaY(start);
-        }
-
-        public float getDistance() {
-            return this.mEnd.distanceTo(this.mStart);
-        }
-
-        public Direction getDirection() {
-            return Math.abs(mDeltaX) > Math.abs(mDeltaY) ? Direction.HORIZONTAL : Direction.VERTICAL;
-        }
-
-        public Orientation getOrientation() {
-            if (getDirection().equals(Direction.HORIZONTAL)) {
-                return mDeltaX < 0 ? Orientation.WEST : Orientation.EAST;
-            } else
-                return mDeltaY < 0 ? Orientation.NORTH : Orientation.SOUTH;
-        }
-
-        public long getDuration() {
-            return Math.abs(this.mEnd.getTime() - this.mStart.getTime());
-        }
-
-        @Override
-        public String toString() {
-            return String.format("SwipeEvent with distance %.2f and duration %d in %s direction %s.",
-                    getDistance(), getDuration(), getDirection(), getOrientation());
-        }
     }
 
     public interface SwipeEventListener {

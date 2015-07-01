@@ -10,7 +10,7 @@ public class SwipeDistanceConstraint implements SwipeConstraint {
     }
 
     @Override
-    public boolean isValid(SwipeDetector.SwipeEvent event) {
+    public boolean isValid(SwipeEvent event) {
         return event.getDistance() < mMaxDistance;
     }
 }

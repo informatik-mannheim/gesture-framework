@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import hs_mannheim.pattern_interaction_model.bluetooth.BluetoothChannel;
+import hs_mannheim.pattern_interaction_model.connection.bluetooth.BluetoothChannel;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IPostOffice;

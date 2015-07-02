@@ -6,7 +6,7 @@ import android.hardware.SensorManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.view.View;
 
-import hs_mannheim.pattern_interaction_model.bluetooth.BluetoothChannel;
+import hs_mannheim.pattern_interaction_model.connection.bluetooth.BluetoothChannel;
 import hs_mannheim.pattern_interaction_model.gesture.bump.BumpDetector;
 import hs_mannheim.pattern_interaction_model.gesture.bump.Threshold;
 import hs_mannheim.pattern_interaction_model.gesture.shake.ShakeDetector;
@@ -17,7 +17,7 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
 import hs_mannheim.pattern_interaction_model.model.Selection;
-import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
+import hs_mannheim.pattern_interaction_model.connection.wifidirect.WifiDirectChannel;
 
 public class Configuration {
 

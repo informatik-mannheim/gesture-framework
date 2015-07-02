@@ -1,6 +1,6 @@
 package hs_mannheim.pattern_interaction_model.model;
 
-import hs_mannheim.pattern_interaction_model.PostOffice;
+import hs_mannheim.pattern_interaction_model.connection.PostOffice;
 
 public class InteractionContext implements GestureDetector.GestureEventListener {
 

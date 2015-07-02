@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IPostOffice;
 import hs_mannheim.pattern_interaction_model.model.Packet;
-import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
+import hs_mannheim.pattern_interaction_model.connection.wifidirect.WifiDirectChannel;
 
 public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
     private String TAG = "[WifiDirectActivity]";

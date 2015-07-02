@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model;
+package hs_mannheim.pattern_interaction_model.connection;
 
 import android.database.Observable;
 import android.util.Log;

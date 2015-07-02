@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.bluetooth;
+package hs_mannheim.pattern_interaction_model.connection.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;

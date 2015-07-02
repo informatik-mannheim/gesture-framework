@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.wifidirect;
+package hs_mannheim.pattern_interaction_model.connection.wifidirect;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,29 +1,29 @@
-package hs_mannheim.pattern_interaction_model.wifidirect;
+package hs_mannheim.pattern_interaction_model.connection.bluetooth;
 
+import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.Socket;
 
 import hs_mannheim.pattern_interaction_model.model.Packet;
 
+/**
+ * Thread that runs on both client and server device to send and receive data through streams.
+ */
 public class ConnectedThread extends Thread {
-    private final String TAG = "[WifiP2P ConnectedThread]";
+    private final String TAG = "[Bluetooth Connected Thread]";
 
-    private final Socket mSocket;
-    private final WifiDirectChannel mChannel;
-
+    private final BluetoothSocket mSocket;
+    private BluetoothChannel mChannel;
     private final InputStream mInStream;
     private final OutputStream mOutStream;
     private ObjectOutputStream mObjectOutputStream;
 
-    public ConnectedThread(Socket socket, WifiDirectChannel channel) {
+    public ConnectedThread(BluetoothSocket socket, BluetoothChannel channel) {
         mSocket = socket;
         mChannel = channel;
 
@@ -31,8 +31,8 @@ public class ConnectedThread extends Thread {
         OutputStream tmpOut = null;
 
         try {
-            tmpIn = socket.getInputStream();
-            tmpOut = socket.getOutputStream();
+            tmpIn = mSocket.getInputStream();
+            tmpOut = mSocket.getOutputStream();
         } catch (IOException e) {
             Log.e(TAG, "Could not acquire streams from socket");
         }
@@ -70,16 +70,16 @@ public class ConnectedThread extends Thread {
     /**
      * Write data to socket through output stream.
      *
-     * @param packet to send
+     * @param message to send
      */
-    public void write(Packet packet) {
+    public void write(Packet message) {
         try {
             if(mObjectOutputStream == null) {
                 mObjectOutputStream = new ObjectOutputStream(mOutStream);
             }
-            mObjectOutputStream.writeObject(packet);
+            mObjectOutputStream.writeObject(message);
         } catch (IOException e) {
-            Log.e(TAG, "Error writing packet to stream");
+            Log.e(TAG, "Error sending data to remote device");
         }
     }
 
@@ -88,7 +88,10 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
-            mSocket.close();
+            if(mObjectOutputStream != null) {
+                mObjectOutputStream.close();
+            }
+
             mChannel.disconnected();
         } catch (IOException e) {
             Log.e(TAG, "Error closing client connection");

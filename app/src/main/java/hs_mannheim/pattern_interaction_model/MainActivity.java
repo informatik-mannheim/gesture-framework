@@ -1,10 +1,6 @@
 package hs_mannheim.pattern_interaction_model;
 
-import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.SensorManager;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -16,19 +12,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import hs_mannheim.pattern_interaction_model.bluetooth.BluetoothChannel;
-import hs_mannheim.pattern_interaction_model.gesture.bump.BumpDetector;
-import hs_mannheim.pattern_interaction_model.gesture.bump.Threshold;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDirectionConstraint;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
 import hs_mannheim.pattern_interaction_model.model.Packet;
-import hs_mannheim.pattern_interaction_model.model.Selection;
-import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
 
 public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher {

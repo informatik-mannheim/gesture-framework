@@ -6,8 +6,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 public class ConnectedThread extends Thread {
     private final String TAG = "[WifiP2P ConnectedThread]";
@@ -17,9 +21,9 @@ public class ConnectedThread extends Thread {
 
     private final InputStream mInStream;
     private final OutputStream mOutStream;
+    private ObjectOutputStream mObjectOutputStream;
 
     public ConnectedThread(Socket socket, WifiDirectChannel channel) {
-        Log.d(TAG, "Connected Thread started");
         mSocket = socket;
         mChannel = channel;
 
@@ -40,14 +44,23 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(mInStream));
+        ObjectInputStream objectInputStream = null;
+        try {
+            objectInputStream = new ObjectInputStream(mInStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         while (true) {
             try {
-                mChannel.receive(stdIn.readLine());
+                mChannel.receive((Packet) objectInputStream.readObject());
             } catch (IOException e) {
                 Log.d(TAG, "IO Exception: " + e.getMessage());
                 this.cancel();
+
+                break;
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
 
                 break;
             }
@@ -57,14 +70,16 @@ public class ConnectedThread extends Thread {
     /**
      * Write data to socket through output stream.
      *
-     * @param bytes to send
+     * @param packet to send
      */
-    public void write(byte[] bytes) {
+    public void write(Packet packet) {
         try {
-            mOutStream.write(bytes);
-            //mOutStream.flush();
+            if(mObjectOutputStream == null) {
+                mObjectOutputStream = new ObjectOutputStream(mOutStream);
+            }
+            mObjectOutputStream.writeObject(packet);
         } catch (IOException e) {
-            Log.e(TAG, "Error sending data to remote device");
+            Log.e(TAG, "Error writing packet to stream");
         }
     }
 

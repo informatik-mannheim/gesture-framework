@@ -1,6 +1,5 @@
 package hs_mannheim.pattern_interaction_model.wifidirect;
 
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,14 +13,12 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import hs_mannheim.pattern_interaction_model.model.IConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
-import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
+import hs_mannheim.pattern_interaction_model.model.IConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.Packet;
 
 public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
-        WifiP2pManager.ConnectionInfoListener
-{
+        WifiP2pManager.ConnectionInfoListener {
     private static final int MSG_DATA_RECEIVED = 0xAA;
     private static final int MSG_CONNECTION_ESTABLISHED = 0xBB;
     private static final int MSG_CONNECTION_LOST = 0xCC;
@@ -72,11 +69,11 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     }
 
     @Override
-    public void transfer(Packet payload) {
-        Log.d(TAG, "Sending " + payload);
+    public void transfer(Packet packet) {
+        Log.d(TAG, "Sending " + packet);
 
         if (isConnected()) {
-            this.mConnectionThread.write(payload.toString().getBytes());
+            this.mConnectionThread.write(packet);
         }
     }
 
@@ -114,11 +111,11 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION)) {
-            onConnectionChanged(intent, context);
+            onConnectionChanged(intent);
         }
     }
 
-    private void onConnectionChanged(Intent intent, Context context) {
+    private void onConnectionChanged(Intent intent) {
         NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
         if (networkInfo.isConnected()) {
@@ -141,7 +138,6 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         }
     }
 
-
     public void disconnected() {
         this.isConnected = false;
         this.mConnectionThread = null;
@@ -149,7 +145,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     }
 
     public void receive(Object data) {
-        _handler.obtainMessage(MSG_DATA_RECEIVED, (String) data).sendToTarget();
+        _handler.obtainMessage(MSG_DATA_RECEIVED, data).sendToTarget();
         Log.d(TAG, "Data received: " + data);
     }
 
@@ -157,6 +153,5 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         isConnected = true;
         this.mConnectionThread = connectionThread;
         _handler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
-        Log.d(TAG, "Connected to other device");
     }
 }

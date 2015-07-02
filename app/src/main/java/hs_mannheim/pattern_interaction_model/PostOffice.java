@@ -17,7 +17,6 @@ public class PostOffice extends Observable<IPacketReceiver> implements IPostOffi
     private IConnection mConnection;
 
     public PostOffice(IConnection connection) {
-
         mConnection = connection;
         mConnection.register(this);
     }

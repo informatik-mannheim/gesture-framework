@@ -51,14 +51,14 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         createInteractionContext();
     }
 
-    private void createInteractionContext() {
+    private void createInteractionContext2() {
         InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(new Packet("DATA", "swipe default")), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.setInteractionContext(interactionContext);
     }
 
     @SuppressWarnings("unused")
-    private void createInteractionContext2() {
+    private void createInteractionContext() {
 
         WifiP2pManager wifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         WifiP2pManager.Channel channel = wifiP2pManager.initialize(this, getMainLooper(), null);

@@ -21,6 +21,6 @@ public class Packet implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Message of type: %s containing: %s ", _type, _message);
+        return String.format("Message of type: %s containing: %s\n", _type, _message);
     }
 }

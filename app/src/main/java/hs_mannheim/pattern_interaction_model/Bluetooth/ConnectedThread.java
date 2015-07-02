@@ -11,51 +11,49 @@ import java.io.OutputStream;
 
 import hs_mannheim.pattern_interaction_model.model.Packet;
 
-
 /**
  * Thread that runs on both client and server device to send and receive data through streams.
  */
 public class ConnectedThread extends Thread {
     private final String TAG = "[Bluetooth Connected Thread]";
 
-    private final BluetoothSocket _socket;
-    private BluetoothChannel _channel;
-    private final InputStream _inStream;
-    private final OutputStream _outStream;
-    private ObjectOutputStream _objectOutStream;
+    private final BluetoothSocket mSocket;
+    private BluetoothChannel mChannel;
+    private final InputStream mInStream;
+    private final OutputStream mOutStream;
+    private ObjectOutputStream mObjectOutputStream;
 
     public ConnectedThread(BluetoothSocket socket, BluetoothChannel channel) {
-        _socket = socket;
-        _channel = channel;
+        mSocket = socket;
+        mChannel = channel;
 
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
 
         try {
-            tmpIn = _socket.getInputStream();
-            tmpOut = _socket.getOutputStream();
+            tmpIn = mSocket.getInputStream();
+            tmpOut = mSocket.getOutputStream();
         } catch (IOException e) {
             Log.e(TAG, "Could not acquire streams from socket");
         }
 
-        _inStream = tmpIn;
-        _outStream = tmpOut;
+        mInStream = tmpIn;
+        mOutStream = tmpOut;
 
-        _channel.connected(this);
+        mChannel.connected(this);
     }
 
     public void run() {
-
         ObjectInputStream objectInputStream = null;
         try {
-            objectInputStream = new ObjectInputStream(_inStream);
+            objectInputStream = new ObjectInputStream(mInStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         while (true) {
             try {
-                _channel.receive((Packet) objectInputStream.readObject());
+                mChannel.receive((Packet) objectInputStream.readObject());
             } catch (IOException e) {
                 Log.d(TAG, "IO Exception: " + e.getMessage());
                 this.cancel();
@@ -76,10 +74,10 @@ public class ConnectedThread extends Thread {
      */
     public void write(Packet message) {
         try {
-            if(_objectOutStream == null) {
-                _objectOutStream = new ObjectOutputStream(_outStream);
+            if(mObjectOutputStream == null) {
+                mObjectOutputStream = new ObjectOutputStream(mOutStream);
             }
-            _objectOutStream.writeObject(message);
+            mObjectOutputStream.writeObject(message);
         } catch (IOException e) {
             Log.e(TAG, "Error sending data to remote device");
         }
@@ -90,11 +88,11 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
-            if(_objectOutStream != null) {
-                _objectOutStream.close();
+            if(mObjectOutputStream != null) {
+                mObjectOutputStream.close();
             }
 
-            _channel.disconnected();
+            mChannel.disconnected();
         } catch (IOException e) {
             Log.e(TAG, "Error closing client connection");
         }

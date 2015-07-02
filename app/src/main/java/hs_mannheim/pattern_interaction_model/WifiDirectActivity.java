@@ -19,13 +19,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import hs_mannheim.pattern_interaction_model.model.IConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IPostOffice;
 import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
-public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IConnectionListener, IPacketReceiver {
+public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
     private String TAG = "[WifiDirectActivity]";
 
     private WifiP2pManager mManager;
@@ -56,8 +55,7 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
             }
         };
 
-        this.mConnection = new WifiDirectChannel(mManager, mChannel, this);
-        this.mConnection.register(this);
+        mConnection = (WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection();
     }
 
     private void onPeersChanged() {
@@ -124,21 +122,6 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
         Log.d(TAG, "Connecting to " + address);
 
         this.mConnection.connect(address);
-    }
-
-    @Override
-    public void onConnectionLost() {
-        Toast.makeText(this, "Connection lost", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnectionEstablished() {
-        Toast.makeText(this, "Connection established", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDataReceived(Packet packet) {
-        /* handled by post office now */
     }
 
     @Override

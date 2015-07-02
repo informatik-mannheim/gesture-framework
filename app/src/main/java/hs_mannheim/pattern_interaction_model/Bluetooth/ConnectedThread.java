@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import hs_mannheim.pattern_interaction_model.model.Payload;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 
 /**
@@ -55,7 +55,7 @@ public class ConnectedThread extends Thread {
 
         while (true) {
             try {
-                _channel.receive((Payload) objectInputStream.readObject());
+                _channel.receive((Packet) objectInputStream.readObject());
             } catch (IOException e) {
                 Log.d(TAG, "IO Exception: " + e.getMessage());
                 this.cancel();
@@ -74,7 +74,7 @@ public class ConnectedThread extends Thread {
      *
      * @param message to send
      */
-    public void write(Payload message) {
+    public void write(Packet message) {
         try {
             if(_objectOutStream == null) {
                 _objectOutStream = new ObjectOutputStream(_outStream);

@@ -2,11 +2,11 @@ package hs_mannheim.pattern_interaction_model.model;
 
 import java.io.Serializable;
 
-public class Payload implements Serializable {
+public class Packet implements Serializable {
     private final String _type;
     private final String _message;
 
-    public Payload(String type, String message) {
+    public Packet(String type, String message) {
         _type = type;
         _message = message;
     }

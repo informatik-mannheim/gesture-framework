@@ -2,21 +2,21 @@ package hs_mannheim.pattern_interaction_model.model;
 
 public class Selection {
 
-    private Payload _payload;
+    private Packet _packet;
 
-    public Selection(Payload data) {
+    public Selection(Packet data) {
         setData(data);
     }
 
-    public void updateSelection(Payload newData) {
+    public void updateSelection(Packet newData) {
         setData(newData);
     }
 
-    public Payload getData() {
-        return _payload;
+    public Packet getData() {
+        return _packet;
     }
 
-    private void setData(Payload data) {
-        this._payload = data;
+    private void setData(Packet data) {
+        this._packet = data;
     }
 }

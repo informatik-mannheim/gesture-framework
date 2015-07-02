@@ -19,11 +19,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
-import hs_mannheim.pattern_interaction_model.model.Payload;
+import hs_mannheim.pattern_interaction_model.model.IConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
+import hs_mannheim.pattern_interaction_model.model.IPostOffice;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
-public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, ConnectionListener {
+public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IConnectionListener, IPacketReceiver {
     private String TAG = "[WifiDirectActivity]";
 
     private WifiP2pManager mManager;
@@ -32,6 +34,7 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     private WifiDirectChannel mConnection;
 
     private IntentFilter mIntentFilter;
+    private IPostOffice mPostOffice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,8 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
 
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
+
+        mPostOffice = ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice();
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -86,12 +91,14 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     protected void onResume() {
         super.onResume();
         registerReceiver(mReceiver, mIntentFilter);
+        mPostOffice.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
+        mPostOffice.unregister(this);
     }
 
     public void listDevices(WifiP2pDeviceList peers) {
@@ -108,7 +115,7 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     }
 
     public void sendStuff(View view) {
-        this.mConnection.transfer(new Payload("DATA", "TeST\n"));
+        this.mConnection.transfer(new Packet("DATA", "TeST\n"));
     }
 
     @Override
@@ -130,7 +137,17 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     }
 
     @Override
-    public void onDataReceived(Payload data) {
-        Toast.makeText(this, data.toString(), Toast.LENGTH_SHORT).show();
+    public void onDataReceived(Packet packet) {
+        /* handled by post office now */
+    }
+
+    @Override
+    public void receive(Packet packet) {
+        Toast.makeText(this, packet.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean accept(String type) {
+        return true;
     }
 }

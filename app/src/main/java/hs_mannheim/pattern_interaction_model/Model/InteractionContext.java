@@ -1,52 +1,39 @@
 package hs_mannheim.pattern_interaction_model.model;
 
-public class InteractionContext implements GestureDetector.GestureEventListener, ConnectionListener {
-    private final GestureDetector _gestureDetector;
-    private final Selection _selection;
-    private final IConnection _connection;
+import hs_mannheim.pattern_interaction_model.PostOffice;
+
+public class InteractionContext implements GestureDetector.GestureEventListener {
+
+    private final GestureDetector mGestureDetector;
+    private final Selection mSelection;
+    private final IConnection mConnection;
+    private final IPostOffice mPostOffice;
 
     public InteractionContext(GestureDetector gestureDetector,
                               Selection selection,
                               IConnection connection) {
 
-        _gestureDetector = gestureDetector;
-        _selection = selection;
-        _connection = connection;
+        mGestureDetector = gestureDetector;
+        mSelection = selection;
+        mConnection = connection;
+        mPostOffice = new PostOffice(mConnection); /* only PostOffice talks to the connection */
+        mGestureDetector.registerGestureEventListener(this);
+    }
 
-        // as a default, let this be the client for all listening.
-        _connection.register(this);
-        _gestureDetector.registerGestureEventListener(this);
+    public IPostOffice getPostOffice() {
+        return mPostOffice;
     }
 
     public IConnection getConnection() {
-        return this._connection;
+        return this.mConnection;
     }
 
-    public void registerConnectionListener(ConnectionListener listener) {
-        this._connection.register(listener);
-    }
-
-    public void updateSelection(Payload data) {
-        _selection.updateSelection(data);
+    public void updateSelection(Packet data) {
+        mSelection.updateSelection(data);
     }
 
     @Override
     public void onGestureDetected() {
-        _connection.transfer(_selection.getData());
-    }
-
-    @Override
-    public void onConnectionEstablished() {
-
-    }
-
-    @Override
-    public void onDataReceived(Payload data) {
-
-    }
-
-    @Override
-    public void onConnectionLost() {
-
+        mPostOffice.send(mSelection.getData());
     }
 }

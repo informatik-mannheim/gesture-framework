@@ -24,14 +24,14 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDirectionConstra
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
-import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
-import hs_mannheim.pattern_interaction_model.model.Payload;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.model.Selection;
 import hs_mannheim.pattern_interaction_model.wifidirect.WifiDirectChannel;
 
 
-public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, ConnectionListener, TextWatcher {
+public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher {
 
     public final static String MODEL = Build.MODEL;
 
@@ -52,8 +52,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     }
 
     private void createInteractionContext() {
-        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(new Payload("DATA", "swipe default")), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
-        interactionContext.registerConnectionListener(this);
+        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(new Packet("DATA", "swipe default")), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.setInteractionContext(interactionContext);
     }
@@ -64,8 +63,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         WifiP2pManager wifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         WifiP2pManager.Channel channel = wifiP2pManager.initialize(this, getMainLooper(), null);
 
-        InteractionContext interactionContext = new InteractionContext(registerBumpListener(), new Selection(new Payload("DATA", "bump default")), new WifiDirectChannel(wifiP2pManager, channel, getApplicationContext()));
-        interactionContext.registerConnectionListener(this);
+        InteractionContext interactionContext = new InteractionContext(registerBumpListener(), new Selection(new Packet("DATA", "bump default")), new WifiDirectChannel(wifiP2pManager, channel, getApplicationContext()));
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
         applicationContext.setInteractionContext(interactionContext);
     }
@@ -85,9 +83,13 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     @Override
     protected void onResume() {
         super.onResume();
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
+    }
 
-        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
-        applicationContext.getInteractionContext().registerConnectionListener(this);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().unregister(this);
     }
 
     @Override
@@ -104,21 +106,6 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     }
 
     @Override
-    public void onConnectionLost() {
-
-    }
-
-    @Override
-    public void onConnectionEstablished() {
-
-    }
-
-    @Override
-    public void onDataReceived(Payload data) {
-        Toast.makeText(this, "Data received in MAIN: " + data.toString(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
     }
@@ -130,10 +117,20 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
 
     @Override
     public void afterTextChanged(Editable s) {
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Payload("DATA", s.toString()));
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Packet("DATA", s.toString()));
     }
 
     public void startStitchView(View view) {
         startActivity(new Intent(this, StitchView.class));
+    }
+
+    @Override
+    public void receive(Packet packet) {
+        Toast.makeText(this, "Packet received in MAIN: " + packet.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean accept(String type) {
+        return true;
     }
 }

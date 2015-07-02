@@ -11,9 +11,9 @@ import android.util.Log;
 import java.util.UUID;
 
 import hs_mannheim.pattern_interaction_model.MainActivity;
-import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.IConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
-import hs_mannheim.pattern_interaction_model.model.Payload;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 public class BluetoothChannel implements IConnection {
 
@@ -27,7 +27,7 @@ public class BluetoothChannel implements IConnection {
     private final Handler mHandler;
     private BluetoothDevice mConnectedDevice;
     private BluetoothAdapter mBluetoothAdapter;
-    private ConnectionListener mListener;
+    private IConnectionListener mListener;
 
     private boolean isConnected = false;
     private ConnectedThread mConnectionThread;
@@ -44,7 +44,7 @@ public class BluetoothChannel implements IConnection {
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_DATA_RECEIVED:
-                        mListener.onDataReceived((Payload) message.obj);
+                        mListener.onDataReceived((Packet) message.obj);
                         break;
                     case MSG_CONNECTION_ESTABLISHED:
                         mListener.onConnectionEstablished();
@@ -59,7 +59,7 @@ public class BluetoothChannel implements IConnection {
         };
     }
 
-    public void register(ConnectionListener listener) {
+    public void register(IConnectionListener listener) {
         this.mListener = listener;
     }
 
@@ -71,7 +71,7 @@ public class BluetoothChannel implements IConnection {
         return this.isConnected;
     }
 
-    public void transfer(Payload message) {
+    public void transfer(Packet message) {
         if (isConnected) {
             mConnectionThread.write(message);
         }
@@ -93,7 +93,7 @@ public class BluetoothChannel implements IConnection {
         }
     }
 
-    public void receive(Payload data) {
+    public void receive(Packet data) {
         Log.d(TAG, "Data received: " + data);
         mHandler.obtainMessage(MSG_DATA_RECEIVED, data).sendToTarget();
     }

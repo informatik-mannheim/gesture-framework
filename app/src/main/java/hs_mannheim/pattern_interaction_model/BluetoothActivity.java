@@ -20,23 +20,26 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import hs_mannheim.pattern_interaction_model.bluetooth.BluetoothChannel;
-import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
-import hs_mannheim.pattern_interaction_model.model.Payload;
+import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
+import hs_mannheim.pattern_interaction_model.model.IPostOffice;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 
-public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, ConnectionListener {
+public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
     private final String TAG = "[BluetoothActivity]";
     private int REQUEST_ENABLE_BT = 0xfe;
 
     private BluetoothAdapter mBluetoothAdapter;
-    private IConnection mConnection;
-    private BroadcastReceiver _receiver;
+
+    private BroadcastReceiver mBroadcastReceiver;
     private ArrayList<String> devices = new ArrayList<>();
     private ArrayAdapter<String> mArrayAdapter;
 
     private Button mStartDiscoveryButton;
-    private IntentFilter _intentFilter;
+    private IntentFilter mIntentFilter;
+    private IPostOffice mPostOffice;
+    private IConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +51,8 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
 
         checkBluetoothAvailability();
 
+        mPostOffice = ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice();
         mConnection = ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection();
-        mConnection.register(this);
 
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, devices);
 
@@ -57,8 +60,8 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
         devicesList.setAdapter(mArrayAdapter);
         devicesList.setOnItemClickListener(this);
 
-        _intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        _receiver = new BluetoothDeviceFoundReceiver();
+        mIntentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        mBroadcastReceiver = new BluetoothDeviceFoundReceiver();
     }
 
     private void checkBluetoothAvailability() {
@@ -109,9 +112,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     }
 
     public void sendHallo(View view) {
-        if (mConnection.isConnected()) {
-            mConnection.transfer(new Payload("TYPE", "Hallo!\n"));
-        }
+        mPostOffice.send(new Packet("TYPE", "Hallo!\n"));
     }
 
     private void showToast(final String message) {
@@ -119,35 +120,32 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     }
 
     @Override
-    public void onConnectionEstablished() {
-        showToast("Connected to " + ((BluetoothChannel) mConnection).getConnectedDevice());
-    }
-
-    @Override
-    public void onDataReceived(Payload data) {
-        showToast("Data received: " + data.toString());
-    }
-
-    @Override
-    public void onConnectionLost() {
-        showToast("Connection lost");
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(_receiver, _intentFilter);
+        registerReceiver(mBroadcastReceiver, mIntentFilter);
+        mPostOffice.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(_receiver);
+        unregisterReceiver(mBroadcastReceiver);
+        mPostOffice.unregister(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onResume();
+    }
+
+    @Override
+    public void receive(Packet packet) {
+        showToast(packet.toString());
+    }
+
+    @Override
+    public boolean accept(String type) {
+        return true;
     }
 
     class BluetoothDeviceFoundReceiver extends BroadcastReceiver {

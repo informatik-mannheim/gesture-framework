@@ -1,6 +1,8 @@
 package hs_mannheim.pattern_interaction_model;
 
+import android.content.Context;
 import android.graphics.Point;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Display;
@@ -9,7 +11,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import hs_mannheim.pattern_interaction_model.gesture.stitch.StitchEdgeConstraint;
+import hs_mannheim.pattern_interaction_model.gesture.shake.ShakeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
@@ -33,11 +35,9 @@ public class StitchView extends ActionBarActivity implements GestureDetector.Ges
         screenX = size.x;
         screenY = size.y;
 
-
         ((TextView)findViewById(R.id.tvHeader)).setText(String.format("x: %d; y: %d", screenX, screenY));
 
         mStitchDetector = new SwipeDetector();
-        mStitchDetector.addConstraint(new StitchEdgeConstraint(screenX, screenY, SwipeEvent.Bounding.OUTBOUND));
         mStitchDetector.registerGestureEventListener(this);
         mStitchDetector.attachToView(findViewById(R.id.stitchView), this);
     }

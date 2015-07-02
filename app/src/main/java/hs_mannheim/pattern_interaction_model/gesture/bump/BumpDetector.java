@@ -95,7 +95,7 @@ public class BumpDetector extends GestureDetector implements SensorEventListener
     }
 
     private void fireBumpEvent() {
-        this.onGestureDetected();
+        this.fireGestureDetected();
     }
 
     @Override

@@ -14,12 +14,14 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import hs_mannheim.pattern_interaction_model.model.ConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.IConnectionListener;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
-import hs_mannheim.pattern_interaction_model.model.Payload;
+import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
-        WifiP2pManager.ConnectionInfoListener {
+        WifiP2pManager.ConnectionInfoListener
+{
     private static final int MSG_DATA_RECEIVED = 0xAA;
     private static final int MSG_CONNECTION_ESTABLISHED = 0xBB;
     private static final int MSG_CONNECTION_LOST = 0xCC;
@@ -32,7 +34,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private WifiP2pManager.Channel mChannel;
 
     private boolean isConnected;
-    private ConnectionListener mListener;
+    private IConnectionListener mListener;
     private ConnectedThread mConnectionThread;
 
     public WifiDirectChannel(WifiP2pManager manager, WifiP2pManager.Channel channel, Context context) {
@@ -54,7 +56,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_DATA_RECEIVED:
-                        mListener.onDataReceived((Payload) message.obj);
+                        mListener.onDataReceived((Packet) message.obj);
                         break;
                     case MSG_CONNECTION_ESTABLISHED:
                         mListener.onConnectionEstablished();
@@ -70,16 +72,16 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     }
 
     @Override
-    public void transfer(Payload payload) {
+    public void transfer(Packet payload) {
         Log.d(TAG, "Sending " + payload);
 
-        if (this.isConnected()) {
+        if (isConnected()) {
             this.mConnectionThread.write(payload.toString().getBytes());
         }
     }
 
     @Override
-    public void register(ConnectionListener listener) {
+    public void register(IConnectionListener listener) {
         this.mListener = listener;
     }
 

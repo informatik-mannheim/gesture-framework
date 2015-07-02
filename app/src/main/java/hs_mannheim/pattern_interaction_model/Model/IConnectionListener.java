@@ -1,7 +1,7 @@
 package hs_mannheim.pattern_interaction_model.model;
 
-public interface ConnectionListener {
+public interface IConnectionListener {
     void onConnectionLost();
     void onConnectionEstablished();
-    void onDataReceived(Payload data);
+    void onDataReceived(Packet data);
 }

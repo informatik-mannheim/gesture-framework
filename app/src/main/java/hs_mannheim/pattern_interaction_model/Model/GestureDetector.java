@@ -8,7 +8,7 @@ public abstract class GestureDetector {
         this.mListener = listener;
     }
 
-    protected void onGestureDetected() {
+    protected void fireGestureDetected() {
         if(mListener != null) {
             mListener.onGestureDetected();
         }

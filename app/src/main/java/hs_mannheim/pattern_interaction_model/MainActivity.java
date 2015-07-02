@@ -49,7 +49,8 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         StrictMode.setThreadPolicy(policy);
 
         //InteractionContext interactionContext = new Configuration().wifiBump((InteractionApplication) getApplicationContext());
-        InteractionContext interactionContext = new Configuration().bluetoothSwipe((InteractionApplication) getApplicationContext(), findViewById(R.id.layout_main), this);
+        //InteractionContext interactionContext = new Configuration().bluetoothSwipe((InteractionApplication) getApplicationContext(), findViewById(R.id.layout_main), this);
+        InteractionContext interactionContext = new Configuration().wifiShake((InteractionApplication) getApplicationContext());
         ((InteractionApplication) getApplicationContext()).setInteractionContext(interactionContext);
     }
 

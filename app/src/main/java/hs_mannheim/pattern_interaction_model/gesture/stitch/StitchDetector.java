@@ -1,6 +1,7 @@
 package hs_mannheim.pattern_interaction_model.gesture.stitch;
 
 
+import android.graphics.Point;
 import android.view.View;
 
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeConstraint;
@@ -19,9 +20,11 @@ import static hs_mannheim.pattern_interaction_model.model.GestureDetector.Gestur
 public class StitchDetector extends GestureDetector implements SwipeDetector.SwipeEventListener {
     private final SwipeDetector mSwipeDetector;
     private IPostOffice mPostOffice;
+    private Point mDisplay;
 
-    public StitchDetector(IPostOffice postOffice) {
+    public StitchDetector(IPostOffice postOffice, Point display) {
         this.mPostOffice = postOffice;
+        mDisplay = display;
         this.mSwipeDetector = new SwipeDetector();
         mSwipeDetector.addSwipeListener(this);
     }
@@ -36,8 +39,8 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
     @Override
     public void onSwipeDetected(SwipeEvent event) {
-
-        mPostOffice.send(new StitchPacket("Stitch on other device", event));
+        StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mDisplay);
+        mPostOffice.send(new StitchPacket("Stitch on other device", stitchEvent.getBounding(), stitchEvent.getOrientation()));
         fireGestureDetected();
     }
 }

@@ -3,7 +3,6 @@ package hs_mannheim.pattern_interaction_model;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -21,22 +20,16 @@ import hs_mannheim.pattern_interaction_model.model.StitchPacket;
 public class StitchView extends ActionBarActivity implements GestureDetector.GestureEventListener, IPacketReceiver {
 
     private StitchDetector mStitchDetector;
-    private int screenX;
-    private int screenY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stitch_view);
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
+        Point displaySize = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(displaySize);
 
-        display.getRealSize(size);
-        screenX = size.x;
-        screenY = size.y;
-
-        ((TextView) findViewById(R.id.tvHeader)).setText(String.format("x: %d; y: %d", screenX, screenY));
+        ((TextView) findViewById(R.id.tvHeader)).setText(String.format("x: %d; y: %d", displaySize.x, displaySize.y));
 
         InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
 
@@ -44,7 +37,7 @@ public class StitchView extends ActionBarActivity implements GestureDetector.Ges
 
         postOffice.register(this);
 
-        mStitchDetector = new StitchDetector(postOffice);
+        mStitchDetector = new StitchDetector(postOffice, displaySize);
         mStitchDetector.registerGestureEventListener(this);
         mStitchDetector.attachToView(findViewById(R.id.stitchView));
     }
@@ -80,7 +73,7 @@ public class StitchView extends ActionBarActivity implements GestureDetector.Ges
     @Override
     public void receive(Packet packet) {
         StitchPacket stitchPacket = (StitchPacket) packet;
-        Toast.makeText(this, stitchPacket.toString() + stitchPacket.getSwipeEvent().toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Stitch received: " + stitchPacket.getBounding().toString() + ":" + stitchPacket.getOrientation(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -7,9 +7,9 @@ public class StitchEdgeConstraint implements SwipeConstraint {
 
     private final int mScreenX;
     private final int mScreenY;
-    private final SwipeEvent.Bounding mBounding;
+    private final StitchEvent.Bounding mBounding;
 
-    public StitchEdgeConstraint(int screenX, int screenY, SwipeEvent.Bounding bounding) {
+    public StitchEdgeConstraint(int screenX, int screenY, StitchEvent.Bounding bounding) {
         this.mScreenX = screenX;
         this.mScreenY = screenY;
         this.mBounding = bounding;
@@ -17,6 +17,7 @@ public class StitchEdgeConstraint implements SwipeConstraint {
 
     @Override
     public boolean isValid(SwipeEvent event) {
-        return event.getBounding(mScreenX, mScreenY).equals(mBounding);
+        return true;
+        //return event.getBounding(mScreenX, mScreenY).equals(mBounding);
     }
 }

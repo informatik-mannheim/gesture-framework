@@ -1,5 +1,6 @@
 package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
+import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
 

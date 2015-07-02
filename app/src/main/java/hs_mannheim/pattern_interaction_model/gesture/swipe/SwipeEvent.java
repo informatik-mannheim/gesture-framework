@@ -3,9 +3,9 @@ package hs_mannheim.pattern_interaction_model.gesture.swipe;
 import java.io.Serializable;
 
 public class SwipeEvent implements Serializable {
-    private final int TOLERANCE = 150;
-    private final TouchPoint mStart;
-    private final TouchPoint mEnd;
+    protected final int TOLERANCE = 150;
+    protected final TouchPoint mStart;
+    protected final TouchPoint mEnd;
     private final float mDeltaX;
     private final float mDeltaY;
 
@@ -68,12 +68,14 @@ public class SwipeEvent implements Serializable {
         return mEnd;
     }
 
-    /**
+
+    /*
      * Determines whether the Swipe is ingoing, outgoing or internal
      * @param screenX width of the screen in pixels
      * @param screenY height of the screen in pixels
      * @return returns the Bounding of the Swipe
      */
+ /*
     public Bounding getBounding(int screenX, int screenY) {
         Bounding bounding;
 
@@ -123,6 +125,7 @@ public class SwipeEvent implements Serializable {
 
         return bounding;
     }
+    */
 
     @Override
     public String toString() {
@@ -138,8 +141,10 @@ public class SwipeEvent implements Serializable {
         NORTH, WEST, SOUTH, EAST
     }
 
+    /*
     public enum Bounding {
         INBOUND, OUTBOUND, INTERNAL
     }
+    */
 
 }

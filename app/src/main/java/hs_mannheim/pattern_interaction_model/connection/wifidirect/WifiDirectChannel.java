@@ -116,6 +116,9 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         }
     }
 
+    /**
+     * Important: this also changes when the other device asks to have a connection.
+     */
     private void onConnectionChanged(Intent intent) {
         NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
@@ -143,6 +146,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     public void disconnected() {
         this.isConnected = false;
         this.mConnectionThread = null;
+        mIsTryingToConnect = false;
         _handler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
     }
 

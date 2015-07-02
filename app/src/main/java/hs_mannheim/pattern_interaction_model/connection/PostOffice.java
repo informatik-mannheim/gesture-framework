@@ -3,10 +3,10 @@ package hs_mannheim.pattern_interaction_model.connection;
 import android.database.Observable;
 import android.util.Log;
 
-import hs_mannheim.pattern_interaction_model.model.IConnection;
-import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
-import hs_mannheim.pattern_interaction_model.model.IPostOffice;
-import hs_mannheim.pattern_interaction_model.model.Packet;
+import hs_mannheim.pattern_interaction_model.modeltemp.IConnection;
+import hs_mannheim.pattern_interaction_model.modeltemp.IPacketReceiver;
+import hs_mannheim.pattern_interaction_model.modeltemp.IPostOffice;
+import hs_mannheim.pattern_interaction_model.modeltemp.Packet;
 
 /**
  * Manages all packet traffic in an interaction context. It can send packages over a connection or

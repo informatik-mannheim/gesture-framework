@@ -2,7 +2,7 @@ package hs_mannheim.pattern_interaction_model;
 
 import android.app.Application;
 
-import hs_mannheim.pattern_interaction_model.model.InteractionContext;
+import hs_mannheim.pattern_interaction_model.modeltemp.InteractionContext;
 
 public class InteractionApplication extends Application {
 

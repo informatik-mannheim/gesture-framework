@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.model;
+package hs_mannheim.pattern_interaction_model.modeltemp;
 
 public interface IPostOffice extends IConnectionListener {
     void send(Packet packet);

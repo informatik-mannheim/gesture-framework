@@ -15,8 +15,8 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDirectionConstra
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
-import hs_mannheim.pattern_interaction_model.model.InteractionContext;
-import hs_mannheim.pattern_interaction_model.model.Selection;
+import hs_mannheim.pattern_interaction_model.modeltemp.InteractionContext;
+import hs_mannheim.pattern_interaction_model.modeltemp.Selection;
 import hs_mannheim.pattern_interaction_model.connection.wifidirect.WifiDirectChannel;
 
 public class Configuration {

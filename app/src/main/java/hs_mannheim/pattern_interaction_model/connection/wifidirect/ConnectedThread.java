@@ -9,7 +9,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import hs_mannheim.pattern_interaction_model.model.Packet;
+import hs_mannheim.pattern_interaction_model.modeltemp.Packet;
 
 public class ConnectedThread extends Thread {
     private final String TAG = "[WifiP2P ConnectedThread]";

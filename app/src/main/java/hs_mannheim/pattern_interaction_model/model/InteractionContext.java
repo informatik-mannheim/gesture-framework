@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model.modeltemp;
+package hs_mannheim.pattern_interaction_model.model;
 
 import hs_mannheim.pattern_interaction_model.connection.PostOffice;
 

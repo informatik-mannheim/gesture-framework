@@ -11,9 +11,9 @@ import android.util.Log;
 import java.util.UUID;
 
 import hs_mannheim.pattern_interaction_model.MainActivity;
-import hs_mannheim.pattern_interaction_model.modeltemp.IConnectionListener;
-import hs_mannheim.pattern_interaction_model.modeltemp.IConnection;
-import hs_mannheim.pattern_interaction_model.modeltemp.Packet;
+import hs_mannheim.pattern_interaction_model.model.IConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.IConnection;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 public class BluetoothChannel implements IConnection {
 

@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import hs_mannheim.pattern_interaction_model.modeltemp.Packet;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 /**
  * Thread that runs on both client and server device to send and receive data through streams.

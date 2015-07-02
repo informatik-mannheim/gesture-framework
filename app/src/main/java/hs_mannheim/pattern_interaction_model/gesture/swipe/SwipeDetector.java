@@ -5,7 +5,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import hs_mannheim.pattern_interaction_model.modeltemp.GestureDetector;
+import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 
 public class SwipeDetector extends GestureDetector implements View.OnTouchListener{
 

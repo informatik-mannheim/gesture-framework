@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
-import hs_mannheim.pattern_interaction_model.modeltemp.GestureDetector;
+import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 
 
 public class StitchView extends ActionBarActivity implements GestureDetector.GestureEventListener, SwipeDetector.SwipeEventListener {

@@ -13,9 +13,9 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import hs_mannheim.pattern_interaction_model.modeltemp.IConnection;
-import hs_mannheim.pattern_interaction_model.modeltemp.IConnectionListener;
-import hs_mannheim.pattern_interaction_model.modeltemp.Packet;
+import hs_mannheim.pattern_interaction_model.model.IConnection;
+import hs_mannheim.pattern_interaction_model.model.IConnectionListener;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         WifiP2pManager.ConnectionInfoListener {

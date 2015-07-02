@@ -14,9 +14,9 @@ import android.widget.Toast;
 
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
-import hs_mannheim.pattern_interaction_model.modeltemp.IPacketReceiver;
-import hs_mannheim.pattern_interaction_model.modeltemp.InteractionContext;
-import hs_mannheim.pattern_interaction_model.modeltemp.Packet;
+import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
+import hs_mannheim.pattern_interaction_model.model.InteractionContext;
+import hs_mannheim.pattern_interaction_model.model.Packet;
 
 
 public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher {

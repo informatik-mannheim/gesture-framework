@@ -33,6 +33,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private boolean isConnected;
     private IConnectionListener mListener;
     private ConnectedThread mConnectionThread;
+    private boolean mIsTryingToConnect;
 
     public WifiDirectChannel(WifiP2pManager manager, WifiP2pManager.Channel channel, Context context) {
         this.mManager = manager;
@@ -118,22 +119,23 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private void onConnectionChanged(Intent intent) {
         NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
-        if (networkInfo.isConnected()) {
-
+        if (networkInfo.isConnected() && !mIsTryingToConnect && !isConnected()) { /* this only means p2p is connected */
+            Log.d(TAG, "No socket open. Trying to connect");
+            mIsTryingToConnect = true;
             mManager.requestConnectionInfo(mChannel, this);
         } else {
-
             this.disconnected();
         }
     }
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
+        Log.d(TAG, "Connection info arrived.");
         if (info.groupFormed && info.isGroupOwner) { // group owner starts the server
-            Log.d(TAG, "SERVER");
+            Log.d(TAG, "I am the Server");
             new Server(8090, this).execute();
         } else if (info.groupFormed) { // and the other party connects to it
-            Log.d(TAG, "CLIENT");
+            Log.d(TAG, "I am the client");
             new Client(info.groupOwnerAddress, 8090, this).execute();
         }
     }
@@ -151,6 +153,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     public void connected(ConnectedThread connectionThread) {
         isConnected = true;
+        mIsTryingToConnect = false;
         this.mConnectionThread = connectionThread;
         _handler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
     }

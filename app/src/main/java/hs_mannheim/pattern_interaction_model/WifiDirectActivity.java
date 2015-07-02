@@ -23,6 +23,7 @@ import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IPostOffice;
 import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.connection.wifidirect.WifiDirectChannel;
+import hs_mannheim.pattern_interaction_model.model.PacketType;
 
 public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
     private String TAG = "[WifiDirectActivity]";
@@ -74,14 +75,10 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     public void discoverPeers(View view) {
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
-            public void onSuccess() {
-                Log.d(TAG, "Peer discovery successful.");
-            }
+            public void onSuccess() {}
 
             @Override
-            public void onFailure(int reason) {
-                Log.d(TAG, "Peer discovery failed.");
-            }
+            public void onFailure(int reason) {Log.d(TAG, "Peer discovery failed");}
         });
     }
 
@@ -113,13 +110,12 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     }
 
     public void sendStuff(View view) {
-        this.mConnection.transfer(new Packet("DATA", "TeST\n"));
+        this.mConnection.transfer(new Packet("TeST\n"));
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         final String address = ((TextView) view).getText().toString().split("@")[1];
-        Log.d(TAG, "Connecting to " + address);
 
         this.mConnection.connect(address);
     }
@@ -130,7 +126,7 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     }
 
     @Override
-    public boolean accept(String type) {
+    public boolean accept(PacketType type) {
         return true;
     }
 }

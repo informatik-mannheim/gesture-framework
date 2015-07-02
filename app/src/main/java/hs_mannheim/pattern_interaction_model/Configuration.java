@@ -47,6 +47,7 @@ public class Configuration {
                 .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
                 .addConstraint(new SwipeDurationConstraint(250))
                 .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST))
-                .attachToView(attachView, listener);
+                .attachToView(attachView)
+                .addSwipeListener(listener);
     }
 }

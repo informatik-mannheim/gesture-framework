@@ -17,6 +17,7 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
 import hs_mannheim.pattern_interaction_model.model.Packet;
+import hs_mannheim.pattern_interaction_model.model.PacketType;
 
 
 public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher {
@@ -79,7 +80,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
 
     @Override
     public void afterTextChanged(Editable s) {
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Packet("DATA", s.toString()));
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Packet(s.toString()));
     }
 
     public void startStitchView(View view) {
@@ -92,7 +93,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
     }
 
     @Override
-    public boolean accept(String type) {
+    public boolean accept(PacketType type) {
         return true;
     }
 }

@@ -22,9 +22,13 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
         return this;
     }
 
-    public SwipeDetector attachToView(View view, SwipeEventListener listener) {
+    public SwipeDetector attachToView(View view) {
         view.setOnTouchListener(this);
-        mSwipeListener = listener;
+        return this;
+    }
+
+    public SwipeDetector addSwipeListener(SwipeEventListener listener) {
+        this.mSwipeListener = listener;
         return this;
     }
 
@@ -53,7 +57,10 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
             if (!constraint.isValid(swipeEvent)) return false;
         }
 
-        mSwipeListener.onSwipeDetected(swipeEvent);
+        if(mSwipeListener != null ){
+            mSwipeListener.onSwipeDetected(swipeEvent);
+        }
+
         super.fireGestureDetected();
 
         return true;

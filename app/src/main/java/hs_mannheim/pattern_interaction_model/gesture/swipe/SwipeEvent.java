@@ -1,6 +1,8 @@
 package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
-public class SwipeEvent {
+import java.io.Serializable;
+
+public class SwipeEvent implements Serializable {
     private final int TOLERANCE = 150;
     private final TouchPoint mStart;
     private final TouchPoint mEnd;
@@ -68,9 +70,9 @@ public class SwipeEvent {
 
     /**
      * Determines whether the Swipe is ingoing, outgoing or internal
-     * @param screenX
-     * @param screenY
-     * @return
+     * @param screenX width of the screen in pixels
+     * @param screenY height of the screen in pixels
+     * @return returns the Bounding of the Swipe
      */
     public Bounding getBounding(int screenX, int screenY) {
         Bounding bounding;

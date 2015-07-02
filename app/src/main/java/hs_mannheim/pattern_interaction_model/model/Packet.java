@@ -3,24 +3,29 @@ package hs_mannheim.pattern_interaction_model.model;
 import java.io.Serializable;
 
 public class Packet implements Serializable {
-    private final String _type;
-    private final String _message;
+    private final PacketType mPacketType;
+    private final String mMessage;
 
-    public Packet(String type, String message) {
-        _type = type;
-        _message = message;
+    public Packet(String message) {
+        mPacketType = PacketType.PlainStringPacket;
+        mMessage = message;
     }
 
-    public String get_type() {
-        return _type;
+    public Packet(PacketType packetType, String message) {
+        mPacketType = packetType;
+        mMessage = message;
     }
 
-    public String get_message() {
-        return _message;
+    public PacketType getType() {
+        return mPacketType;
+    }
+
+    public String getMessage() {
+        return mMessage;
     }
 
     @Override
     public String toString() {
-        return String.format("Message of type: %s containing: %s\n", _type, _message);
+        return String.format("Message of type: %s containing: %s\n", mPacketType, mMessage);
     }
 }

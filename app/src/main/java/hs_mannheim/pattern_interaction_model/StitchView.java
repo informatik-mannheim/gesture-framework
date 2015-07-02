@@ -9,14 +9,18 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
+import hs_mannheim.pattern_interaction_model.gesture.stitch.StitchDetector;
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
+import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
+import hs_mannheim.pattern_interaction_model.model.IPostOffice;
+import hs_mannheim.pattern_interaction_model.model.Packet;
+import hs_mannheim.pattern_interaction_model.model.PacketType;
+import hs_mannheim.pattern_interaction_model.model.StitchPacket;
 
 
-public class StitchView extends ActionBarActivity implements GestureDetector.GestureEventListener, SwipeDetector.SwipeEventListener {
+public class StitchView extends ActionBarActivity implements GestureDetector.GestureEventListener, IPacketReceiver {
 
-    private SwipeDetector mStitchDetector;
+    private StitchDetector mStitchDetector;
     private int screenX;
     private int screenY;
 
@@ -32,11 +36,17 @@ public class StitchView extends ActionBarActivity implements GestureDetector.Ges
         screenX = size.x;
         screenY = size.y;
 
-        ((TextView)findViewById(R.id.tvHeader)).setText(String.format("x: %d; y: %d", screenX, screenY));
+        ((TextView) findViewById(R.id.tvHeader)).setText(String.format("x: %d; y: %d", screenX, screenY));
 
-        mStitchDetector = new SwipeDetector();
+        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
+
+        IPostOffice postOffice = applicationContext.getInteractionContext().getPostOffice();
+
+        postOffice.register(this);
+
+        mStitchDetector = new StitchDetector(postOffice);
         mStitchDetector.registerGestureEventListener(this);
-        mStitchDetector.attachToView(findViewById(R.id.stitchView), this);
+        mStitchDetector.attachToView(findViewById(R.id.stitchView));
     }
 
 
@@ -64,11 +74,17 @@ public class StitchView extends ActionBarActivity implements GestureDetector.Ges
 
     @Override
     public void onGestureDetected() {
-
+        Toast.makeText(this, "Stitch detected!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onSwipeDetected(SwipeEvent event) {
-        Toast.makeText(this, "Swipe detected: " + event.toString() + "(" + event.getBounding(screenX, screenY) + ")", Toast.LENGTH_SHORT).show();
+    public void receive(Packet packet) {
+        StitchPacket stitchPacket = (StitchPacket) packet;
+        Toast.makeText(this, stitchPacket.toString() + stitchPacket.getSwipeEvent().toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean accept(PacketType type) {
+        return type.equals(PacketType.Stitch);
     }
 }

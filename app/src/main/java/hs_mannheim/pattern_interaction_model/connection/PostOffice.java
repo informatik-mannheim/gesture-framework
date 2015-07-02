@@ -54,7 +54,7 @@ public class PostOffice extends Observable<IPacketReceiver> implements IPostOffi
     @Override
     public void receive(Packet packet) {
         for (IPacketReceiver receiver : this.mObservers) {
-            if (receiver.accept(packet.get_type())) {
+            if (receiver.accept(packet.getType())) {
                 receiver.receive(packet);
             }
         }
@@ -62,12 +62,12 @@ public class PostOffice extends Observable<IPacketReceiver> implements IPostOffi
 
     @Override
     public void onConnectionLost() {
-        receive(new Packet("DATA", "Connection lost"));
+        receive(new Packet("Connection lost"));
     }
 
     @Override
     public void onConnectionEstablished() {
-        receive(new Packet("DATA", "Connection established"));
+        receive(new Packet("Connection established"));
     }
 
     @Override

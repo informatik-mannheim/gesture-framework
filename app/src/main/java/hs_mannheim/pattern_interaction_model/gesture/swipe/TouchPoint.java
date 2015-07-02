@@ -2,7 +2,9 @@ package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
 import android.view.MotionEvent;
 
-public class TouchPoint {
+import java.io.Serializable;
+
+public class TouchPoint implements Serializable {
     private float x;
     private float y;
     private long time;

@@ -24,6 +24,7 @@ import hs_mannheim.pattern_interaction_model.model.IConnection;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IPostOffice;
 import hs_mannheim.pattern_interaction_model.model.Packet;
+import hs_mannheim.pattern_interaction_model.model.PacketType;
 
 
 public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
@@ -112,7 +113,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     }
 
     public void sendHallo(View view) {
-        mPostOffice.send(new Packet("TYPE", "Hallo!\n"));
+        mPostOffice.send(new Packet("Hallo!\n"));
     }
 
     private void showToast(final String message) {
@@ -144,7 +145,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     }
 
     @Override
-    public boolean accept(String type) {
+    public boolean accept(PacketType type) {
         return true;
     }
 

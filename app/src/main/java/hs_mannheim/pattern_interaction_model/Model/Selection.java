@@ -4,6 +4,8 @@ public class Selection {
 
     private Packet _packet;
 
+    public final static Selection Empty = new Selection(new Packet("DATA", "Nothing selected."));
+
     public Selection(Packet data) {
         setData(data);
     }

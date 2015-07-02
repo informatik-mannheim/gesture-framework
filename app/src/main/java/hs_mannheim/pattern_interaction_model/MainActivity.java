@@ -48,36 +48,9 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        createInteractionContext();
-    }
-
-    private void createInteractionContext2() {
-        InteractionContext interactionContext = new InteractionContext(registerSwipeListener(), new Selection(new Packet("DATA", "swipe default")), new BluetoothChannel(BluetoothAdapter.getDefaultAdapter()));
-        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
-        applicationContext.setInteractionContext(interactionContext);
-    }
-
-    @SuppressWarnings("unused")
-    private void createInteractionContext() {
-
-        WifiP2pManager wifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        WifiP2pManager.Channel channel = wifiP2pManager.initialize(this, getMainLooper(), null);
-
-        InteractionContext interactionContext = new InteractionContext(registerBumpListener(), new Selection(new Packet("DATA", "bump default")), new WifiDirectChannel(wifiP2pManager, channel, getApplicationContext()));
-        InteractionApplication applicationContext = (InteractionApplication) getApplicationContext();
-        applicationContext.setInteractionContext(interactionContext);
-    }
-
-    private BumpDetector registerBumpListener() {
-        return new BumpDetector((SensorManager) getSystemService(SENSOR_SERVICE), Threshold.LOW);
-    }
-
-    private SwipeDetector registerSwipeListener() {
-        return new SwipeDetector()
-                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
-                .addConstraint(new SwipeDurationConstraint(250))
-                .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST))
-                .attachToView(findViewById(R.id.layout_main), this);
+        //InteractionContext interactionContext = new Configuration().wifiBump((InteractionApplication) getApplicationContext());
+        InteractionContext interactionContext = new Configuration().bluetoothSwipe((InteractionApplication) getApplicationContext(), findViewById(R.id.layout_main), this);
+        ((InteractionApplication) getApplicationContext()).setInteractionContext(interactionContext);
     }
 
     @Override
@@ -126,7 +99,7 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
 
     @Override
     public void receive(Packet packet) {
-        Toast.makeText(this, "Packet received in MAIN: " + packet.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, packet.toString(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

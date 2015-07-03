@@ -20,7 +20,7 @@ public class ShakeDetector extends GestureDetector implements SensorEventListene
      */
     private static final float SHAKE_THRESHOLD_GRAVITY = 2.5F;
     private static final int SHAKE_SLOP_TIME_MS = 500;
-    private static final int SHAKE_COUNT_RESET_TIME_MS = 3000;
+    private static final int SHAKE_COUNT_RESET_TIME_MS = 1000;
 
     private long mShakeTimestamp;
     private int mShakeCount;

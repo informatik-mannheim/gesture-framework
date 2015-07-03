@@ -121,6 +121,6 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     }
 
     enum State {
-        OUTBOUND_SENT, INBOUND_RECOGNIZE, OUTBOUND_RECEIVED, IDLE
+        OUTBOUND_SENT, INBOUND_RECOGNIZE, IDLE
     }
 }

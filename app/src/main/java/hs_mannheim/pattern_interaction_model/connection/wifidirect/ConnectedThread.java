@@ -47,6 +47,7 @@ public class ConnectedThread extends Thread {
             objectInputStream = new ObjectInputStream(mInStream);
         } catch (IOException e) {
             e.printStackTrace();
+            this.cancel();
         }
 
         while (true) {
@@ -56,16 +57,17 @@ public class ConnectedThread extends Thread {
                 mChannel.receive(data);
 
             } catch (IOException e) {
-                Log.e(TAG, "IO Exception: " + e.getMessage());
+                Log.e(TAG, e.toString());
                 this.cancel();
-
                 break;
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-
+                Log.e(TAG, e.toString());
+                this.cancel();
                 break;
             } catch (NullPointerException e) {
-                Log.e(TAG, "boom");
+                Log.e(TAG, e.toString());
+                this.cancel();
+                break;
             }
         }
     }
@@ -91,7 +93,9 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
-            mObjectOutputStream.close();
+            if(mObjectOutputStream == null) {
+                mObjectOutputStream = new ObjectOutputStream(mOutStream);
+            }
             mChannel.disconnected();
         } catch (IOException e) {
             Log.e(TAG, "Error closing client connection");

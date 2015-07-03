@@ -1,6 +1,7 @@
 package hs_mannheim.pattern_interaction_model.gesture.stitch;
 
 import android.graphics.Point;
+import android.view.MotionEvent;
 
 import java.io.Serializable;
 
@@ -9,12 +10,17 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.TouchPoint;
 
 public class StitchEvent extends SwipeEvent implements Serializable {
 
+    public static StitchEvent None = new StitchEvent(new TouchPoint(0,0,0),new TouchPoint(0,0,0), new Point(0,0));
     private final int TOLERANCE = 150;
     private Point mDisplaySize;
 
     public StitchEvent(TouchPoint start, TouchPoint end, Point displaySize) {
         super(start, end);
         mDisplaySize = displaySize;
+    }
+
+    private StitchEvent() {
+        super(null, null);
     }
 
     /**

@@ -9,6 +9,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.pattern_interaction_model.gesture.stitch.StitchDetector;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDistanceConstraint;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IPostOffice;
@@ -17,7 +21,7 @@ import hs_mannheim.pattern_interaction_model.model.PacketType;
 import hs_mannheim.pattern_interaction_model.model.StitchPacket;
 
 
-public class StitchView extends ActionBarActivity implements GestureDetector.GestureEventListener, IPacketReceiver {
+public class StitchView extends ActionBarActivity implements GestureDetector.GestureEventListener {
 
     private StitchDetector mStitchDetector;
 
@@ -35,9 +39,9 @@ public class StitchView extends ActionBarActivity implements GestureDetector.Ges
 
         IPostOffice postOffice = applicationContext.getInteractionContext().getPostOffice();
 
-        postOffice.register(this);
-
         mStitchDetector = new StitchDetector(postOffice, displaySize);
+        mStitchDetector.addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.EAST));
+        mStitchDetector.addConstraint(new SwipeDurationConstraint(1000));
         mStitchDetector.registerGestureEventListener(this);
         mStitchDetector.attachToView(findViewById(R.id.stitchView));
     }
@@ -68,16 +72,5 @@ public class StitchView extends ActionBarActivity implements GestureDetector.Ges
     @Override
     public void onGestureDetected() {
         Toast.makeText(this, "Stitch detected!", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void receive(Packet packet) {
-        StitchPacket stitchPacket = (StitchPacket) packet;
-        Toast.makeText(this, "Stitch received: " + stitchPacket.getBounding().toString() + ":" + stitchPacket.getOrientation(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public boolean accept(PacketType type) {
-        return type.equals(PacketType.Stitch);
     }
 }

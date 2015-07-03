@@ -10,9 +10,13 @@ public class TouchPoint implements Serializable {
     private long time;
 
     public TouchPoint(MotionEvent event) {
-        setX(event.getRawX());
-        setY(event.getRawY());
-        setTime(event.getEventTime());
+        this(event.getRawX(), event.getRawY(), event.getEventTime());
+    }
+
+    public TouchPoint(float x, float y, long timestamp) {
+        setX(x);
+        setY(y);
+        setTime(timestamp);
     }
 
     public long getTime() {

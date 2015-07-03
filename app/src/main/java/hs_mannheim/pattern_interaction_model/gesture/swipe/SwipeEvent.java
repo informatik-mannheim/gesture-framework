@@ -68,65 +68,6 @@ public class SwipeEvent implements Serializable {
         return mEnd;
     }
 
-
-    /*
-     * Determines whether the Swipe is ingoing, outgoing or internal
-     * @param screenX width of the screen in pixels
-     * @param screenY height of the screen in pixels
-     * @return returns the Bounding of the Swipe
-     */
- /*
-    public Bounding getBounding(int screenX, int screenY) {
-        Bounding bounding;
-
-        int minX = screenX - TOLERANCE;
-        int minY = screenY - TOLERANCE;
-
-        switch (getOrientation()) {
-            case NORTH:
-                if (mEnd.getY() < TOLERANCE) {
-                    bounding = Bounding.OUTBOUND;
-                } else if (mStart.getY() > minY) {
-                    bounding = Bounding.INBOUND;
-                } else {
-                    bounding = Bounding.INTERNAL;
-                }
-                break;
-            case SOUTH:
-                if (mEnd.getY() > minY) {
-                    bounding = Bounding.OUTBOUND;
-                } else if (mStart.getY() < TOLERANCE) {
-                    bounding = Bounding.INBOUND;
-                } else {
-                    bounding = Bounding.INTERNAL;
-                }
-                break;
-            case WEST:
-                if (mEnd.getX() < TOLERANCE) {
-                    bounding = Bounding.OUTBOUND;
-                } else if (mStart.getX() > minX) {
-                    bounding = Bounding.INBOUND;
-                } else {
-                    bounding = Bounding.INTERNAL;
-                }
-                break;
-            case EAST:
-                if (mEnd.getX() > minX) {
-                    bounding = Bounding.OUTBOUND;
-                } else if (mStart.getX() < TOLERANCE) {
-                    bounding = Bounding.INBOUND;
-                } else {
-                    bounding = Bounding.INTERNAL;
-                }
-                break;
-            default:
-                bounding = Bounding.INTERNAL;
-        }
-
-        return bounding;
-    }
-    */
-
     @Override
     public String toString() {
         return String.format("SwipeEvent with distance %.2f and duration %d in %s direction %s ending at x: %.0f and y: %.0f",
@@ -140,11 +81,4 @@ public class SwipeEvent implements Serializable {
     public enum Orientation {
         NORTH, WEST, SOUTH, EAST
     }
-
-    /*
-    public enum Bounding {
-        INBOUND, OUTBOUND, INTERNAL
-    }
-    */
-
 }

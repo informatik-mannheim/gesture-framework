@@ -3,13 +3,11 @@ package hs_mannheim.pattern_interaction_model;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Build;
-import android.os.StrictMode;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.os.Vibrator;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -84,6 +82,7 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
 
     @Override
     public void receive(Packet packet) {
+        ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(700);
         Toast.makeText(this, packet.toString(), Toast.LENGTH_SHORT).show();
     }
 

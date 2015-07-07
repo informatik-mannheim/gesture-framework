@@ -1,7 +1,5 @@
 package hs_mannheim.pattern_interaction_model.gesture.stitch;
 
-
-import android.graphics.Point;
 import android.os.Handler;
 import android.util.Log;
 
@@ -14,7 +12,8 @@ import hs_mannheim.pattern_interaction_model.model.IPostOffice;
 import hs_mannheim.pattern_interaction_model.model.IViewContext;
 import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.model.PacketType;
-import hs_mannheim.pattern_interaction_model.model.StitchPacket;
+import hs_mannheim.pattern_interaction_model.model.StitchAckPacket;
+import hs_mannheim.pattern_interaction_model.model.StitchSynPacket;
 
 /**
  * Detector for synchronous Stitch Gestures. Needs connection to another device to have a handshake
@@ -23,7 +22,7 @@ import hs_mannheim.pattern_interaction_model.model.StitchPacket;
 public class StitchDetector extends GestureDetector implements SwipeDetector.SwipeEventListener, IPacketReceiver {
     private final int WAIT_TIME = 2000;
     private static final String TAG = "[StitchDetector]";
-    private final SwipeDetector mSwipeDetector;
+    private SwipeDetector mSwipeDetector;
     private IPostOffice mPostOffice;
     private State mState;
     private Handler mHandler;
@@ -46,10 +45,9 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     @Override
     public void setViewContext(IViewContext viewContext) {
         super.setViewContext(viewContext);
-        if(mSwipeDetector != null ){
+        if (mSwipeDetector != null) {
             mSwipeDetector.setViewContext(viewContext);
         }
-
     }
 
     @Override
@@ -57,7 +55,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
         StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mViewContext.getDisplaySize());
 
         if (stitchEvent.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
-            mPostOffice.send(new StitchPacket("Stitch on other device", stitchEvent.getBounding(), stitchEvent.getOrientation()));
+            mPostOffice.send(new StitchSynPacket(stitchEvent.getBounding(), stitchEvent.getOrientation()));
             mState = State.OUTBOUND_SENT;
             Log.d(TAG, "State changed to OUTBOUND SENT");
             startWait();
@@ -94,18 +92,17 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
     @Override
     public void receive(Packet packet) {
-        StitchPacket stitchPacket = (StitchPacket) packet;
-        Log.d(TAG, "Received packet:" + stitchPacket.getBounding().toString() + ";" + stitchPacket.getOrientation().toString());
         //TODO: Check for direction
-        if (mState.equals(State.INBOUND_RECOGNIZE) && stitchPacket.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
-            // lol
-            Log.d(TAG, "Received outbound package after inbound recognize. Sending ack.");
-            mPostOffice.send(new StitchPacket("Stitch on other device", StitchEvent.Bounding.INTERNAL, SwipeEvent.Orientation.NORTH));
-            fireGestureDetected();
-            abortWaiting();
-        } else if (mState.equals(State.OUTBOUND_SENT) && stitchPacket.getBounding().equals(StitchEvent.Bounding.INTERNAL)) {
-            // we got a stitch here!
-            Log.d(TAG, "Ack received!");
+        if (mState.equals(State.INBOUND_RECOGNIZE) && packet.getType().equals(PacketType.StitchSyn)) {
+            StitchSynPacket stitchPacket = (StitchSynPacket) packet;
+            if (stitchPacket.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
+                Log.d(TAG, "Received outbound package after inbound recognize. Sending ack.");
+                mPostOffice.send(new StitchAckPacket());
+                fireGestureDetected();
+                abortWaiting();
+            }
+        } else if (mState.equals(State.OUTBOUND_SENT) && packet.getType().equals(PacketType.StitchAck)) {
+            Log.d(TAG, "Ack received.");
             fireGestureDetected();
             abortWaiting();
         }
@@ -114,7 +111,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
     @Override
     public boolean accept(PacketType type) {
-        return type.equals(PacketType.Stitch);
+        return type.equals(PacketType.StitchSyn) || type.equals(PacketType.StitchAck);
     }
 
     enum State {

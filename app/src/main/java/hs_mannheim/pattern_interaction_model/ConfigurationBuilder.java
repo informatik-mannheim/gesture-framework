@@ -2,10 +2,8 @@ package hs_mannheim.pattern_interaction_model;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.graphics.Point;
 import android.hardware.SensorManager;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.view.View;
 
 import hs_mannheim.pattern_interaction_model.connection.PostOffice;
 import hs_mannheim.pattern_interaction_model.connection.bluetooth.BluetoothChannel;
@@ -37,74 +35,66 @@ public class ConfigurationBuilder {
     public ConfigurationBuilder(Context context, IViewContext viewContext) {
         mContext = context;
         mViewContext = viewContext;
+        mSelection = Selection.Empty;
     }
 
-    public ConfigurationBuilderC withBluetooth() {
+    public ConfigurationBuilder withBluetooth() {
         mConnection = new BluetoothChannel(BluetoothAdapter.getDefaultAdapter());
         mPostOffice = new PostOffice(mConnection);
-        return new ConfigurationBuilderC();
+        return this;
     }
 
-    public ConfigurationBuilderC withWifiDirect() {
+    public ConfigurationBuilder withWifiDirect() {
         WifiP2pManager wifiP2pManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
         WifiP2pManager.Channel channel = wifiP2pManager.initialize(mContext, mContext.getMainLooper(), null);
         mConnection = new WifiDirectChannel(wifiP2pManager, channel, mContext);
         mPostOffice = new PostOffice(mConnection);
-        return new ConfigurationBuilderC();
+        return this;
     }
 
-    public class ConfigurationBuilderC {
-        public ConfigurationBuilderG shake() {
-            mDetector = new ShakeDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), mViewContext);
-            return new ConfigurationBuilderG();
-        }
-
-        public ConfigurationBuilderG bump() {
-            mDetector = new BumpDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), Threshold.LOW, mViewContext);
-            return new ConfigurationBuilderG();
-        }
-
-        public ConfigurationBuilderG swipe() {
-            mDetector = createSwipeDetector(null);
-            return new ConfigurationBuilderG();
-        }
-
-        public ConfigurationBuilderG stitch() {
-            mDetector = createStitchDetector();
-            return new ConfigurationBuilderG();
-        }
-
-        private StitchDetector createStitchDetector() {
-            StitchDetector stitchDetector = new StitchDetector(mPostOffice, mViewContext);
-            stitchDetector.addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.EAST));
-            stitchDetector.addConstraint(new SwipeDurationConstraint(1000));
-            return stitchDetector;
-
-        }
-
-        private SwipeDetector createSwipeDetector(SwipeDetector.SwipeEventListener listener) {
-            return new SwipeDetector(mViewContext)
-                    .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
-                    .addConstraint(new SwipeDurationConstraint(250))
-                    .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST))
-                    .addSwipeListener(listener);
-        }
+    public ConfigurationBuilder shake() {
+        mDetector = new ShakeDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), mViewContext);
+        return this;
     }
 
-    public class ConfigurationBuilderG {
+    public ConfigurationBuilder bump() {
+        mDetector = new BumpDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), Threshold.LOW, mViewContext);
+        return this;
+    }
 
-        public ConfigurationBuilderG() {
-            mSelection = Selection.Empty;
-        }
+    public ConfigurationBuilder swipe() {
+        mDetector = createSwipeDetector(null);
+        return this;
+    }
 
-        public ConfigurationBuilderG select(Selection selection) {
-            mSelection = selection;
-            return this;
-        }
+    public ConfigurationBuilder stitch() {
+        mDetector = createStitchDetector();
+        return this;
+    }
 
-        public void buildAndRegister() {
-            InteractionContext interactionContext = new InteractionContext(mDetector, mSelection, mConnection, mPostOffice);
-            ((InteractionApplication) mContext).setInteractionContext(interactionContext);
-        }
+    public ConfigurationBuilder select(Selection selection) {
+        mSelection = selection;
+        return this;
+    }
+
+    public void buildAndRegister() {
+        InteractionContext interactionContext = new InteractionContext(mDetector, mSelection, mConnection, mPostOffice);
+        ((InteractionApplication) mContext).setInteractionContext(interactionContext);
+    }
+
+    private StitchDetector createStitchDetector() {
+        StitchDetector stitchDetector = new StitchDetector(mPostOffice, mViewContext);
+        stitchDetector.addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.EAST));
+        stitchDetector.addConstraint(new SwipeDurationConstraint(1000));
+        return stitchDetector;
+
+    }
+
+    private SwipeDetector createSwipeDetector(SwipeDetector.SwipeEventListener listener) {
+        return new SwipeDetector(mViewContext)
+                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
+                .addConstraint(new SwipeDurationConstraint(250))
+                .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST))
+                .addSwipeListener(listener);
     }
 }

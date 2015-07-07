@@ -12,8 +12,6 @@ import hs_mannheim.pattern_interaction_model.model.IPostOffice;
 import hs_mannheim.pattern_interaction_model.model.IViewContext;
 import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.model.PacketType;
-import hs_mannheim.pattern_interaction_model.model.StitchAckPacket;
-import hs_mannheim.pattern_interaction_model.model.StitchSynPacket;
 
 /**
  * Detector for synchronous Stitch Gestures. Needs connection to another device to have a handshake

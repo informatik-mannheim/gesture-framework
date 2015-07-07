@@ -10,7 +10,7 @@ import java.io.IOException;
 public class ConnectThread extends Thread {
     private final String TAG = "[Bluetooth Connect Thread]";
 
-    private final BluetoothSocket _socket;
+    private final BluetoothSocket mBluetoothSocket;
     private final BluetoothChannel mChannel;
     private final BluetoothAdapter mBluetoothAdapter;
 
@@ -26,7 +26,7 @@ public class ConnectThread extends Thread {
         } catch (IOException e) {
             Log.d(TAG, "Could not connect");
         }
-        _socket = tmp;
+        mBluetoothSocket = tmp;
     }
 
     public void run() {
@@ -35,7 +35,7 @@ public class ConnectThread extends Thread {
 
         try {
             // block
-            _socket.connect();
+            mBluetoothSocket.connect();
         } catch (IOException connectException) {
             Log.d(TAG, String.format("Could not connect: %s", connectException.getMessage()));
 
@@ -44,7 +44,7 @@ public class ConnectThread extends Thread {
             return;
         }
 
-        new ConnectedThread(_socket, mChannel).start();
+        new ConnectedThread(mBluetoothSocket, mChannel).start();
     }
 
     /**
@@ -52,7 +52,7 @@ public class ConnectThread extends Thread {
      */
     public void cancel() {
         try {
-            _socket.close();
+            mBluetoothSocket.close();
         } catch (IOException e) {
             Log.e(TAG, "Error closing socket");
         }

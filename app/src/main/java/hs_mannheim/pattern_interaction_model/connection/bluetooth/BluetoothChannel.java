@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import java.util.Set;
 import java.util.UUID;
 
 import hs_mannheim.pattern_interaction_model.MainActivity;
@@ -79,7 +80,7 @@ public class BluetoothChannel implements IConnection {
 
     public void connect(String address) {
         if (isConnected()) return;
-
+        
         mConnectedDevice = mBluetoothAdapter.getRemoteDevice(address);
 
         Log.d(TAG, String.format("Device to connect to: %s", mConnectedDevice));

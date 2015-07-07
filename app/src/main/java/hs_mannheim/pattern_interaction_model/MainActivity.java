@@ -89,4 +89,8 @@ public class MainActivity extends ActionBarActivity implements IViewContext {
     public Point getDisplaySize() {
         return DISPLAY_SIZE;
     }
+
+    public void startCompass(View view) {
+        startActivity(new Intent(this, CompassActivity.class));
+    }
 }

@@ -1,9 +1,11 @@
-package hs_mannheim.pattern_interaction_model.model;
+package hs_mannheim.pattern_interaction_model.gesture.stitch;
 
 import java.io.Serializable;
 
 import hs_mannheim.pattern_interaction_model.gesture.stitch.StitchEvent;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
+import hs_mannheim.pattern_interaction_model.model.Packet;
+import hs_mannheim.pattern_interaction_model.model.PacketType;
 
 public class StitchSynPacket extends Packet implements Serializable {
 

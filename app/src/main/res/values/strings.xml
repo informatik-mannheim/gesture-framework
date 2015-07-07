@@ -22,5 +22,6 @@
     <string name="title_activity_interaction">InteractionActivity</string>
     <string name="main_tv_connection">Connection</string>
     <string name="main_tv_headline">Interaction</string>
+    <string name="title_activity_compass">CompassActivity</string>
 
 </resources>

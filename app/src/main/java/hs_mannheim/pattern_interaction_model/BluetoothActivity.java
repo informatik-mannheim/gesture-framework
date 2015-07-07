@@ -90,7 +90,6 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
         }
     }
 
-
     private void makeDiscoverable() {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
@@ -98,12 +97,13 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     }
 
     public void startDiscovery(View view) {
-        mBluetoothAdapter.cancelDiscovery();
+        if(mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
         makeDiscoverable();
-        Log.d(TAG, "Discovery Started");
         mArrayAdapter.clear();
         mBluetoothAdapter.startDiscovery();
-
     }
 
     @Override
@@ -162,8 +162,6 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
                 if (device.getAddress().equals(((BluetoothChannel) mConnection).getConnectedDevice())) {
                     deviceDescription += " [CONNECTED]";
                 }
-
-                Log.d(TAG, String.format("Device discovered: %s", device.getName()));
 
                 if (mArrayAdapter.getPosition(deviceDescription) == -1) {
                     mArrayAdapter.add(deviceDescription);

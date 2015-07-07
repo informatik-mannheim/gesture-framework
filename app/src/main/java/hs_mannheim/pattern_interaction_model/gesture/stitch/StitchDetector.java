@@ -24,10 +24,9 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     private static final String TAG = "[StitchDetector]";
     private SwipeDetector mSwipeDetector;
     private IPostOffice mPostOffice;
-    private State mState;
+    private StitchState mState;
     private Handler mHandler;
     private Runnable mRunnable;
-
 
     public StitchDetector(IPostOffice postOffice, IViewContext viewContext) {
         super(viewContext);
@@ -35,7 +34,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
         mSwipeDetector = new SwipeDetector(viewContext);
         mSwipeDetector.addSwipeListener(this);
         mPostOffice.register(this);
-        mState = State.IDLE;
+        mState = new IdleState();
     }
 
     public void addConstraint(SwipeConstraint constraint) {
@@ -53,60 +52,12 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     @Override
     public void onSwipeDetected(SwipeEvent event) {
         StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mViewContext.getDisplaySize());
-
-        if (stitchEvent.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
-            mPostOffice.send(new StitchSynPacket(stitchEvent.getBounding(), stitchEvent.getOrientation()));
-            mState = State.OUTBOUND_SENT;
-            Log.d(TAG, "State changed to OUTBOUND SENT");
-            startWait();
-            // wait for ack
-        } else if (stitchEvent.getBounding().equals(StitchEvent.Bounding.INBOUND)) {
-            mState = State.INBOUND_RECOGNIZE;
-            Log.d(TAG, "State changed to INBOUND RECOGNIZED");
-            startWait();
-            // check for recv already gotten
-            // wait for recv
-
-        }
-    }
-
-    public void startWait() {
-        mHandler = new android.os.Handler();
-        mRunnable = new Runnable() {
-            public void run() {
-                reset();
-            }
-        };
-        mHandler.postDelayed(mRunnable, WAIT_TIME);
-
-    }
-
-    private void abortWaiting() {
-        mHandler.removeCallbacks(mRunnable);
-        reset();
-    }
-
-    private void reset() {
-        mState = State.IDLE;
+        mState.handle(stitchEvent);
     }
 
     @Override
     public void receive(Packet packet) {
-        //TODO: Check for direction
-        if (mState.equals(State.INBOUND_RECOGNIZE) && packet.getType().equals(PacketType.StitchSyn)) {
-            StitchSynPacket stitchPacket = (StitchSynPacket) packet;
-            if (stitchPacket.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
-                Log.d(TAG, "Received outbound package after inbound recognize. Sending ack.");
-                mPostOffice.send(new StitchAckPacket());
-                fireGestureDetected();
-                abortWaiting();
-            }
-        } else if (mState.equals(State.OUTBOUND_SENT) && packet.getType().equals(PacketType.StitchAck)) {
-            Log.d(TAG, "Ack received.");
-            fireGestureDetected();
-            abortWaiting();
-        }
-//        boolean directionMatches = stitchPacket.getOrientation().equals(mLastStitch.getOrientation());
+        mState.handle(packet);
     }
 
     @Override
@@ -114,7 +65,104 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
         return type.equals(PacketType.StitchSyn) || type.equals(PacketType.StitchAck);
     }
 
-    enum State {
-        OUTBOUND_SENT, INBOUND_RECOGNIZE, IDLE
+    public void startWait() {
+        mHandler = new android.os.Handler();
+        mRunnable = new Runnable() {
+            public void run() {
+                mState = new IdleState();
+            }
+        };
+        mHandler.postDelayed(mRunnable, WAIT_TIME);
+    }
+
+    private void abortWaiting() {
+        mHandler.removeCallbacks(mRunnable);
+        mState = new IdleState();
+    }
+
+    abstract class StitchState {
+        abstract void handle(Packet packet);
+        abstract void handle(StitchEvent event);
+    }
+
+    class IdleState extends StitchState {
+
+        @Override
+        /* Must be a SYN packet that arrived before any swipe event */
+        void handle(Packet packet) {
+            startWait();
+            mState = new PrematureInState();
+        }
+
+        @Override
+        /* Send either a SYN or wait for an ACK */
+        void handle(StitchEvent event) {
+            if (event.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
+                mPostOffice.send(new StitchSynPacket(event.getBounding(), event.getOrientation()));
+                startWait();
+                mState = new OutState();
+            } else if (event.getBounding().equals(StitchEvent.Bounding.INBOUND)) {
+                startWait();
+                mState = new InState();
+            }
+        }
+    }
+
+    class OutState extends StitchState {
+
+        @Override
+        /* Is this the ACK we are waiting for? */
+        void handle(Packet packet) {
+            if (packet.getType().equals(PacketType.StitchAck)) {
+                fireGestureDetected();
+                abortWaiting();
+            }
+        }
+
+        @Override
+        /* We are waiting for an ACK, no need to process further StitchEvents */
+        void handle(StitchEvent event) {
+            // nothing
+        }
+    }
+
+    class PrematureInState extends StitchState {
+
+        @Override
+        /* We already received a packet */
+        void handle(Packet packet) {
+            // nothing
+        }
+
+        @Override
+        /* Checks whether the StitchEvent is INBOUND, matching the already received SYN */
+        void handle(StitchEvent event) {
+            if (event.getBounding().equals(StitchEvent.Bounding.INBOUND)) {
+                mPostOffice.send(new StitchAckPacket());
+                fireGestureDetected();
+                abortWaiting();
+            }
+        }
+    }
+
+    class InState extends StitchState {
+
+        @Override
+        /* Checks whether the packet is the corresponding SYN after a recognized INBOUND swipe */
+        void handle(Packet packet) {
+            if (packet.getType().equals(PacketType.StitchSyn)) {
+                Log.d(TAG, "Received outbound package after inbound recognize. Sending ack.");
+                mPostOffice.send(new StitchAckPacket());
+                fireGestureDetected();
+                abortWaiting();
+                //boolean directionMatches = stitchPacket.getOrientation().equals(mLastStitch.getOrientation());
+            }
+        }
+
+        @Override
+        /* In this state, do not process further StitchEvents */
+        void handle(StitchEvent event) {
+            // nothing
+        }
     }
 }

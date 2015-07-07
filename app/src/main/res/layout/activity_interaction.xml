@@ -1,8 +1,8 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_interaction"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -10,41 +10,42 @@
     tools:context="hs_mannheim.pattern_interaction_model.InteractionActivity">
 
     <TextView
-        android:id="@+id/tv_header_interaction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Header"
+        android:id="@+id/tv_header_interaction"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/etMessage" />
 
     <EditText
         android:id="@+id/etMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text" />
+        android:inputType="text"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="123dp" />
 
     <Button
         android:id="@+id/btnBluetooth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="startBluetoothActivity"
-
-        android:text="Bluetooth" />
-
-    <Button
-        android:id="@+id/btnStitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="startStitchView"
-        android:text="Stitch" />
+        android:text="Bluetooth"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/btnWifi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
         android:onClick="startWifiDirectActivity"
-        android:text="Wifi P2P" />
+        android:text="Wifi P2P"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/btnBluetooth" />
 
 
-</LinearLayout>
+
+
+</RelativeLayout>

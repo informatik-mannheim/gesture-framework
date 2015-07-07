@@ -8,6 +8,7 @@ import android.util.FloatMath;
 import android.util.Log;
 
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
+import hs_mannheim.pattern_interaction_model.model.IViewContext;
 
 public class ShakeDetector extends GestureDetector implements SensorEventListener {
 
@@ -26,7 +27,8 @@ public class ShakeDetector extends GestureDetector implements SensorEventListene
     private int mShakeCount;
     private SensorManager mSensorManager;
 
-    public ShakeDetector(SensorManager sensorManager) {
+    public ShakeDetector(SensorManager sensorManager, IViewContext viewContext) {
+        super(viewContext);
         mSensorManager = sensorManager;
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_UI);
     }

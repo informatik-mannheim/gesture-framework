@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
+import hs_mannheim.pattern_interaction_model.model.IViewContext;
 
 public class BumpDetector extends GestureDetector implements SensorEventListener {
 
@@ -29,7 +30,8 @@ public class BumpDetector extends GestureDetector implements SensorEventListener
 
     private Threshold mThreshold;
 
-    public BumpDetector(SensorManager sensorManager, Threshold threshold) {
+    public BumpDetector(SensorManager sensorManager, Threshold threshold, IViewContext viewContext) {
+        super(viewContext);
         this.mSensorManager = sensorManager;
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         this.mThreshold = threshold;

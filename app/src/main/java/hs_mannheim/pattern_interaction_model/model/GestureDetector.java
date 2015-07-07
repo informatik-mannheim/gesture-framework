@@ -3,6 +3,11 @@ package hs_mannheim.pattern_interaction_model.model;
 public abstract class GestureDetector {
 
     private GestureEventListener mListener;
+    protected IViewContext mViewContext;
+
+    public GestureDetector(IViewContext viewContext) {
+        setViewContext(viewContext);
+    }
 
     public void registerGestureEventListener(GestureEventListener listener) {
         this.mListener = listener;
@@ -12,6 +17,10 @@ public abstract class GestureDetector {
         if(mListener != null) {
             mListener.onGestureDetected();
         }
+    }
+
+    public void setViewContext(IViewContext viewContext) {
+        mViewContext = viewContext;
     }
 
     public interface GestureEventListener {

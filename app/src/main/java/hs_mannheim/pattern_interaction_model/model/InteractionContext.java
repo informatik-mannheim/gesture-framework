@@ -1,7 +1,5 @@
 package hs_mannheim.pattern_interaction_model.model;
 
-import hs_mannheim.pattern_interaction_model.connection.PostOffice;
-
 public class InteractionContext implements GestureDetector.GestureEventListener {
 
     private final GestureDetector mGestureDetector;
@@ -11,12 +9,13 @@ public class InteractionContext implements GestureDetector.GestureEventListener 
 
     public InteractionContext(GestureDetector gestureDetector,
                               Selection selection,
-                              IConnection connection) {
+                              IConnection connection,
+                              IPostOffice postOffice) {
 
         mGestureDetector = gestureDetector;
         mSelection = selection;
         mConnection = connection;
-        mPostOffice = new PostOffice(mConnection); /* only PostOffice talks to the connection */
+        mPostOffice = postOffice; /* only PostOffice talks to the connection */
         mGestureDetector.registerGestureEventListener(this);
     }
 
@@ -30,6 +29,10 @@ public class InteractionContext implements GestureDetector.GestureEventListener 
 
     public void updateSelection(Packet data) {
         mSelection.updateSelection(data);
+    }
+
+    public void updateViewContext(IViewContext viewContext) {
+        mGestureDetector.setViewContext(viewContext);
     }
 
     @Override

@@ -1,12 +1,12 @@
 package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
-import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
 
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
+import hs_mannheim.pattern_interaction_model.model.IViewContext;
 
 public class SwipeDetector extends GestureDetector implements View.OnTouchListener{
 
@@ -14,7 +14,9 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     private SwipeEventListener mSwipeListener;
     private TouchPoint mStart;
 
-    public SwipeDetector() {
+    public SwipeDetector(IViewContext viewContext) {
+        super(viewContext);
+        mViewContext.getInteractionView().setOnTouchListener(this);
         this.mSwipeConstraints = new ArrayList<>();
     }
 
@@ -23,9 +25,10 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
         return this;
     }
 
-    public SwipeDetector attachToView(View view) {
-        view.setOnTouchListener(this);
-        return this;
+    @Override
+    public void setViewContext(IViewContext viewContext) {
+        super.setViewContext(viewContext);
+        mViewContext.getInteractionView().setOnTouchListener(this);
     }
 
     public SwipeDetector addSwipeListener(SwipeEventListener listener) {

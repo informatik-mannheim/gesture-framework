@@ -1,6 +1,7 @@
 package hs_mannheim.pattern_interaction_model;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
@@ -17,12 +18,13 @@ import android.widget.Toast;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
+import hs_mannheim.pattern_interaction_model.model.IViewContext;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
 import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.model.PacketType;
 
 
-public class InteractionActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher {
+public class InteractionActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher, IViewContext {
 
     public final static String MODEL = Build.MODEL;
 
@@ -37,11 +39,12 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         header.setText(MODEL);
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
+        InteractionContext interactionContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
+        interactionContext.getPostOffice().register(this);
+        interactionContext.updateViewContext(this);
     }
 
     @Override
@@ -79,11 +82,6 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Packet(s.toString()));
     }
 
-    public void startStitchView(View view) {
-        startActivity(new Intent(this, StitchView.class));
-    }
-
-
     @Override
     public void receive(Packet packet) {
         Toast.makeText(this, packet.toString(), Toast.LENGTH_SHORT).show();
@@ -91,6 +89,18 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
 
     @Override
     public boolean accept(PacketType type) {
-        return true;
+        return type.equals(PacketType.PlainStringPacket);
+    }
+
+    @Override
+    public View getInteractionView() {
+        return findViewById(R.id.layout_interaction);
+    }
+
+    @Override
+    public Point getDisplaySize() {
+        Point displaySize = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(displaySize);
+        return displaySize;
     }
 }

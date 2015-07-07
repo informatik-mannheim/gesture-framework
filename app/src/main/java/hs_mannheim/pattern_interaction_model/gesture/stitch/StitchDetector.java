@@ -4,7 +4,6 @@ package hs_mannheim.pattern_interaction_model.gesture.stitch;
 import android.graphics.Point;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeConstraint;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
@@ -12,6 +11,7 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IPostOffice;
+import hs_mannheim.pattern_interaction_model.model.IViewContext;
 import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.model.PacketType;
 import hs_mannheim.pattern_interaction_model.model.StitchPacket;
@@ -25,17 +25,15 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     private static final String TAG = "[StitchDetector]";
     private final SwipeDetector mSwipeDetector;
     private IPostOffice mPostOffice;
-    private Point mDisplay;
-    private StitchEvent mLastStitch;
     private State mState;
     private Handler mHandler;
     private Runnable mRunnable;
 
 
-    public StitchDetector(IPostOffice postOffice, Point display) {
+    public StitchDetector(IPostOffice postOffice, IViewContext viewContext) {
+        super(viewContext);
         mPostOffice = postOffice;
-        mDisplay = display;
-        mSwipeDetector = new SwipeDetector();
+        mSwipeDetector = new SwipeDetector(viewContext);
         mSwipeDetector.addSwipeListener(this);
         mPostOffice.register(this);
         mState = State.IDLE;
@@ -45,13 +43,18 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
         mSwipeDetector.addConstraint(constraint);
     }
 
-    public void attachToView(View view) {
-        mSwipeDetector.attachToView(view);
+    @Override
+    public void setViewContext(IViewContext viewContext) {
+        super.setViewContext(viewContext);
+        if(mSwipeDetector != null ){
+            mSwipeDetector.setViewContext(viewContext);
+        }
+
     }
 
     @Override
     public void onSwipeDetected(SwipeEvent event) {
-        StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mDisplay);
+        StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mViewContext.getDisplaySize());
 
         if (stitchEvent.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
             mPostOffice.send(new StitchPacket("Stitch on other device", stitchEvent.getBounding(), stitchEvent.getOrientation()));
@@ -67,9 +70,6 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
             // wait for recv
 
         }
-
-        mLastStitch = stitchEvent;
-
     }
 
     public void startWait() {
@@ -85,6 +85,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
     private void abortWaiting() {
         mHandler.removeCallbacks(mRunnable);
+        reset();
     }
 
     private void reset() {
@@ -100,17 +101,13 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
             // lol
             Log.d(TAG, "Received outbound package after inbound recognize. Sending ack.");
             mPostOffice.send(new StitchPacket("Stitch on other device", StitchEvent.Bounding.INTERNAL, SwipeEvent.Orientation.NORTH));
-            mState = State.IDLE; /* ende */
             fireGestureDetected();
-            reset();
             abortWaiting();
         } else if (mState.equals(State.OUTBOUND_SENT) && stitchPacket.getBounding().equals(StitchEvent.Bounding.INTERNAL)) {
             // we got a stitch here!
             Log.d(TAG, "Ack received!");
             fireGestureDetected();
-            reset();
             abortWaiting();
-
         }
 //        boolean directionMatches = stitchPacket.getOrientation().equals(mLastStitch.getOrientation());
     }

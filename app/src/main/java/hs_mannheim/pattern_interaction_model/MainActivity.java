@@ -20,7 +20,7 @@ import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.model.PacketType;
 
 
-public class MainActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher {
+public class MainActivity extends ActionBarActivity {
 
     public final static String MODEL = Build.MODEL;
 
@@ -29,71 +29,21 @@ public class MainActivity extends ActionBarActivity implements SwipeDetector.Swi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView header = (TextView) findViewById(R.id.tvHeaderMain);
-        ((EditText) findViewById(R.id.etMessage)).addTextChangedListener(this);
-
-        header.setText(MODEL);
+        ((TextView) findViewById(R.id.tvHeaderMain)).setText(MODEL);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         //InteractionContext interactionContext = new Configuration().wifiBump((InteractionApplication) getApplicationContext());
         //InteractionContext interactionContext = new Configuration().bluetoothSwipe((InteractionApplication) getApplicationContext(), findViewById(R.id.layout_main), this);
+        //InteractionContext interactionContext = new Configuration().wifiShake((InteractionApplication) getApplicationContext());
+        //((InteractionApplication) getApplicationContext()).setInteractionContext(interactionContext);
+    }
+
+    public void buildClicked(View view) {
         InteractionContext interactionContext = new Configuration().wifiShake((InteractionApplication) getApplicationContext());
         ((InteractionApplication) getApplicationContext()).setInteractionContext(interactionContext);
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().unregister(this);
-    }
-
-    @Override
-    public void onSwipeDetected(SwipeEvent event) {
-        Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
-    }
-
-    public void startBluetoothActivity(View view) {
-        startActivity(new Intent(this, BluetoothActivity.class));
-    }
-
-    public void startWifiDirectActivity(View view) {
-        startActivity(new Intent(this, WifiDirectActivity.class));
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Packet(s.toString()));
-    }
-
-    public void startStitchView(View view) {
-        startActivity(new Intent(this, StitchView.class));
-    }
-
-    @Override
-    public void receive(Packet packet) {
-        Toast.makeText(this, packet.toString(), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public boolean accept(PacketType type) {
-        return true;
+        startActivity(new Intent(this, InteractionActivity.class));
     }
 }

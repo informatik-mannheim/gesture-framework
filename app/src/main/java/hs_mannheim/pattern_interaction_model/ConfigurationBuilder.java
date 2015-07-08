@@ -84,7 +84,7 @@ public class ConfigurationBuilder {
 
     private StitchDetector createStitchDetector() {
         StitchDetector stitchDetector = new StitchDetector(mPostOffice, mViewContext);
-        stitchDetector.addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.EAST));
+        stitchDetector.addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST));
         stitchDetector.addConstraint(new SwipeDurationConstraint(1000));
         return stitchDetector;
 

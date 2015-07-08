@@ -3,11 +3,14 @@ package hs_mannheim.pattern_interaction_model.connection.bluetooth;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.zip.DeflaterOutputStream;
 
 import hs_mannheim.pattern_interaction_model.model.Packet;
 
@@ -55,13 +58,16 @@ public class ConnectedThread extends Thread {
             try {
                 mChannel.receive((Packet) objectInputStream.readObject());
             } catch (IOException e) {
-                Log.d(TAG, "IO Exception: " + e.getMessage());
+                Log.e(TAG, "IO Exception: " + e.getMessage());
                 this.cancel();
-
                 break;
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-
+                Log.e(TAG, "ClassNotFoundException: " + e.getMessage());
+                this.cancel();
+                break;
+            } catch (NullPointerException e) {
+                Log.e(TAG, "NullPointerException: " + e.getMessage());
+                this.cancel();
                 break;
             }
         }
@@ -74,10 +80,13 @@ public class ConnectedThread extends Thread {
      */
     public void write(Packet message) {
         try {
-            if(mObjectOutputStream == null) {
+
+            if (mObjectOutputStream == null) {
                 mObjectOutputStream = new ObjectOutputStream(mOutStream);
             }
+
             mObjectOutputStream.writeObject(message);
+            mObjectOutputStream.reset();
         } catch (IOException e) {
             Log.e(TAG, "Error sending data to remote device");
         }
@@ -88,7 +97,7 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
-            if(mObjectOutputStream != null) {
+            if (mObjectOutputStream != null) {
                 mObjectOutputStream.close();
             }
 

@@ -72,7 +72,7 @@ public class BluetoothChannel implements IConnection {
         return this.isConnected;
     }
 
-    public void transfer(Packet message) {
+    public void transfer(final Packet message) {
         if (isConnected) {
             mConnectionThread.write(message);
         }

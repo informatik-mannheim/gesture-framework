@@ -1,15 +1,21 @@
 package hs_mannheim.pattern_interaction_model;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,14 +23,17 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IViewContext;
+import hs_mannheim.pattern_interaction_model.model.ImagePacket;
 import hs_mannheim.pattern_interaction_model.model.InteractionContext;
 import hs_mannheim.pattern_interaction_model.model.Packet;
 import hs_mannheim.pattern_interaction_model.model.PacketType;
+import hs_mannheim.pattern_interaction_model.model.SerializableImage;
 
 
 public class InteractionActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher, IViewContext {
 
     public final static String MODEL = Build.MODEL;
+    private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,13 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
 
         TextView header = (TextView) findViewById(R.id.tv_header_interaction);
         ((EditText) findViewById(R.id.etMessage)).addTextChangedListener(this);
+
+        mImageView = (ImageView) findViewById(R.id.ivPic);
+
+        // hack!
+        if(MODEL.equals("Nexus 4")) {
+            mImageView.setImageResource(0);
+        }
 
         header.setText(MODEL);
     }
@@ -43,6 +59,14 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         InteractionContext interactionContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
         interactionContext.getPostOffice().register(this);
         interactionContext.updateViewContext(this);
+
+        if (mImageView.getDrawable() != null) {
+            BitmapDrawable drawable = (BitmapDrawable) mImageView.getDrawable();
+            Bitmap bitmap = Bitmap.createBitmap(drawable.getBitmap());
+            SerializableImage image = new SerializableImage(bitmap);
+
+            ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new ImagePacket(image));
+        }
     }
 
     @Override
@@ -82,13 +106,18 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
 
     @Override
     public void receive(Packet packet) {
+        if (packet.getType().equals(PacketType.Image)) {
+            Bitmap image = ((ImagePacket) packet).getImage().getImage();
+            mImageView.setImageBitmap(image);
+        }
+
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(700);
         Toast.makeText(this, packet.toString(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public boolean accept(PacketType type) {
-        return type.equals(PacketType.PlainStringPacket);
+        return type.equals(PacketType.PlainStringPacket) || type.equals(PacketType.Image);
     }
 
     @Override
@@ -101,5 +130,9 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         Point displaySize = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(displaySize);
         return displaySize;
+    }
+
+    public void clearImage(View view) {
+        mImageView.setImageResource(0);
     }
 }

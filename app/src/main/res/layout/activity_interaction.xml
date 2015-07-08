@@ -24,8 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="123dp" />
+        android:layout_below="@+id/tv_header_interaction"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:id="@+id/btnBluetooth"
@@ -49,11 +49,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ivPic"
-        android:layout_below="@+id/etMessage"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/btnBluetooth"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/cats" />
+        android:layout_marginBottom="89dp"
+        android:layout_below="@+id/etMessage" />
 
     <Button
         android:layout_width="wrap_content"
@@ -61,8 +60,17 @@
         android:text="Clear"
         android:id="@+id/btnClear"
         android:onClick="clearImage"
-        android:layout_alignTop="@+id/btnWifi"
-        android:layout_alignEnd="@+id/ivPic" />
+        android:layout_above="@+id/btnWifi"
+        android:layout_alignStart="@+id/btnLoad" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Load"
+        android:onClick="loadImage"
+        android:id="@+id/btnLoad"
+        android:layout_below="@+id/btnClear"
+        android:layout_alignParentEnd="true" />
 
 
 </RelativeLayout>

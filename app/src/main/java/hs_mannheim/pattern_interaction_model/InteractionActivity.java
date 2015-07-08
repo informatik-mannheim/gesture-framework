@@ -1,14 +1,11 @@
 package hs_mannheim.pattern_interaction_model;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
@@ -45,11 +42,6 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
 
         mImageView = (ImageView) findViewById(R.id.ivPic);
 
-        // hack!
-        if(MODEL.equals("Nexus 4")) {
-            mImageView.setImageResource(0);
-        }
-
         header.setText(MODEL);
     }
 
@@ -59,14 +51,6 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         InteractionContext interactionContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
         interactionContext.getPostOffice().register(this);
         interactionContext.updateViewContext(this);
-
-        if (mImageView.getDrawable() != null) {
-            BitmapDrawable drawable = (BitmapDrawable) mImageView.getDrawable();
-            Bitmap bitmap = Bitmap.createBitmap(drawable.getBitmap());
-            SerializableImage image = new SerializableImage(bitmap);
-
-            ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new ImagePacket(image));
-        }
     }
 
     @Override
@@ -134,5 +118,16 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
 
     public void clearImage(View view) {
         mImageView.setImageResource(0);
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Packet("Nothing selected"));
+
+    }
+
+    public void loadImage(View view) {
+        mImageView.setImageResource(R.drawable.cats);
+        BitmapDrawable drawable = (BitmapDrawable) mImageView.getDrawable();
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getBitmap());
+        SerializableImage image = new SerializableImage(bitmap);
+
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new ImagePacket(image));
     }
 }

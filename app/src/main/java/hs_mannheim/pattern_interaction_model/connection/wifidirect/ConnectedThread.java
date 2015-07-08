@@ -93,8 +93,8 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
-            if(mObjectOutputStream == null) {
-                mObjectOutputStream = new ObjectOutputStream(mOutStream);
+            if(mObjectOutputStream != null) {
+                mObjectOutputStream.close();
             }
             mChannel.disconnected();
         } catch (IOException e) {

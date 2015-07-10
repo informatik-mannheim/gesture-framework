@@ -30,6 +30,7 @@ public class Client extends AsyncTask<Void, Void, Void> {
 
             new ConnectedThread(socket, _channel).start();
         } catch (IOException e) {
+            e.printStackTrace();
             Log.e(TAG, "Error writing to client socket.");
             _channel.disconnected();
         }

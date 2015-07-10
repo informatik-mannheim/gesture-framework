@@ -8,7 +8,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import java.util.Set;
 import java.util.UUID;
 
 import hs_mannheim.pattern_interaction_model.MainActivity;
@@ -30,7 +29,7 @@ public class BluetoothChannel implements IConnection {
     private BluetoothAdapter mBluetoothAdapter;
     private IConnectionListener mListener;
 
-    private boolean isConnected = false;
+    private boolean mIsConnected = false;
     private ConnectedThread mConnectionThread;
 
     public BluetoothChannel(BluetoothAdapter bluetoothAdapter) {
@@ -69,11 +68,11 @@ public class BluetoothChannel implements IConnection {
     }
 
     public boolean isConnected() {
-        return this.isConnected;
+        return mIsConnected;
     }
 
     public void transfer(final Packet message) {
-        if (isConnected) {
+        if (mIsConnected) {
             mConnectionThread.write(message);
         }
     }
@@ -100,14 +99,14 @@ public class BluetoothChannel implements IConnection {
     }
 
     public void connected(ConnectedThread connectionThread) {
-        isConnected = true;
+        mIsConnected = true;
         this.mConnectionThread = connectionThread;
         mHandler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
     }
 
 
     public void disconnected() {
-        this.isConnected = false;
+        this.mIsConnected = false;
         this.mConnectionThread = null;
         mHandler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
     }

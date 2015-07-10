@@ -34,7 +34,7 @@ public class SerializableImage implements Serializable {
         Log.d(TAG, "serializing...");
         if (mImage != null) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            mImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            mImage.compress(Bitmap.CompressFormat.JPEG, 20, stream);
             byte[] imageByteArray = stream.toByteArray();
             out.writeInt(imageByteArray.length);
             out.write(imageByteArray);

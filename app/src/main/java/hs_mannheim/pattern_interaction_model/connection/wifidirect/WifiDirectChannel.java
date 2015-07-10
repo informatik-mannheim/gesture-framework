@@ -30,7 +30,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
 
-    private boolean isConnected;
+    private boolean mIsConnected;
     private IConnectionListener mListener;
     private ConnectedThread mConnectionThread;
     private boolean mIsTryingToConnect;
@@ -106,7 +106,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public boolean isConnected() {
-        return this.isConnected;
+        return this.mIsConnected;
     }
 
     @Override
@@ -133,20 +133,24 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
-        Log.d(TAG, "Connection info arrived.");
         if (info.groupFormed && info.isGroupOwner) { // group owner starts the server
-            Log.d(TAG, "I am the Server");
+            Log.d(TAG, "Connection Info Changed: Connected [Client]");
             new Server(8090, this).execute();
         } else if (info.groupFormed) { // and the other party connects to it
-            Log.d(TAG, "I am the client");
+            Log.d(TAG, "Connection Info Changed: Connected [Server]");
             new Client(info.groupOwnerAddress, 8090, this).execute();
         }
     }
 
     public void disconnected() {
-        this.isConnected = false;
-        this.mConnectionThread = null;
+        if (!isConnected()) {
+            return;
+        }
+
+        mIsConnected = false;
         mIsTryingToConnect = false;
+        mConnectionThread = null;
+        mManager.removeGroup(mChannel, new IngoreActionListener());
         _handler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
     }
 
@@ -156,7 +160,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     }
 
     public void connected(ConnectedThread connectionThread) {
-        isConnected = true;
+        mIsConnected = true;
         mIsTryingToConnect = false;
         this.mConnectionThread = connectionThread;
         _handler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();

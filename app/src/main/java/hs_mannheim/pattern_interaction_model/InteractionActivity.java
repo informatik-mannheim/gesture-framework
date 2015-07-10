@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import hs_mannheim.pattern_interaction_model.animation.MovementSpring;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
@@ -88,11 +89,15 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Packet(s.toString()));
     }
 
+
+
     @Override
     public void receive(Packet packet) {
         if (packet.getType().equals(PacketType.Image)) {
             Bitmap image = ((ImagePacket) packet).getImage().getImage();
             mImageView.setImageBitmap(image);
+
+            new MovementSpring(mImageView);
         }
 
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(700);

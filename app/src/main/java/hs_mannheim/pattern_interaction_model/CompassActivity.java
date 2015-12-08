@@ -77,12 +77,12 @@ public class CompassActivity extends ActionBarActivity implements SensorEventLis
             ra.setDuration(1000);
             ra.setFillAfter(true);
 
-            if (counter < 100) {
+            if (counter < 10) {
                 counter++;
                 accumulator += azimuthInDegress;
             } else {
                 counter = 0;
-                float meanDegrees = accumulator / 100;
+                float meanDegrees = accumulator / 10;
                 String degrees = Float.toString(meanDegrees);
 
                 if (meanDegrees <= 10) {

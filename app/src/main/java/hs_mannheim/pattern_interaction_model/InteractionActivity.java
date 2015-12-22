@@ -10,15 +10,18 @@ import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import hs_mannheim.pattern_interaction_model.animation.MovementSpring;
+import hs_mannheim.gestureframework.Test;
+import hs_mannheim.pattern_interaction_model.animation.ScaleSpring;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.TouchPoint;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IViewContext;
 import hs_mannheim.pattern_interaction_model.model.ImagePacket;
@@ -31,6 +34,7 @@ import hs_mannheim.pattern_interaction_model.model.SerializableImage;
 public class InteractionActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher, IViewContext {
 
     public final static String MODEL = Build.MODEL;
+    private static final String TAG = "[InteractionActivity]";
     private ImageView mImageView;
 
     @Override
@@ -44,6 +48,8 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         mImageView = (ImageView) findViewById(R.id.ivPic);
 
         header.setText(MODEL);
+
+        Test test = new Test();
     }
 
     @Override
@@ -63,6 +69,11 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
     @Override
     public void onSwipeDetected(SwipeEvent event) {
         Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSwiping(TouchPoint touchPoint) {
+        Log.d(TAG, touchPoint.toString());
     }
 
     public void startBluetoothActivity(View view) {
@@ -97,7 +108,8 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
             Bitmap image = ((ImagePacket) packet).getImage().getImage();
             mImageView.setImageBitmap(image);
 
-            new MovementSpring(mImageView);
+            // animate!
+            new ScaleSpring(mImageView);
         }
 
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(700);

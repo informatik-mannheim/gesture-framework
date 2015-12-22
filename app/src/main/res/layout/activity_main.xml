@@ -95,13 +95,4 @@
         android:layout_height="wrap_content"
         android:text="@string/main_btn_build"
         android:onClick="buildClicked" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Compass"
-        android:onClick="startCompass"
-        android:id="@+id/btnCompass" />
-
-
 </LinearLayout>

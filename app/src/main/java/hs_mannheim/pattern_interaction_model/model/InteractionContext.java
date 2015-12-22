@@ -19,8 +19,6 @@ public class InteractionContext extends Observable<AllEventsListener> implements
         mConnection = connection;
         mPostOffice = postOffice; /* only PostOffice talks to the connection */
         mGestureDetector.registerGestureEventListener(this);
-
-
     }
 
     public IPostOffice getPostOffice() {

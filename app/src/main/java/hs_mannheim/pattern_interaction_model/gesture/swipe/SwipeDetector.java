@@ -1,5 +1,6 @@
 package hs_mannheim.pattern_interaction_model.gesture.swipe;
 
+import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -44,8 +45,17 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
                 return true;
             case MotionEvent.ACTION_UP:
                 return handle_up(event);
+            case MotionEvent.ACTION_MOVE:
+                handle_move(event);
+                return true;
             default:
                 return false;
+        }
+    }
+
+    private void handle_move(MotionEvent event) {
+        if(mSwipeListener != null ){
+            mSwipeListener.onSwiping(new TouchPoint(event));
         }
     }
 
@@ -72,5 +82,6 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
     public interface SwipeEventListener {
         void onSwipeDetected(SwipeEvent event);
+        void onSwiping(TouchPoint touchPoint);
     }
 }

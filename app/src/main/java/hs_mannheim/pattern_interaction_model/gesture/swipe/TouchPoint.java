@@ -54,4 +54,9 @@ public class TouchPoint implements Serializable {
     public float distanceTo(TouchPoint other) {
         return (float) Math.sqrt(Math.pow(deltaX(other), 2) + Math.pow(deltaY(other), 2));
     }
+
+    @Override
+    public String toString() {
+        return String.format("x: %f, y: %f", this.getX(), this.getY());
+    }
 }

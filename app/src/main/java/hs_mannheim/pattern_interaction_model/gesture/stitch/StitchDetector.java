@@ -6,6 +6,7 @@ import android.util.Log;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeConstraint;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.TouchPoint;
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
 import hs_mannheim.pattern_interaction_model.model.IPostOffice;
@@ -51,6 +52,11 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     public void onSwipeDetected(SwipeEvent event) {
         StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mViewContext.getDisplaySize());
         mState.handle(stitchEvent);
+    }
+
+    @Override
+    public void onSwiping(TouchPoint touchPoint) {
+        // ignore for now.
     }
 
     @Override

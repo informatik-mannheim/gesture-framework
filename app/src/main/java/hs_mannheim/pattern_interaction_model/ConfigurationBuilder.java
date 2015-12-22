@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.util.Log;
 
 import hs_mannheim.pattern_interaction_model.connection.PostOffice;
 import hs_mannheim.pattern_interaction_model.connection.bluetooth.BluetoothChannel;
@@ -17,6 +18,7 @@ import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDirectionConstra
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
 import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
+import hs_mannheim.pattern_interaction_model.gesture.swipe.TouchPoint;
 import hs_mannheim.pattern_interaction_model.model.GestureDetector;
 import hs_mannheim.pattern_interaction_model.model.IConnection;
 import hs_mannheim.pattern_interaction_model.model.IViewContext;
@@ -27,7 +29,7 @@ public class ConfigurationBuilder {
 
     private final Context mContext;
     private IViewContext mViewContext;
-    private IConnection mConnection;
+    private IConnection mChannel;
     private Selection mSelection;
     private GestureDetector mDetector;
     private PostOffice mPostOffice;
@@ -39,16 +41,16 @@ public class ConfigurationBuilder {
     }
 
     public ConfigurationBuilder withBluetooth() {
-        mConnection = new BluetoothChannel(BluetoothAdapter.getDefaultAdapter());
-        mPostOffice = new PostOffice(mConnection);
+        mChannel = new BluetoothChannel(BluetoothAdapter.getDefaultAdapter());
+        mPostOffice = new PostOffice(mChannel);
         return this;
     }
 
     public ConfigurationBuilder withWifiDirect() {
         WifiP2pManager wifiP2pManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
         WifiP2pManager.Channel channel = wifiP2pManager.initialize(mContext, mContext.getMainLooper(), null);
-        mConnection = new WifiDirectChannel(wifiP2pManager, channel, mContext);
-        mPostOffice = new PostOffice(mConnection);
+        mChannel = new WifiDirectChannel(wifiP2pManager, channel, mContext);
+        mPostOffice = new PostOffice(mChannel);
         return this;
     }
 
@@ -78,7 +80,7 @@ public class ConfigurationBuilder {
     }
 
     public void buildAndRegister() {
-        InteractionContext interactionContext = new InteractionContext(mDetector, mSelection, mConnection, mPostOffice);
+        InteractionContext interactionContext = new InteractionContext(mDetector, mSelection, mChannel, mPostOffice);
         ((InteractionApplication) mContext).setInteractionContext(interactionContext);
     }
 
@@ -95,6 +97,18 @@ public class ConfigurationBuilder {
                 .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
                 .addConstraint(new SwipeDurationConstraint(250))
                 .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST))
-                .addSwipeListener(listener);
+                .addSwipeListener(new DebugSwipeListener());
+    }
+
+    public class DebugSwipeListener implements SwipeDetector.SwipeEventListener {
+        @Override
+        public void onSwipeDetected(SwipeEvent event) {
+            Log.d("[SwipeDetector]", "Swipe Detected");
+        }
+
+        @Override
+        public void onSwiping(TouchPoint touchPoint) {
+            Log.d("[Swiping]", touchPoint.toString());
+        }
     }
 }

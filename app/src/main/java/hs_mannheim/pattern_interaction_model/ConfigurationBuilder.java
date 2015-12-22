@@ -6,24 +6,24 @@ import android.hardware.SensorManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
 
-import hs_mannheim.pattern_interaction_model.connection.PostOffice;
-import hs_mannheim.pattern_interaction_model.connection.bluetooth.BluetoothChannel;
-import hs_mannheim.pattern_interaction_model.connection.wifidirect.WifiDirectChannel;
-import hs_mannheim.pattern_interaction_model.gesture.bump.BumpDetector;
-import hs_mannheim.pattern_interaction_model.gesture.bump.Threshold;
-import hs_mannheim.pattern_interaction_model.gesture.shake.ShakeDetector;
-import hs_mannheim.pattern_interaction_model.gesture.stitch.StitchDetector;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDirectionConstraint;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDurationConstraint;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeOrientationConstraint;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.TouchPoint;
-import hs_mannheim.pattern_interaction_model.model.GestureDetector;
-import hs_mannheim.pattern_interaction_model.model.IConnection;
-import hs_mannheim.pattern_interaction_model.model.IViewContext;
-import hs_mannheim.pattern_interaction_model.model.InteractionContext;
-import hs_mannheim.pattern_interaction_model.model.Selection;
+import hs_mannheim.gestureframework.connection.PostOffice;
+import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
+import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
+import hs_mannheim.gestureframework.gesture.bump.BumpDetector;
+import hs_mannheim.gestureframework.gesture.bump.Threshold;
+import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
+import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDirectionConstraint;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDurationConstraint;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeOrientationConstraint;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+import hs_mannheim.gestureframework.model.GestureDetector;
+import hs_mannheim.gestureframework.model.IConnection;
+import hs_mannheim.gestureframework.model.IViewContext;
+import hs_mannheim.gestureframework.model.InteractionContext;
+import hs_mannheim.gestureframework.model.Selection;
 
 public class ConfigurationBuilder {
 

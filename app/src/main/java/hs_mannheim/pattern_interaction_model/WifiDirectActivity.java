@@ -19,11 +19,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
-import hs_mannheim.pattern_interaction_model.model.IPostOffice;
-import hs_mannheim.pattern_interaction_model.model.Packet;
-import hs_mannheim.pattern_interaction_model.connection.wifidirect.WifiDirectChannel;
-import hs_mannheim.pattern_interaction_model.model.PacketType;
+import hs_mannheim.gestureframework.model.IPacketReceiver;
+import hs_mannheim.gestureframework.model.IPostOffice;
+import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
+import hs_mannheim.gestureframework.model.PacketType;
 
 public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
     private String TAG = "[WifiDirectActivity]";

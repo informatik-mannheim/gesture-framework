@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,16 +18,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import hs_mannheim.pattern_interaction_model.connection.bluetooth.BluetoothChannel;
-import hs_mannheim.pattern_interaction_model.model.IConnection;
-import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
-import hs_mannheim.pattern_interaction_model.model.IPostOffice;
-import hs_mannheim.pattern_interaction_model.model.Packet;
-import hs_mannheim.pattern_interaction_model.model.PacketType;
+import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
+import hs_mannheim.gestureframework.model.IConnection;
+import hs_mannheim.gestureframework.model.IPacketReceiver;
+import hs_mannheim.gestureframework.model.IPostOffice;
+import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.model.PacketType;
 
 
 public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
-    private final String TAG = "[BluetoothActivity]";
     private int REQUEST_ENABLE_BT = 0xfe;
 
     private BluetoothAdapter mBluetoothAdapter;

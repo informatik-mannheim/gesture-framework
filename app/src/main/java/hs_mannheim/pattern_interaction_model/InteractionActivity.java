@@ -18,17 +18,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.gestureframework.Test;
-import hs_mannheim.pattern_interaction_model.animation.ScaleSpring;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.TouchPoint;
-import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
-import hs_mannheim.pattern_interaction_model.model.IViewContext;
-import hs_mannheim.pattern_interaction_model.model.ImagePacket;
-import hs_mannheim.pattern_interaction_model.model.InteractionContext;
-import hs_mannheim.pattern_interaction_model.model.Packet;
-import hs_mannheim.pattern_interaction_model.model.PacketType;
-import hs_mannheim.pattern_interaction_model.model.SerializableImage;
+import hs_mannheim.gestureframework.animation.ScaleSpring;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+import hs_mannheim.gestureframework.model.IPacketReceiver;
+import hs_mannheim.gestureframework.model.IViewContext;
+import hs_mannheim.gestureframework.model.ImagePacket;
+import hs_mannheim.gestureframework.model.InteractionContext;
+import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.model.PacketType;
+import hs_mannheim.gestureframework.model.SerializableImage;
 
 
 public class InteractionActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher, IViewContext {
@@ -48,8 +48,6 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         mImageView = (ImageView) findViewById(R.id.ivPic);
 
         header.setText(MODEL);
-
-        Test test = new Test();
     }
 
     @Override

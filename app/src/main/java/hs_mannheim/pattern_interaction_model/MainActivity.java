@@ -6,22 +6,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.ActionBarActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeDetector;
-import hs_mannheim.pattern_interaction_model.gesture.swipe.SwipeEvent;
-import hs_mannheim.pattern_interaction_model.model.IPacketReceiver;
-import hs_mannheim.pattern_interaction_model.model.IViewContext;
-import hs_mannheim.pattern_interaction_model.model.InteractionContext;
-import hs_mannheim.pattern_interaction_model.model.Packet;
-import hs_mannheim.pattern_interaction_model.model.PacketType;
-import hs_mannheim.pattern_interaction_model.model.Selection;
+import hs_mannheim.gestureframework.model.IViewContext;
+import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.model.Selection;
 
 
 public class MainActivity extends ActionBarActivity implements IViewContext {

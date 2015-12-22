@@ -10,13 +10,15 @@ import com.facebook.rebound.SpringSystem;
 /**
  * Translates a view with a bouncing effect, using the rebound spring framework.
  */
-public class MovementSpring {
+public class MovementSpring extends GestureAnimation{
 
-    /**
-     * Calling the constructor attaches to bounce effect to the view and starts it immediately.
-     * @param view The view to attach to
-     */
     public MovementSpring(final View view) {
+        super.type = AnimationType.RECEIVE;
+        super.view = view;
+    }
+
+    @Override
+    public void play() {
         SpringSystem springSystem = SpringSystem.create();
         Spring spring = springSystem.createSpring();
         spring.setSpringConfig(new SpringConfig(55, 3));

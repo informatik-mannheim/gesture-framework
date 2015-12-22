@@ -18,6 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.gestureframework.Test;
+import hs_mannheim.gestureframework.animation.AnimationType;
+import hs_mannheim.gestureframework.animation.GestureAnimation;
+import hs_mannheim.gestureframework.animation.MovementSpring;
 import hs_mannheim.gestureframework.animation.ScaleSpring;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
@@ -106,8 +109,12 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
             Bitmap image = ((ImagePacket) packet).getImage().getImage();
             mImageView.setImageBitmap(image);
 
-            // animate!
-            new ScaleSpring(mImageView);
+            // mAnimation should be set beforehand (ideally during configuration at start)
+            GestureAnimation mAnimation = new MovementSpring(mImageView);
+            if (mAnimation.getType().equals(AnimationType.RECEIVE)){
+                mAnimation.play();
+            }
+
         }
 
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(700);

@@ -37,6 +37,10 @@ public class InteractionContext extends Observable<AllEventsListener> implements
         mGestureDetector.setViewContext(viewContext);
     }
 
+    public GestureDetector getGestureDetector(){
+        return this.mGestureDetector;
+    }
+
     @Override
     public void onGestureDetected() {
         notifyTransferStarted();

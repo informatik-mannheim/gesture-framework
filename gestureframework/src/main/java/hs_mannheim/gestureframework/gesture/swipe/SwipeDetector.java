@@ -58,8 +58,9 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
         }
     }
 
-    private void handle_down(MotionEvent event) {
+    private void handle_down(MotionEvent event){
         mStart = new TouchPoint(event);
+        mSwipeListener.onSwipeStart(new TouchPoint(event));
     }
 
     private boolean handle_up(MotionEvent event) {
@@ -72,6 +73,8 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
         if(mSwipeListener != null ){
             mSwipeListener.onSwipeDetected(swipeEvent);
+        } else {
+            mSwipeListener.onSwipeEnd(end);
         }
 
         super.fireGestureDetected();
@@ -82,5 +85,7 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     public interface SwipeEventListener {
         void onSwipeDetected(SwipeEvent event);
         void onSwiping(TouchPoint touchPoint);
+        void onSwipeStart(TouchPoint touchPoint);
+        void onSwipeEnd(TouchPoint touchPoint);
     }
 }

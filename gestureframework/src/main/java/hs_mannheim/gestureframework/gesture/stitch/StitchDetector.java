@@ -60,6 +60,16 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     }
 
     @Override
+    public void onSwipeStart(TouchPoint touchPoint) {
+        // ignore for now.
+    }
+
+    @Override
+    public void onSwipeEnd(TouchPoint touchPoint) {
+
+    }
+
+    @Override
     public void receive(Packet packet) {
         mState.handle(packet);
     }

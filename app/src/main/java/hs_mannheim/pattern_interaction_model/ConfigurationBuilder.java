@@ -15,8 +15,10 @@ import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDirectionConstraint;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDistanceConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDurationConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeMinDistanceConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeOrientationConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.model.GestureDetector;
@@ -94,10 +96,15 @@ public class ConfigurationBuilder {
 
     private SwipeDetector createSwipeDetector(SwipeDetector.SwipeEventListener listener) {
         return new SwipeDetector(mViewContext)
-                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
-                .addConstraint(new SwipeDurationConstraint(250))
-                .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST))
+                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.VERTICAL))
+                .addConstraint(new SwipeDurationConstraint(1000))
+                .addConstraint(new SwipeMinDistanceConstraint(700))
+                .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.NORTH))
                 .addSwipeListener(new DebugSwipeListener());
+    }
+
+    public GestureDetector getDetector(){
+        return this.mDetector;
     }
 
     public class DebugSwipeListener implements SwipeDetector.SwipeEventListener {
@@ -109,6 +116,16 @@ public class ConfigurationBuilder {
         @Override
         public void onSwiping(TouchPoint touchPoint) {
             Log.d("[Swiping]", touchPoint.toString());
+        }
+
+        @Override
+        public void onSwipeStart(TouchPoint touchPoint) {
+
+        }
+
+        @Override
+        public void onSwipeEnd(TouchPoint touchPoint) {
+
         }
     }
 }

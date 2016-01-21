@@ -7,6 +7,8 @@ import com.facebook.rebound.Spring;
 import com.facebook.rebound.SpringConfig;
 import com.facebook.rebound.SpringSystem;
 
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+
 /**
  * Scales a view with a bouncing effect, using the rebound spring framework.
  */
@@ -41,5 +43,20 @@ public class ScaleSpring extends GestureAnimation{
         });
 
         spring.setEndValue(1);
+    }
+
+    @Override
+    public void handleSwiping(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    public void startSwipe() {
+
+    }
+
+    @Override
+    public void onSwipeEnd(TouchPoint touchPoint) {
+
     }
 }

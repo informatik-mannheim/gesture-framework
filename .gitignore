@@ -45,6 +45,7 @@ proguard/
 .idea/copyright/profiles_settings.xml
 .idea/encodings.xml
 .idea/misc.xml
+.idea/gradle.xml
 .idea/modules.xml
 .idea/scopes/scope_settings.xml
 .idea/vcs.xml

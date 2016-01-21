@@ -47,22 +47,11 @@
         android:id="@+id/ivPic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:src="@drawable/cats"
-        android:elevation="16dp"
         android:layout_margin="8dp"
+        android:src="@drawable/cats"
+        android:background="#00ff00"
         android:adjustViewBounds="true"
 
-        android:layout_above="@+id/btnBluetooth"
-        android:outlineProvider="bounds"
-        android:layout_gravity="center"
-        android:layout_alignParentStart="true"
-
-        android:layout_marginBottom="89dp"
-
-
-
-        android:layout_below="@+id/etMessage"
         />
 
     <Button

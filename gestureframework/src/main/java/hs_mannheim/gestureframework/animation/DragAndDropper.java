@@ -3,7 +3,7 @@ package hs_mannheim.gestureframework.animation;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.doemski.animationplatform.swipe.TouchPoint;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
 
 public class DragAndDropper {

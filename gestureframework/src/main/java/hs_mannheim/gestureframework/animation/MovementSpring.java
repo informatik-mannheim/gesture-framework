@@ -1,6 +1,8 @@
 package hs_mannheim.gestureframework.animation;
 
+import android.animation.Animator;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
@@ -14,7 +16,7 @@ import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
  */
 public class MovementSpring extends GestureAnimation{
 
-    public MovementSpring(final View view) {
+    public MovementSpring(final ImageView view) {
         super.type = AnimationType.RECEIVE;
         super.view = view;
     }
@@ -45,17 +47,47 @@ public class MovementSpring extends GestureAnimation{
     }
 
     @Override
+    protected void registerAnimators() {
+
+    }
+
+    @Override
     public void onSwiping(TouchPoint touchPoint) {
 
     }
 
     @Override
-    public void startSwipe() {
+    public void onSwipeEnd(TouchPoint touchPoint) {
 
     }
 
     @Override
-    public void onSwipeEnd(TouchPoint touchPoint) {
+    protected void handleSwipeStart(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    protected void handleSwipeEnd(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    public void onAnimationStart(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationCancel(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {
 
     }
 }

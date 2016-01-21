@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion '23.0.2'
 
     defaultConfig {
         applicationId "hs_mannheim.pattern_interaction_model"

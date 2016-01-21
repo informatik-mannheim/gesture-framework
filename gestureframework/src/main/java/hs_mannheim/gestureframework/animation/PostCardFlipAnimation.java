@@ -1,32 +1,35 @@
 package hs_mannheim.gestureframework.animation;
 
-
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.content.Context;
-import android.view.View;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.R;
-import hs_mannheim.gestureframework.animation.AnimationType;
-import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-
 
 /**
  * Simple SEND Animation
  */
-public class ElevateAndLeaveAnimation extends GestureAnimation {
+public class PostCardFlipAnimation extends GestureAnimation{
 
     Context context;
-    Animator swipeStartAnimator, swipeEndAnimator;
+    Animator swipeStartAnimator, swipeEndAnimator, flipLeftInAnimator, flipRightInAnimator;
     DragAndDropper dragAndDropper;
+    Bitmap postcard;
+    Bitmap origImage;
 
-    public ElevateAndLeaveAnimation(Context context, final ImageView view) {
+    public PostCardFlipAnimation(Context context, final ImageView view) {
         this.type = AnimationType.SEND;
         this.view = view;
         this.context = context;
+
+        postcard = BitmapFactory.decodeResource(context.getResources(), R.drawable.postcard);
+        origImage = ((BitmapDrawable)view.getDrawable()).getBitmap();
+
         registerAnimators();
         registerDragAndDropper(false, true);
     }
@@ -34,7 +37,8 @@ public class ElevateAndLeaveAnimation extends GestureAnimation {
     @Override
     public void play() {
         if(!animationRunning){
-            playAnimator.start();
+            swipeStartAnimator.start();
+            animatorQueue.add(playAnimator);
         } else {
             animatorQueue.add(playAnimator);
         }
@@ -42,6 +46,7 @@ public class ElevateAndLeaveAnimation extends GestureAnimation {
 
     @Override
     protected void handleSwipeStart(TouchPoint touchPoint) {
+        //TODO: postcard stays small for some reason
         if(!animationRunning){
             swipeStartAnimator.start();
         }else {
@@ -72,17 +77,27 @@ public class ElevateAndLeaveAnimation extends GestureAnimation {
 
     @Override
     protected void registerAnimators() {
-        this.swipeStartAnimator =  AnimatorInflater.loadAnimator(context, R.animator.elevate);
+        swipeStartAnimator =  AnimatorInflater.loadAnimator(context, R.animator.flip_left_out);
         swipeStartAnimator.addListener(this);
         swipeStartAnimator.setTarget(view);
 
-        this.swipeEndAnimator =  AnimatorInflater.loadAnimator(context, R.animator.lower);
+        swipeEndAnimator =  AnimatorInflater.loadAnimator(context, R.animator.flip_right_out);
         swipeEndAnimator.addListener(this);
         swipeEndAnimator.setTarget(view);
 
-        this.playAnimator =  AnimatorInflater.loadAnimator(context, R.animator.elevate_leave);
+        playAnimator =  AnimatorInflater.loadAnimator(context, R.animator.elevate_leave);
         playAnimator.addListener(this);
         playAnimator.setTarget(view);
+
+        flipLeftInAnimator = AnimatorInflater.loadAnimator(context, R.animator.flip_left_in);
+        flipLeftInAnimator.addListener(this);
+        flipLeftInAnimator.setTarget(view);
+
+        flipRightInAnimator = AnimatorInflater.loadAnimator(context, R.animator.flip_right_in);
+        flipRightInAnimator.addListener(this);
+        flipRightInAnimator.setTarget(view);
+
+
     }
 
     @Override
@@ -93,7 +108,18 @@ public class ElevateAndLeaveAnimation extends GestureAnimation {
     @Override
     public void onAnimationEnd(Animator animation) {
         animationRunning = false;
-        if(!animatorQueue.isEmpty()) {
+
+        if (animation.equals(swipeStartAnimator)){
+            view.setImageBitmap(postcard);
+            flipLeftInAnimator.start();
+        }
+
+        if (animation.equals(swipeEndAnimator)){
+            view.setImageBitmap(origImage);
+            flipRightInAnimator.start();
+        }
+
+        if (!animatorQueue.isEmpty()) {
             animatorQueue.get(0).start();
             animatorQueue.remove(animatorQueue.get(0));
         }

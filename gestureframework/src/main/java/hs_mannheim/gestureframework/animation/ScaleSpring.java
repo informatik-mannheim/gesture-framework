@@ -1,6 +1,8 @@
 package hs_mannheim.gestureframework.animation;
 
+import android.animation.Animator;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.facebook.rebound.SimpleSpringListener;
 import com.facebook.rebound.Spring;
@@ -18,7 +20,7 @@ public class ScaleSpring extends GestureAnimation{
      * Calling the constructor attaches to bounce effect to the view and starts it immediately.
      * @param view The view to attach to
      */
-    public ScaleSpring(final View view) {
+    public ScaleSpring(final ImageView view) {
         super.type = AnimationType.RECEIVE;
         super.view = view;
     }
@@ -51,12 +53,42 @@ public class ScaleSpring extends GestureAnimation{
     }
 
     @Override
-    public void startSwipe() {
+    protected void registerAnimators() {
 
     }
 
     @Override
     public void onSwipeEnd(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    protected void handleSwipeStart(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    protected void handleSwipeEnd(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    public void onAnimationStart(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationEnd(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationCancel(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {
 
     }
 }

@@ -24,6 +24,7 @@ import hs_mannheim.gestureframework.animation.AnimationType;
 import hs_mannheim.gestureframework.animation.ElevateAndLeaveAnimation;
 import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.animation.MovementSpring;
+import hs_mannheim.gestureframework.animation.PostCardFlipAnimation;
 import hs_mannheim.gestureframework.animation.ScaleSpring;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
@@ -56,7 +57,7 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         mImageView = (ImageView) findViewById(R.id.ivPic);
 
         ///////////////////////////// TODO: Do this somewhere else
-        this.sendAnimation = new ElevateAndLeaveAnimation(mImageView);
+        this.sendAnimation = new PostCardFlipAnimation(this, mImageView);
         this.receiveAnimation = new MovementSpring(mImageView);
         /////////////////////////////
 

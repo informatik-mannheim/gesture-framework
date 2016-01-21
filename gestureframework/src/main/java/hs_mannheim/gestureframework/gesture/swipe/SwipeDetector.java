@@ -10,14 +10,18 @@ import hs_mannheim.gestureframework.model.IViewContext;
 
 public class SwipeDetector extends GestureDetector implements View.OnTouchListener{
 
+    //TODO: make this thread safe
     private final ArrayList<SwipeConstraint> mSwipeConstraints;
+    private final ArrayList<SwipeEventListener> mListeners;
+
     private SwipeEventListener mSwipeListener;
     private TouchPoint mStart;
 
     public SwipeDetector(IViewContext viewContext) {
         super(viewContext);
         mViewContext.getInteractionView().setOnTouchListener(this);
-        this.mSwipeConstraints = new ArrayList<>();
+        mSwipeConstraints = new ArrayList<>();
+        mListeners = new ArrayList<>();
     }
 
     public SwipeDetector addConstraint(SwipeConstraint constraint) {
@@ -31,8 +35,15 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
         mViewContext.getInteractionView().setOnTouchListener(this);
     }
 
+    //TODO: Threadsafe
     public SwipeDetector addSwipeListener(SwipeEventListener listener) {
-        this.mSwipeListener = listener;
+        mListeners.add(listener);
+        return this;
+    }
+
+    //TODO: Threadsafe
+    public SwipeDetector removeSwipeListener(SwipeEventListener listener) {
+        mListeners.remove(listener);
         return this;
     }
 
@@ -43,7 +54,8 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
                 handle_down(event);
                 return true;
             case MotionEvent.ACTION_UP:
-                return handle_up(event);
+                handle_up(event);
+                return true;
             case MotionEvent.ACTION_MOVE:
                 handle_move(event);
                 return true;
@@ -53,33 +65,42 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     }
 
     private void handle_move(MotionEvent event) {
-        if(mSwipeListener != null ){
-            mSwipeListener.onSwiping(new TouchPoint(event));
+        for(SwipeEventListener listener: mListeners) {
+            listener.onSwiping(new TouchPoint(event));
         }
     }
 
     private void handle_down(MotionEvent event){
         mStart = new TouchPoint(event);
-        mSwipeListener.onSwipeStart(new TouchPoint(event));
+        for(SwipeEventListener listener: mListeners) {
+            listener.onSwipeStart(new TouchPoint(event));
+        }
     }
 
     private boolean handle_up(MotionEvent event) {
         TouchPoint end = new TouchPoint(event);
         SwipeEvent swipeEvent = new SwipeEvent(mStart, end);
 
+        boolean isSwipe = true;
+
+        //TODO: come up with something that doesn't force us to loop manually everytime we fire an event (as in C#)
         for (SwipeConstraint constraint : mSwipeConstraints) {
-            if (!constraint.isValid(swipeEvent)) return false;
+            if (!constraint.isValid(swipeEvent)) isSwipe = false;
         }
 
-        if(mSwipeListener != null ){
-            mSwipeListener.onSwipeDetected(swipeEvent);
+        if(isSwipe) {
+            super.fireGestureDetected();
+
+            for(SwipeEventListener listener: mListeners) {
+                listener.onSwipeDetected(swipeEvent);
+            }
         } else {
-            mSwipeListener.onSwipeEnd(end);
+            for (SwipeEventListener listener: mListeners) {
+                listener.onSwipeEnd(end);
+            }
         }
 
-        super.fireGestureDetected();
-
-        return true;
+        return isSwipe;
     }
 
     public interface SwipeEventListener {

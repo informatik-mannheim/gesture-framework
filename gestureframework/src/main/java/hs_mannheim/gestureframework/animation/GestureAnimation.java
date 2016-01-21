@@ -1,20 +1,25 @@
 package hs_mannheim.gestureframework.animation;
 
+import android.animation.Animator;
 import android.view.View;
+import android.widget.ImageView;
 
+
+import java.util.ArrayList;
+
+import hs_mannheim.gestureframework.animation.AnimationType;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
-/**
- * Created by uselab on 22.12.2015.
- */
-public abstract class GestureAnimation {
-    protected View view;
+
+public abstract class GestureAnimation implements Animator.AnimatorListener{
+    protected ImageView view;
     protected AnimationType type;
     protected TouchPoint startPoint, currentPoint;
+    protected boolean animationRunning;
+    protected Animator playAnimator;
+    protected ArrayList<Animator> animatorQueue = new ArrayList<>();
 
     public abstract void play();
-
-    public abstract void handleSwiping(TouchPoint touchPoint);
 
     public void onSwiping(TouchPoint touchPoint){
         if(this.type.equals(AnimationType.SEND)){
@@ -22,7 +27,7 @@ public abstract class GestureAnimation {
         }
     }
 
-    public View getView(){
+    public ImageView getView(){
         return view;
     }
 
@@ -31,11 +36,18 @@ public abstract class GestureAnimation {
     }
 
     public void onSwipeStart(TouchPoint touchPoint) {
-        this.startPoint = touchPoint;
-        startSwipe();
+        handleSwipeStart(touchPoint);
     }
 
-    public abstract void startSwipe();
+    public void onSwipeEnd(TouchPoint touchPoint) {
+        handleSwipeEnd(touchPoint);
+    }
 
-    public abstract void onSwipeEnd(TouchPoint touchPoint);
+    protected abstract void handleSwipeStart(TouchPoint touchPoint);
+
+    protected abstract void handleSwipeEnd(TouchPoint touchPoint);
+
+    protected abstract void handleSwiping(TouchPoint touchPoint);
+
+    protected abstract void registerAnimators();
 }

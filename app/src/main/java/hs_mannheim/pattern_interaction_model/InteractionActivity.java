@@ -2,6 +2,7 @@ package hs_mannheim.pattern_interaction_model;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Outline;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -12,6 +13,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,12 +21,14 @@ import android.widget.Toast;
 
 import hs_mannheim.gestureframework.Test;
 import hs_mannheim.gestureframework.animation.AnimationType;
+import hs_mannheim.gestureframework.animation.ElevateAndLeaveAnimation;
 import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.animation.MovementSpring;
 import hs_mannheim.gestureframework.animation.ScaleSpring;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+import hs_mannheim.gestureframework.model.GestureDetector;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.ImagePacket;
@@ -39,6 +43,7 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
     public final static String MODEL = Build.MODEL;
     private static final String TAG = "[InteractionActivity]";
     private ImageView mImageView;
+    private GestureAnimation sendAnimation, receiveAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,11 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
 
         mImageView = (ImageView) findViewById(R.id.ivPic);
 
+        ///////////////////////////// TODO: Do this somewhere else
+        this.sendAnimation = new ElevateAndLeaveAnimation(mImageView);
+        this.receiveAnimation = new MovementSpring(mImageView);
+        /////////////////////////////
+
         header.setText(MODEL);
     }
 
@@ -59,6 +69,10 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         InteractionContext interactionContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
         interactionContext.getPostOffice().register(this);
         interactionContext.updateViewContext(this);
+
+        //TODO: VERY HACKY! works only for swipe
+        SwipeDetector mSwipeDetector = (SwipeDetector) interactionContext.getGestureDetector();
+        mSwipeDetector.addSwipeListener(this);
     }
 
     @Override
@@ -70,11 +84,23 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
     @Override
     public void onSwipeDetected(SwipeEvent event) {
         Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
+        sendAnimation.play();
     }
 
     @Override
     public void onSwiping(TouchPoint touchPoint) {
         Log.d(TAG, touchPoint.toString());
+        sendAnimation.onSwiping(touchPoint);
+    }
+
+    @Override
+    public void onSwipeStart(TouchPoint touchPoint) {
+        sendAnimation.onSwipeStart(touchPoint);
+    }
+
+    @Override
+    public void onSwipeEnd(TouchPoint touchPoint) {
+        sendAnimation.onSwipeEnd(touchPoint);
     }
 
     public void startBluetoothActivity(View view) {
@@ -101,20 +127,13 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new Packet(s.toString()));
     }
 
-
-
     @Override
     public void receive(Packet packet) {
         if (packet.getType().equals(PacketType.Image)) {
             Bitmap image = ((ImagePacket) packet).getImage().getImage();
             mImageView.setImageBitmap(image);
 
-            // mAnimation should be set beforehand (ideally during configuration at start)
-            GestureAnimation mAnimation = new MovementSpring(mImageView);
-            if (mAnimation.getType().equals(AnimationType.RECEIVE)){
-                mAnimation.play();
-            }
-
+            receiveAnimation.play();
         }
 
         ((Vibrator) getSystemService(VIBRATOR_SERVICE)).vibrate(700);
@@ -151,5 +170,12 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         SerializableImage image = new SerializableImage(bitmap);
 
         ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new ImagePacket(image));
+    }
+
+    private class CircleOutlineProvider extends ViewOutlineProvider {
+        @Override
+        public void getOutline(View view, Outline outline) {
+            outline.setOval(0, 0, view.getWidth(), view.getHeight());
+        }
     }
 }

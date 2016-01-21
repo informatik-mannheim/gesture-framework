@@ -12,11 +12,22 @@
         <option name="SELECTED_TEST_ARTIFACT" value="_android_test_" />
         <option name="ASSEMBLE_TASK_NAME" value="assembleDebug" />
         <option name="COMPILE_JAVA_TASK_NAME" value="compileDebugSources" />
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+        <afterSyncTasks>
+          <task>generateDebugSources</task>
+=======
+>>>>>>> f3bc1786a4a6c584fbaef282fb7f440cac8b2efa
         <option name="ASSEMBLE_TEST_TASK_NAME" value="assembleDebugTest" />
         <option name="COMPILE_JAVA_TEST_TASK_NAME" value="compileDebugTestSources" />
         <afterSyncTasks>
           <task>generateDebugSources</task>
           <task>generateDebugTestSources</task>
+<<<<<<< HEAD
+=======
+>>>>>>> d47979a5ff46176f1362e0adbb0ad5ee6e917daf
+>>>>>>> f3bc1786a4a6c584fbaef282fb7f440cac8b2efa
         </afterSyncTasks>
         <option name="ALLOW_USER_CONFIGURATION" value="false" />
         <option name="MANIFEST_FILE_RELATIVE_PATH" value="/src/main/AndroidManifest.xml" />

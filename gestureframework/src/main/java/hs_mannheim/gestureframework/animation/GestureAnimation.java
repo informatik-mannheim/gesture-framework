@@ -1,6 +1,7 @@
 package hs_mannheim.gestureframework.animation;
 
 import android.animation.Animator;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -12,6 +13,9 @@ import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
 
 public abstract class GestureAnimation implements Animator.AnimatorListener{
+
+    //TODO: make separate animatorlistener
+    //TODO: split send- and receiveanimations into separate abstract classes and extend from there
     protected ImageView view;
     protected AnimationType type;
     protected TouchPoint startPoint, currentPoint;
@@ -20,6 +24,7 @@ public abstract class GestureAnimation implements Animator.AnimatorListener{
     protected ArrayList<Animator> animatorQueue = new ArrayList<>();
 
     public abstract void play();
+    public abstract void play(Bitmap image);
 
     public void onSwiping(TouchPoint touchPoint){
         if(this.type.equals(AnimationType.SEND)){

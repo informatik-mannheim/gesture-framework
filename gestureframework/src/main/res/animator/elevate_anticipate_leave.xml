@@ -1,4 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set xmlns:android="http://schemas.android.com/apk/res/android">
+<set android:shareInterpolator="false"
+    android:ordering="sequentially"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <set
+        android:ordering="together">
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:propertyName="scaleX"
+            android:valueTo="1.2"
+            android:valueType="floatType"
+            android:duration="750"
+            />
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:propertyName="scaleY"
+            android:valueTo="1.2"
+            android:valueType="floatType"
+            android:duration="750"
+            />
 
+        <objectAnimator
+            android:propertyName="y"
+            android:valueTo="100"
+            android:valueType="floatType"
+            android:duration="600"
+            android:startOffset="200"
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            />
+
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:propertyName="scaleY"
+            android:valueTo="0.8"
+            android:valueType="floatType"
+            android:duration="600"
+            android:startOffset="200"
+            />
+
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:propertyName="scaleX"
+            android:valueTo="1.2"
+            android:valueType="floatType"
+            android:duration="600"
+            android:startOffset="200"
+            />
+        -->
+
+    </set>
+    <set android:ordering="together">
+
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_cubic"
+            android:propertyName="scaleY"
+            android:valueTo="1.5"
+            android:valueType="floatType"
+            android:duration="300"
+            />
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_cubic"
+            android:propertyName="scaleX"
+            android:valueTo="0.7"
+            android:valueType="floatType"
+            android:duration="300"
+            />
+        <objectAnimator
+            android:propertyName="y"
+            android:valueTo="-5000"
+            android:valueType="floatType"
+            android:duration="500"
+            android:interpolator="@android:interpolator/accelerate_cubic"
+            android:startOffset="100"
+            />
+    </set>
 </set>

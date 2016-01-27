@@ -1,6 +1,7 @@
 package hs_mannheim.gestureframework.animation;
 
 import android.animation.Animator;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -45,6 +46,11 @@ public class ScaleSpring extends GestureAnimation{
         });
 
         spring.setEndValue(1);
+    }
+
+    @Override
+    public void play(Bitmap image) {
+
     }
 
     @Override

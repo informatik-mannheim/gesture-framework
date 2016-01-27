@@ -47,12 +47,13 @@
         android:id="@+id/ivPic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
         android:src="@drawable/cats"
         android:background="#00ff00"
         android:adjustViewBounds="true"
-
-        />
+        android:layout_marginTop="64dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"

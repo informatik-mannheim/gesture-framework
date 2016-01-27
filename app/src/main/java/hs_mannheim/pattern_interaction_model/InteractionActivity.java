@@ -19,17 +19,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import hs_mannheim.gestureframework.Test;
-import hs_mannheim.gestureframework.animation.AnimationType;
-import hs_mannheim.gestureframework.animation.ElevateAndLeaveAnimation;
 import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.animation.MovementSpring;
-import hs_mannheim.gestureframework.animation.PostCardFlipAnimation;
-import hs_mannheim.gestureframework.animation.ScaleSpring;
+import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
+import hs_mannheim.gestureframework.animation.PostcardFlipAnimationSend;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-import hs_mannheim.gestureframework.model.GestureDetector;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.ImagePacket;
@@ -57,8 +53,8 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         mImageView = (ImageView) findViewById(R.id.ivPic);
 
         ///////////////////////////// TODO: Do this somewhere else
-        this.sendAnimation = new PostCardFlipAnimation(this, mImageView);
-        this.receiveAnimation = new MovementSpring(mImageView);
+        this.sendAnimation = new PostcardFlipAnimationSend(this, mImageView);
+        this.receiveAnimation = new PostcardFlipAnimationReceive(this, mImageView);
         /////////////////////////////
 
         header.setText(MODEL);

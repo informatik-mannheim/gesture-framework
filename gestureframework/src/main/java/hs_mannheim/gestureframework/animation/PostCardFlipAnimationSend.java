@@ -14,7 +14,7 @@ import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 /**
  * Simple SEND Animation
  */
-public class PostCardFlipAnimationSend extends GestureAnimation{
+public class PostcardFlipAnimationSend extends GestureAnimation{
 
     Context context;
     Animator swipeStartAnimator, swipeEndAnimator, flipLeftInAnimator, flipRightInAnimator;
@@ -22,7 +22,7 @@ public class PostCardFlipAnimationSend extends GestureAnimation{
     Bitmap postcard;
     Bitmap origImage;
 
-    public PostCardFlipAnimationSend(Context context, final ImageView view) {
+    public PostcardFlipAnimationSend(Context context, final ImageView view) {
         this.type = AnimationType.SEND;
         this.view = view;
         this.context = context;
@@ -45,8 +45,12 @@ public class PostCardFlipAnimationSend extends GestureAnimation{
     }
 
     @Override
+    public void play(Bitmap image) {
+
+    }
+
+    @Override
     protected void handleSwipeStart(TouchPoint touchPoint) {
-        //TODO: postcard stays small for some reason
         if(!animationRunning){
             swipeStartAnimator.start();
         }else {
@@ -77,23 +81,23 @@ public class PostCardFlipAnimationSend extends GestureAnimation{
 
     @Override
     protected void registerAnimators() {
-        swipeStartAnimator =  AnimatorInflater.loadAnimator(context, R.animator.flip_left_out);
+        swipeStartAnimator =  AnimatorInflater.loadAnimator(context, R.animator.postcardsend_flip_left_out);
         swipeStartAnimator.addListener(this);
         swipeStartAnimator.setTarget(view);
 
-        swipeEndAnimator =  AnimatorInflater.loadAnimator(context, R.animator.flip_right_out);
+        swipeEndAnimator =  AnimatorInflater.loadAnimator(context, R.animator.postcardsend_flip_right_out);
         swipeEndAnimator.addListener(this);
         swipeEndAnimator.setTarget(view);
 
-        playAnimator =  AnimatorInflater.loadAnimator(context, R.animator.elevate_leave);
+        playAnimator =  AnimatorInflater.loadAnimator(context, R.animator.elevate_anticipate_leave);
         playAnimator.addListener(this);
         playAnimator.setTarget(view);
 
-        flipLeftInAnimator = AnimatorInflater.loadAnimator(context, R.animator.flip_left_in);
+        flipLeftInAnimator = AnimatorInflater.loadAnimator(context, R.animator.postcardsend_flip_left_in);
         flipLeftInAnimator.addListener(this);
         flipLeftInAnimator.setTarget(view);
 
-        flipRightInAnimator = AnimatorInflater.loadAnimator(context, R.animator.flip_right_in);
+        flipRightInAnimator = AnimatorInflater.loadAnimator(context, R.animator.postcardsend_flip_right_in);
         flipRightInAnimator.addListener(this);
         flipRightInAnimator.setTarget(view);
 

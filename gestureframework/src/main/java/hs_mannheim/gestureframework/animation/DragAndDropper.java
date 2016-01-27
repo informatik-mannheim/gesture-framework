@@ -33,7 +33,11 @@ public class DragAndDropper {
         }
 
         if (shouldDragY){
-            layoutParams.topMargin = (int) (touchPoint.getY() - deltaPoint.getY());
+            if (layoutParams.topMargin > 0) {
+                layoutParams.topMargin = (int) (touchPoint.getY() - deltaPoint.getY());
+            } else if ((int)(touchPoint.getY() - deltaPoint.getY()) > 0){
+                layoutParams.topMargin = (int) (touchPoint.getY() - deltaPoint.getY());
+            }
         }
 
         view.setLayoutParams(layoutParams);

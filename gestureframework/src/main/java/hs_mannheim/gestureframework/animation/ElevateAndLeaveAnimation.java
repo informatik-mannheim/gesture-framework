@@ -4,6 +4,7 @@ package hs_mannheim.gestureframework.animation;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -38,6 +39,11 @@ public class ElevateAndLeaveAnimation extends GestureAnimation {
         } else {
             animatorQueue.add(playAnimator);
         }
+    }
+
+    @Override
+    public void play(Bitmap image) {
+
     }
 
     @Override

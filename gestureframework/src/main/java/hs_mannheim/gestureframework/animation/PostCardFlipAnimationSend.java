@@ -14,7 +14,7 @@ import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 /**
  * Simple SEND Animation
  */
-public class PostCardFlipAnimation extends GestureAnimation{
+public class PostCardFlipAnimationSend extends GestureAnimation{
 
     Context context;
     Animator swipeStartAnimator, swipeEndAnimator, flipLeftInAnimator, flipRightInAnimator;
@@ -22,7 +22,7 @@ public class PostCardFlipAnimation extends GestureAnimation{
     Bitmap postcard;
     Bitmap origImage;
 
-    public PostCardFlipAnimation(Context context, final ImageView view) {
+    public PostCardFlipAnimationSend(Context context, final ImageView view) {
         this.type = AnimationType.SEND;
         this.view = view;
         this.context = context;

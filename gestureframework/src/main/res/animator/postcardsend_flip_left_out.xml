@@ -9,7 +9,7 @@
 
     <objectAnimator
         android:valueFrom="1.0"
-        android:valueTo="0.0"
+        android:valueTo="0"
         android:propertyName="alpha"
         android:startOffset="100"
         android:duration="1" />
@@ -24,94 +24,4 @@
         android:valueTo="1.05"
         android:propertyName="scaleY"
         android:duration="50" />
-
-
-
-
-    <!--
-
-
-
-         card_flip_left_in.xml
-
- <set xmlns:android="http://schemas.android.com/apk/res/android">
-     <objectAnimator
-         android:valueFrom="1.0"
-         android:valueTo="0.0"
-         android:propertyName="alpha"
-         android:duration="0" />
-
-     <objectAnimator
-         android:valueFrom="-180"
-         android:valueTo="0"
-         android:propertyName="rotationY"
-         android:interpolator="@android:interpolator/accelerate_decelerate"
-         android:duration="@integer/card_flip_time_full" />
-
-     <objectAnimator
-         android:valueFrom="0.0"
-         android:valueTo="1.0"
-         android:propertyName="alpha"
-         android:startOffset="@integer/card_flip_time_half"
-         android:duration="1" />
- </set>
-     card_flip_left_out.xml
-
- <set xmlns:android="http://schemas.android.com/apk/res/android">
- <objectAnimator
-     android:valueFrom="0"
-     android:valueTo="180"
-     android:propertyName="rotationY"
-     android:interpolator="@android:interpolator/accelerate_decelerate"
-     android:duration="@integer/card_flip_time_full" />
-
- <objectAnimator
-     android:valueFrom="1.0"
-     android:valueTo="0.0"
-     android:propertyName="alpha"
-     android:startOffset="@integer/card_flip_time_half"
-     android:duration="1" />
- </set>
-     card_flip_right_in.xml
-
- <set xmlns:android="http://schemas.android.com/apk/res/android">
- <objectAnimator
-     android:valueFrom="1.0"
-     android:valueTo="0.0"
-     android:propertyName="alpha"
-     android:duration="0" />
-
- <objectAnimator
-     android:valueFrom="180"
-     android:valueTo="0"
-     android:propertyName="rotationY"
-     android:interpolator="@android:interpolator/accelerate_decelerate"
-     android:duration="@integer/card_flip_time_full" />
-
- <objectAnimator
-     android:valueFrom="0.0"
-     android:valueTo="1.0"
-     android:propertyName="alpha"
-     android:startOffset="@integer/card_flip_time_half"
-     android:duration="1" />
- </set>
-     card_flip_right_out.xml
-
- <set xmlns:android="http://schemas.android.com/apk/res/android">
- <objectAnimator
-     android:valueFrom="0"
-     android:valueTo="-180"
-     android:propertyName="rotationY"
-     android:interpolator="@android:interpolator/accelerate_decelerate"
-     android:duration="@integer/card_flip_time_full" />
-
- <objectAnimator
-     android:valueFrom="1.0"
-     android:valueTo="0.0"
-     android:propertyName="alpha"
-     android:startOffset="@integer/card_flip_time_half"
-     android:duration="1" />
- </set>
-
-     -->
 </set>

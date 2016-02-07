@@ -2,33 +2,48 @@ package hs_mannheim.gestureframework.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.animation.TimeInterpolator;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.R;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+import hs_mannheim.gestureframework.model.ImagePacket;
+import hs_mannheim.gestureframework.model.SerializableImage;
 
 /**
  * Simple SEND Animation
  */
-public class PostcardFlipAnimationSend extends GestureAnimation{
+public class PostCardFlipAnimationSend extends GestureAnimation{
 
-    Context context;
+    Activity context;
     Animator swipeStartAnimator, swipeEndAnimator, flipLeftInAnimator, flipRightInAnimator;
     DragAndDropper dragAndDropper;
-    Bitmap postcard;
-    Bitmap origImage;
+    Bitmap postcard, origImage;
+    boolean shouldCopyImageBeforeSending;
+    float originalY, originalTopMargin;
 
-    public PostcardFlipAnimationSend(Context context, final ImageView view) {
+    public PostCardFlipAnimationSend(Activity context, final ImageView view) {
         this.type = AnimationType.SEND;
         this.view = view;
+        this.originalY = view.getY();
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+        this.originalTopMargin = layoutParams.topMargin;
         this.context = context;
 
         postcard = BitmapFactory.decodeResource(context.getResources(), R.drawable.postcard);
         origImage = ((BitmapDrawable)view.getDrawable()).getBitmap();
+
+        //TODO: set shouldCopyImageBeforeSending in params
+        shouldCopyImageBeforeSending = true;
 
         registerAnimators();
         registerDragAndDropper(false, true);
@@ -36,8 +51,8 @@ public class PostcardFlipAnimationSend extends GestureAnimation{
 
     @Override
     public void play() {
-        if(!animationRunning){
-            swipeStartAnimator.start();
+        if (!animationRunning){
+            playAnimator.start();
             animatorQueue.add(playAnimator);
         } else {
             animatorQueue.add(playAnimator);
@@ -58,12 +73,13 @@ public class PostcardFlipAnimationSend extends GestureAnimation{
         }
 
         dragAndDropper.setDeltaPoint(touchPoint);
-
     }
 
     @Override
     protected void handleSwipeEnd(TouchPoint touchPoint) {
+        dragAndDropper.returnToStart();
         if(!animationRunning){
+            animatorQueue.clear();
             swipeEndAnimator.start();
         } else {
             animatorQueue.add(swipeEndAnimator);
@@ -100,8 +116,6 @@ public class PostcardFlipAnimationSend extends GestureAnimation{
         flipRightInAnimator = AnimatorInflater.loadAnimator(context, R.animator.postcardsend_flip_right_in);
         flipRightInAnimator.addListener(this);
         flipRightInAnimator.setTarget(view);
-
-
     }
 
     @Override
@@ -122,6 +136,18 @@ public class PostcardFlipAnimationSend extends GestureAnimation{
             view.setImageBitmap(origImage);
             flipRightInAnimator.start();
         }
+/*
+        //send animation finished. return to idle state
+        if (animation.equals(playAnimator)){
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
+            Log.d("Ys", "orig: " + originalY + ", current: " + view.getY());
+            Log.d("TopMargins", "orig: " + originalTopMargin + ", current: " + layoutParams.topMargin);
+            view.setElevation(2);
+            view.setImageBitmap(origImage);
+            layoutParams.topMargin = (int)originalTopMargin;
+            view.setY(originalY);
+        }
+*/
 
         if (!animatorQueue.isEmpty()) {
             animatorQueue.get(0).start();

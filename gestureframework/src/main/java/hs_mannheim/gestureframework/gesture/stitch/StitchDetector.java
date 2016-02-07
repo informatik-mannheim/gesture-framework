@@ -2,6 +2,7 @@ package hs_mannheim.gestureframework.gesture.stitch;
 
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 
 import hs_mannheim.gestureframework.gesture.swipe.SwipeConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
@@ -60,7 +61,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     }
 
     @Override
-    public void onSwipeStart(TouchPoint touchPoint) {
+    public void onSwipeStart(TouchPoint touchPoint, View view) {
         // ignore for now.
     }
 

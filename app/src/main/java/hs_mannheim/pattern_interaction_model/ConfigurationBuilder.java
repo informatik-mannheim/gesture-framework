@@ -5,6 +5,7 @@ import android.content.Context;
 import android.hardware.SensorManager;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.util.Log;
+import android.view.View;
 
 import hs_mannheim.gestureframework.connection.PostOffice;
 import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
@@ -119,7 +120,7 @@ public class ConfigurationBuilder {
         }
 
         @Override
-        public void onSwipeStart(TouchPoint touchPoint) {
+        public void onSwipeStart(TouchPoint touchPoint, View view) {
 
         }
 

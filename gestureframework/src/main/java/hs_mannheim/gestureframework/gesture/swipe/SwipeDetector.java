@@ -1,5 +1,6 @@
 package hs_mannheim.gestureframework.gesture.swipe;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -49,9 +50,11 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                handle_down(event);
+                handle_down(event, v);
+                Log.d("TOUCHEVENT", "View: " + v.getId());
                 return true;
             case MotionEvent.ACTION_UP:
                 handle_up(event);
@@ -70,10 +73,10 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
         }
     }
 
-    private void handle_down(MotionEvent event){
+    private void handle_down(MotionEvent event, View view){
         mStart = new TouchPoint(event);
         for(SwipeEventListener listener: mListeners) {
-            listener.onSwipeStart(new TouchPoint(event));
+            listener.onSwipeStart(new TouchPoint(event), view);
         }
     }
 
@@ -106,7 +109,7 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     public interface SwipeEventListener {
         void onSwipeDetected(SwipeEvent event);
         void onSwiping(TouchPoint touchPoint);
-        void onSwipeStart(TouchPoint touchPoint);
+        void onSwipeStart(TouchPoint touchPoint, View view);
         void onSwipeEnd(TouchPoint touchPoint);
     }
 }

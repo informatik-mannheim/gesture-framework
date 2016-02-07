@@ -50,10 +50,24 @@
         android:src="@drawable/cats"
         android:background="#00ff00"
         android:adjustViewBounds="true"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="50dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:elevation="2dp" />
+
+    <ImageView
+        android:id="@+id/imageViewCopy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/cats"
+        android:background="#00ff00"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -73,6 +87,15 @@
         android:id="@+id/btnLoad"
         android:layout_below="@+id/btnClear"
         android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play Anim"
+        android:onClick="playReceiveAnim"
+        android:id="@+id/btnPlayReceiveAnim"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/btnWifi" />
 
 
 </RelativeLayout>

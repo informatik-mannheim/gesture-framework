@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
@@ -32,6 +33,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     public WifiP2pManager.Channel mChannel;
 
     private boolean mIsConnected;
+    private boolean mIsConnecting = false;
     private IConnectionListener mListener;
     private ConnectedThread mConnectionThread;
     private boolean mIsTryingToConnect;
@@ -55,6 +57,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_DATA_RECEIVED:
+                        Log.d("CONNECTION", "ESTABLISHED");
                         mListener.onDataReceived((Packet) message.obj);
                         break;
                     case MSG_CONNECTION_ESTABLISHED:
@@ -85,22 +88,31 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     }
 
     @Override
-    public void connect(String address) {
-        if (isConnected()) return;
+    public void disconnect() {
+        disconnected();
+    }
 
+    @Override
+    public void connect(String address) {
+        if (isConnected() || mIsConnecting) return;
+
+        mIsConnecting = true;
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = address;
-        config.groupOwnerIntent = 15;
+        config.groupOwnerIntent = -1;
+        config.wps.setup = WpsInfo.PBC;
 
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "Wifi P2P Connection established.");
+                mIsConnecting = false;
             }
 
             @Override
             public void onFailure(int reason) {
                 Log.d(TAG, "Failed to establish Wifi P2P Connection.");
+                mIsConnecting = false;
             }
         });
     }

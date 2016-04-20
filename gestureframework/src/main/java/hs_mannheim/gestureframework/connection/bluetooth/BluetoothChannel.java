@@ -62,6 +62,11 @@ public class BluetoothChannel implements IConnection {
         this.mListener = listener;
     }
 
+    @Override
+    public void disconnect() {
+        // not implemented
+    }
+
     public String getConnectedDevice() {
         return this.isConnected() ? this.mConnectedDevice.getAddress() : "";
     }

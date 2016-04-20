@@ -1,6 +1,5 @@
 package hs_mannheim.sysplace;
 
-import android.content.Context;
 import android.graphics.Point;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -11,6 +10,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,17 +19,20 @@ import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.InteractionApplication;
 import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
 import hs_mannheim.gestureframework.model.GestureDetector;
-import hs_mannheim.gestureframework.model.IConnection;
+import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
+import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.model.PacketType;
 
-public class MainActivity extends AppCompatActivity implements IViewContext, GestureDetector.GestureEventListener {
+public class MainActivity extends AppCompatActivity implements IViewContext, GestureDetector.GestureEventListener, IPacketReceiver {
 
     private String TAG = "MAIN ACTIVITY";
-
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    final HashMap<String, String> buddies = new HashMap<String, String>();
-    private String mOther;
+
+
+    public MainActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,25 +42,22 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        Context context = getApplicationContext();
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
 
         builder.withWifiDirect().bump().buildAndRegister();
 
-
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getGestureDetector().registerGestureEventListener(this);
-        // creap
-        IConnection connection = ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection();
-        mManager = ((WifiDirectChannel) connection).mManager;
-        mChannel = ((WifiDirectChannel) connection).mChannel;
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
+
+        // HACK
+        mChannel = ((WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection()).mChannel;
+        mManager = ((WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection()).mManager;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         startRegistration();
-        discoverService();
-
     }
 
     @Override
@@ -69,15 +69,12 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     private void startRegistration() {
         //  Create a string map containing information about your service.
         Map record = new HashMap();
-        record.put("listenport", String.valueOf(9999));
-        record.put("buddyname", "John Doe" + (int) (Math.random() * 1000));
-        record.put("available", "visible");
+        record.put("app", "sysplace");
 
         // Service information.  Pass it an instance name, service type
         // _protocol._transportlayer , and the map containing
         // information other devices will want once they connect to this one.
-        WifiP2pDnsSdServiceInfo serviceInfo =
-                WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
+        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
 
         // Add the local service, sending the service info, network channel,
         // and listener that will be used to indicate success or failure of
@@ -93,19 +90,17 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
                 // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
             }
         });
-    }
 
 
+        // and for the discovery...
 
-    private void discoverService() {
         WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
-            public void onDnsSdTxtRecordAvailable(
-                    String fullDomain, Map record, WifiP2pDevice device) {
+            public void onDnsSdTxtRecordAvailable(String fullDomain, Map record, WifiP2pDevice device) {
                 Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-                buddies.put(device.deviceAddress, (String) record.get("buddyname"));
-                mOther = device.deviceAddress;
                 Log.d(TAG, "Device address is " + device.deviceAddress);
+
+                ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().connect(device.deviceAddress);
             }
         };
 
@@ -113,12 +108,13 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
             @Override
             public void onDnsSdServiceAvailable(String instanceName, String registrationType,
                                                 WifiP2pDevice resourceType) {
-
+                Log.d(TAG, "Service record available");
                 // Update the device name with the human-friendly version from
                 // the DnsTxtRecord, assuming one arrived.
+/*
                 resourceType.deviceName = buddies
                         .containsKey(resourceType.deviceAddress) ? buddies
-                        .get(resourceType.deviceAddress) : resourceType.deviceName;
+                        .get(resourceType.deviceAddress) : resourceType.deviceName;*/
             }
         };
 
@@ -130,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
                 new WifiP2pManager.ActionListener() {
                     @Override
                     public void onSuccess() {
+                        Log.d(TAG, "Service Request Added");
                     }
 
                     @Override
@@ -138,11 +135,18 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
                     }
                 });
 
+    }
+
+
+
+    private void discoverService() {
+
+
         mManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
 
             @Override
             public void onSuccess() {
-                Log.d(TAG, "XYZAAA");
+                Log.d(TAG, "Successfully started service discovery");
             }
 
             @Override
@@ -166,9 +170,21 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
     @Override
     public void onGestureDetected() {
-        Log.d(TAG, mOther);
-        if(mOther != null) {
-            ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().connect(mOther);
-        }
+        discoverService();
+    }
+
+    public void disconnect(View view) {
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().disconnect();
+    }
+
+    @Override
+    public void receive(Packet packet) {
+        Log.d(TAG, "Packet received!");
+        Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public boolean accept(PacketType type) {
+        return true;
     }
 }

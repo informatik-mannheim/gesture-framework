@@ -12,7 +12,7 @@ import java.net.Socket;
 import hs_mannheim.gestureframework.model.Packet;
 
 public class ConnectedThread extends Thread {
-    private final String TAG = "[WifiP2P ConnectedThread]";
+    private final String TAG = "[WifiP2P ConnThread]";
 
     private final Socket mSocket;
     private final WifiDirectChannel mChannel;
@@ -32,7 +32,7 @@ public class ConnectedThread extends Thread {
             tmpIn = socket.getInputStream();
             tmpOut = socket.getOutputStream();
         } catch (IOException e) {
-            Log.e(TAG, "Could not acquire streams from socket");
+            Log.e(TAG, "streams not acquired");
         }
 
         mInStream = tmpIn;

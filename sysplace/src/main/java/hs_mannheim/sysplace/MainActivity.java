@@ -1,6 +1,7 @@
 package hs_mannheim.sysplace;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
@@ -170,5 +171,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         if(mOther != null) {
             ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().connect(mOther);
         }
+    }
+
+    public void switchToConnectedActivity(View view){
+        Intent intent = new Intent(this, ConnectedActivity.class);
+        startActivity(intent);
     }
 }

@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
 
-        builder.withWifiDirect().bump().buildAndRegister();
+        builder.withWifiDirect().swipe().buildAndRegister();
 
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getGestureDetector().registerGestureEventListener(this);
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     protected void onResume() {
         super.onResume();
         startRegistration();
+        discoverService();
     }
 
     @Override
@@ -67,18 +68,12 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     }
 
     private void startRegistration() {
-        //  Create a string map containing information about your service.
-        Map record = new HashMap();
-        record.put("app", "sysplace");
 
-        // Service information.  Pass it an instance name, service type
-        // _protocol._transportlayer , and the map containing
-        // information other devices will want once they connect to this one.
+        Map record = new HashMap();
+        record.put( "app", "sysplace");
+
         WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
 
-        // Add the local service, sending the service info, network channel,
-        // and listener that will be used to indicate success or failure of
-        // the request.
         mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -86,11 +81,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
             }
 
             @Override
-            public void onFailure(int arg0) {
-                // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-            }
+            public void onFailure(int arg0) { }
         });
-
 
         // and for the discovery...
 
@@ -99,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
             public void onDnsSdTxtRecordAvailable(String fullDomain, Map record, WifiP2pDevice device) {
                 Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
                 Log.d(TAG, "Device address is " + device.deviceAddress);
-
                 ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().connect(device.deviceAddress);
             }
         };
@@ -109,12 +100,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
             public void onDnsSdServiceAvailable(String instanceName, String registrationType,
                                                 WifiP2pDevice resourceType) {
                 Log.d(TAG, "Service record available");
-                // Update the device name with the human-friendly version from
-                // the DnsTxtRecord, assuming one arrived.
-/*
-                resourceType.deviceName = buddies
-                        .containsKey(resourceType.deviceAddress) ? buddies
-                        .get(resourceType.deviceAddress) : resourceType.deviceName;*/
             }
         };
 
@@ -131,17 +116,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
                     @Override
                     public void onFailure(int code) {
-                        // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
                     }
                 });
-
     }
 
-
-
     private void discoverService() {
-
-
         mManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
 
             @Override
@@ -151,14 +130,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
             @Override
             public void onFailure(int code) {
-                // Command failed.  Check for P2P_UNSUPPORTED, ERROR, or BUSY
-
             }});
         }
 
     @Override
     public View getInteractionView() {
-
         return findViewById(R.id.layout_main);
     }
 

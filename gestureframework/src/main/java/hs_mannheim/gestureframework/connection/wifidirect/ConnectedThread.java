@@ -53,8 +53,14 @@ public class ConnectedThread extends Thread {
         while (true) {
             try {
                 //TODO: This still crashes!
-                Packet data = (Packet) objectInputStream.readObject();
-                mChannel.receive(data);
+                if(objectInputStream != null)
+                {
+                    Packet data = (Packet) objectInputStream.readObject();
+                    mChannel.receive(data);
+                }
+                else {
+                    this.cancel();
+                }
 
             } catch (IOException e) {
                 Log.e(TAG, e.toString());

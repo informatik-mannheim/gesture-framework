@@ -96,10 +96,9 @@ public class ConfigurationBuilder {
 
     private SwipeDetector createSwipeDetector(SwipeDetector.SwipeEventListener listener) {
         return new SwipeDetector(mViewContext)
-                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.VERTICAL))
+                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
                 .addConstraint(new SwipeDurationConstraint(1000))
-                .addConstraint(new SwipeMinDistanceConstraint(700))
-                .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.NORTH))
+                .addConstraint(new SwipeMinDistanceConstraint(500))
                 .addSwipeListener(new DebugSwipeListener());
     }
 

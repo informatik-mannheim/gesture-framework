@@ -7,31 +7,24 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:id="@+id/layout_main"
-    tools:context="hs_mannheim.sysplace.MainActivity">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        android:id="@+id/textView" />
-
+    tools:context="hs_mannheim.sysplace.ConnectedActivity">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_disconnect"
-        android:text="Disconnect"
-        android:onClick="disconnect"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
-        android:clickable="true"
-        android:layout_centerVertical="true"
+        android:text="Choose Image"
+        android:id="@+id/ImageChooserButton"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="switchToConnectedActivity" />
+        android:layout_marginBottom="24dp"
+        android:onClick="chooseImage"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgView"
+        android:src="@drawable/polaroid"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

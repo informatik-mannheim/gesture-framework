@@ -1,4 +1,4 @@
-package hs_mannheim.pattern_interaction_model;
+package hs_mannheim.gestureframework;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;

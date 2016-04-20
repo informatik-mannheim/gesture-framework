@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
@@ -27,8 +28,8 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private final IntentFilter mIntentFilter;
     private final Handler _handler;
 
-    private WifiP2pManager mManager;
-    private WifiP2pManager.Channel mChannel;
+    public WifiP2pManager mManager;
+    public WifiP2pManager.Channel mChannel;
 
     private boolean mIsConnected;
     private IConnectionListener mListener;

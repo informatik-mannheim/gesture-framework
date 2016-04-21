@@ -15,6 +15,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
+import hs_mannheim.gestureframework.connection.VoidActionListener;
 import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.IConnectionListener;
 import hs_mannheim.gestureframework.model.Packet;
@@ -73,10 +74,8 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public void transfer(Packet packet) {
-        Log.d(TAG, "Sending " + packet);
-
         if (isConnected()) {
-            this.mConnectionThread.write(packet);
+            mConnectionThread.write(packet);
         }
     }
 
@@ -92,7 +91,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public void connect(String address) {
-        if (isConnected() || mIsTryingToConnect) return;
+        if (isConnected()) return;
 
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = address;
@@ -131,7 +130,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private void onConnectionChanged(Intent intent) {
         NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
-        if (networkInfo.isConnected() && !mIsTryingToConnect && !isConnected()) { /* this only means p2p is connected */
+        if (networkInfo.isConnected() && !isConnected()) { /* this only means p2p is connected */
             Log.d(TAG, "No socket open. Trying to connect");
             mIsTryingToConnect = true;
             mManager.requestConnectionInfo(mChannel, this);
@@ -156,22 +155,26 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
             return;
         }
 
+        Log.d(TAG, "disconnecting");
+
         mIsConnected = false;
         mIsTryingToConnect = false;
+        mConnectionThread.cancel();
         mConnectionThread = null;
-        mManager.removeGroup(mChannel, new IngoreActionListener());
+        mManager.removeGroup(mChannel, new VoidActionListener());
         _handler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
     }
 
     public void receive(Object data) {
         _handler.obtainMessage(MSG_DATA_RECEIVED, data).sendToTarget();
-        Log.d(TAG, "Data received: " + data);
     }
 
     public void connected(ConnectedThread connectionThread) {
+        Log.d(TAG, "connecting");
+
         mIsConnected = true;
         mIsTryingToConnect = false;
-        this.mConnectionThread = connectionThread;
+        mConnectionThread = connectionThread;
         _handler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
     }
 }

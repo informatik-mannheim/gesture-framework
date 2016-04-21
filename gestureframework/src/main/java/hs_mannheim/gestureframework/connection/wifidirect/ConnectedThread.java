@@ -43,40 +43,30 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
-        ObjectInputStream objectInputStream = null;
+        ObjectInputStream objectInputStream;
         try {
             objectInputStream = new ObjectInputStream(mInStream);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "some error");
             this.cancel();
+            return;
         }
 
         while (true) {
             try {
-                //TODO: This still crashes!
-                if(objectInputStream != null)
-                {
-                    Packet data = (Packet) objectInputStream.readObject();
-                    mChannel.receive(data);
-                }
-                else {
-                    this.cancel();
-                }
-
+                Packet data = (Packet) objectInputStream.readObject();
+                mChannel.receive(data);
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
-                Log.e(TAG, "IOEx");
                 this.cancel();
                 break;
             } catch (ClassNotFoundException e) {
                 Log.e(TAG, e.toString());
-                Log.e(TAG, "CNFEx");
                 this.cancel();
                 break;
             } catch (NullPointerException e) {
                 Log.e(TAG, e.toString());
-                Log.e(TAG, "NPEx");
                 this.cancel();
                 break;
             }
@@ -115,10 +105,6 @@ public class ConnectedThread extends Thread {
             if(mOutStream != null) {
                 mOutStream.close();
                 Log.d(TAG, "Closing OutStream");
-            }
-
-            if(mObjectOutputStream != null) {
-                mObjectOutputStream.close();
             }
 
             mChannel.disconnected();

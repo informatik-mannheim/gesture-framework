@@ -46,7 +46,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
         //TODO: This crashes when containing activity is paused
         context.registerReceiver(this, mIntentFilter);
-//somehow broken now :-(
+
         this._handler = createListenerHandler();
     }
 
@@ -96,7 +96,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = address;
-        config.groupOwnerIntent = 7;
+        config.groupOwnerIntent = -1;
         config.wps.setup = WpsInfo.PBC;
 
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {

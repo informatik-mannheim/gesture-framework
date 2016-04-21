@@ -113,14 +113,10 @@ public class ConfigurationBuilder {
         }
 
         @Override
-        public void onSwiping(TouchPoint touchPoint) {
-            Log.d("[Swiping]", touchPoint.toString());
-        }
+        public void onSwiping(TouchPoint touchPoint) { }
 
         @Override
-        public void onSwipeStart(TouchPoint touchPoint, View view) {
-
-        }
+        public void onSwipeStart(TouchPoint touchPoint, View view) { }
 
         @Override
         public void onSwipeEnd(TouchPoint touchPoint) {

@@ -11,6 +11,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -59,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     protected void onResume() {
         super.onResume();
         startRegistration();
-        discoverService();
     }
 
     @Override
@@ -71,9 +71,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     private void startRegistration() {
 
         Map record = new HashMap();
-        record.put( "app", "sysplace");
 
-        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
+        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_sysplace._tcp", record);
 
         mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
             @Override
@@ -90,9 +89,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
             @Override
             public void onDnsSdTxtRecordAvailable(String fullDomain, Map record, WifiP2pDevice device) {
+
                 Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-                Log.d(TAG, "Device address is " + device.deviceAddress);
-                ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().connect(device.deviceAddress);
             }
         };
 
@@ -101,12 +99,14 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
             public void onDnsSdServiceAvailable(String instanceName, String registrationType,
                                                 WifiP2pDevice resourceType) {
                 Log.d(TAG, "Service record available");
+                ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().connect(resourceType.deviceAddress);
             }
         };
 
         mManager.setDnsSdResponseListeners(mChannel, servListener, txtListener);
 
-        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance("_sysplace._tcp");
+
         mManager.addServiceRequest(mChannel,
                 serviceRequest,
                 new WifiP2pManager.ActionListener() {
@@ -157,7 +157,16 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     @Override
     public void receive(Packet packet) {
         Log.d(TAG, "Packet received!");
-        Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
+        if(packet.getMessage().equals("Connection established")) {
+            ((TextView) findViewById(R.id.textView)).setText("Connected");
+        }
+        else if(packet.getMessage().equals("Connection lost")) {
+            ((TextView) findViewById(R.id.textView)).setText("NOT Connected");
+        }
+        else {
+            Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
@@ -168,5 +177,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     public void switchToConnectedActivity(View view){
         Intent intent = new Intent(this, ConnectedActivity.class);
         startActivity(intent);
+    }
+
+    public void ping(View view) {
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().send(new Packet("Ping!"));
     }
 }

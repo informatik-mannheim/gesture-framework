@@ -22,6 +22,7 @@ public class ConnectedThread extends Thread {
     private ObjectOutputStream mObjectOutputStream;
 
     public ConnectedThread(Socket socket, WifiDirectChannel channel) {
+        Log.d(TAG, "Creating ConnThread");
         mSocket = socket;
         mChannel = channel;
 
@@ -47,6 +48,7 @@ public class ConnectedThread extends Thread {
             objectInputStream = new ObjectInputStream(mInStream);
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e(TAG, "some error");
             this.cancel();
         }
 
@@ -64,14 +66,17 @@ public class ConnectedThread extends Thread {
 
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
+                Log.e(TAG, "IOEx");
                 this.cancel();
                 break;
             } catch (ClassNotFoundException e) {
                 Log.e(TAG, e.toString());
+                Log.e(TAG, "CNFEx");
                 this.cancel();
                 break;
             } catch (NullPointerException e) {
                 Log.e(TAG, e.toString());
+                Log.e(TAG, "NPEx");
                 this.cancel();
                 break;
             }
@@ -92,6 +97,7 @@ public class ConnectedThread extends Thread {
         } catch (IOException e) {
             Log.e(TAG, "Error writing packet to stream");
         }
+
     }
 
     /**
@@ -99,9 +105,22 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
+            mSocket.close(); // does this really help?
+
+            if(mInStream != null) {
+                mInStream.close();
+                Log.d(TAG, "Closing InStream");
+            }
+
+            if(mOutStream != null) {
+                mOutStream.close();
+                Log.d(TAG, "Closing OutStream");
+            }
+
             if(mObjectOutputStream != null) {
                 mObjectOutputStream.close();
             }
+
             mChannel.disconnected();
         } catch (IOException e) {
             Log.e(TAG, "Error closing client connection");

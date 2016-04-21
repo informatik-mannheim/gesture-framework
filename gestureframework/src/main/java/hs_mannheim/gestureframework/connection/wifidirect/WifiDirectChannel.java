@@ -38,6 +38,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private boolean mIsConnected;
     private IConnectionListener mListener;
     private ConnectedThread mConnectionThread;
+    private boolean mIsGroupOwner;
 
 
     public WifiDirectChannel(WifiP2pManager manager, WifiP2pManager.Channel channel, Context context) {
@@ -96,7 +97,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         if (isConnected()) return;
 
         mConfig = new WifiP2pConfig();
-        mConfig.groupOwnerIntent = new Random().nextInt(14);
+        mConfig.groupOwnerIntent = -1;
         mConfig.wps.setup = WpsInfo.PBC;
         mConfig.deviceAddress = address;
 
@@ -135,8 +136,8 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
             Log.d(TAG, "No socket open. Trying to connect");
             mManager.requestConnectionInfo(mChannel, this);
         } else {
-            Log.d(TAG, "P2P Connection closed");
-            this.disconnected();
+            Log.d(TAG, "P2P Connection closed"); // kommt bei einem gerät nicht an!!!!
+            disconnected();
         }
     }
 
@@ -156,12 +157,18 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
             return;
         }
 
+        mIsConnected = false;
+
         Log.d(TAG, "disconnecting");
 
-        mIsConnected = false;
+        // this will close the socket, NOT the P2P connection
         mConnectionThread.cancel();
         mConnectionThread = null;
+
+        // this closes the P2P connection. only one device (the group owner) requests this.
+
         mManager.removeGroup(mChannel, new VoidActionListener());
+
         _handler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
     }
 
@@ -170,9 +177,10 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     }
 
     public void connected(ConnectedThread connectionThread) {
+        mIsConnected = true;
+
         Log.d(TAG, "connecting");
 
-        mIsConnected = true;
         mConnectionThread = connectionThread;
         _handler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
     }

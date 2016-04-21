@@ -50,7 +50,12 @@ public class ConfigurationBuilder {
 
     public ConfigurationBuilder withWifiDirect() {
         WifiP2pManager wifiP2pManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
-        WifiP2pManager.Channel channel = wifiP2pManager.initialize(mContext, mContext.getMainLooper(), null);
+        WifiP2pManager.Channel channel = wifiP2pManager.initialize(mContext, mContext.getMainLooper(), new WifiP2pManager.ChannelListener() {
+            @Override
+            public void onChannelDisconnected() {
+                Log.d("[Channel]", "CHANNEL DISCONNECTED!!!!");
+            }
+        });
         mChannel = new WifiDirectChannel(wifiP2pManager, channel, mContext);
         mPostOffice = new PostOffice(mChannel);
         return this;

@@ -58,7 +58,13 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         mChannel = ((WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection()).mChannel;
         mManager = ((WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection()).mManager;
 
-        startRegistration();
+        registerLocalService();
+        registerServiceRequest();
+    }
+
+    private void registerServiceRequest() {
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        mManager.addServiceRequest(mChannel, serviceRequest, new LogActionListener(TAG, "Service Request added", "Service request could not be added. Turn on of Wifi, idiot."));
     }
 
     @Override
@@ -71,20 +77,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         super.onPause();
     }
 
-    private void startRegistration() {
+    private void registerLocalService() {
         mManager.clearLocalServices(mChannel, new LogActionListener(TAG, "services cleared", "services NOT cleared"));
         WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", new HashMap<String, String>());
 
         mManager.addLocalService(mChannel, serviceInfo, new LogActionListener(TAG, "Service registered", "Could not register service"));
-
-        // and for the discovery...
-
-        WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
-            @Override
-            public void onDnsSdTxtRecordAvailable(String fullDomain, Map record, WifiP2pDevice device) {
-                Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-            }
-        };
 
         WifiP2pManager.DnsSdServiceResponseListener servListener = new WifiP2pManager.DnsSdServiceResponseListener() {
             @Override
@@ -96,9 +93,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         };
 
         mManager.setDnsSdResponseListeners(mChannel, servListener, null);
-
-        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-        mManager.addServiceRequest(mChannel, serviceRequest, new LogActionListener(TAG, "Service Request added", "Service request could not be added. Turn on of Wifi, idiot."));
     }
 
     private void discoverService() {

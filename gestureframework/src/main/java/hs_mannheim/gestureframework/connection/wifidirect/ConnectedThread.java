@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 import hs_mannheim.gestureframework.model.Packet;
 
@@ -97,10 +98,13 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
+
             if (!mSocket.isClosed()) {
                 Log.d(TAG, "Closing Socket");
                 mSocket.close();
             }
+        } catch(SocketException ex) {
+            Log.d(TAG, "Nasty Socker Exception");
         } catch (IOException e) {
             Log.e(TAG, "Error closing client connection");
         }

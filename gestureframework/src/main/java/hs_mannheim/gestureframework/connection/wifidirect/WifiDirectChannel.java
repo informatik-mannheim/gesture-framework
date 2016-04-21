@@ -7,13 +7,14 @@ import android.content.IntentFilter;
 import android.net.NetworkInfo;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
-import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
+import java.util.Random;
 
 import hs_mannheim.gestureframework.connection.VoidActionListener;
 import hs_mannheim.gestureframework.model.IConnection;
@@ -32,11 +33,12 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     public WifiP2pManager mManager;
     public WifiP2pManager.Channel mChannel;
+    private WifiP2pConfig mConfig;
 
     private boolean mIsConnected;
     private IConnectionListener mListener;
     private ConnectedThread mConnectionThread;
-    private boolean mIsTryingToConnect = false;
+
 
     public WifiDirectChannel(WifiP2pManager manager, WifiP2pManager.Channel channel, Context context) {
         this.mManager = manager;
@@ -93,12 +95,12 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     public void connect(String address) {
         if (isConnected()) return;
 
-        WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = address;
-        config.groupOwnerIntent = -1;
-        config.wps.setup = WpsInfo.PBC;
+        mConfig = new WifiP2pConfig();
+        mConfig.groupOwnerIntent = new Random().nextInt(14);
+        mConfig.wps.setup = WpsInfo.PBC;
+        mConfig.deviceAddress = address;
 
-        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+        mManager.connect(mChannel, mConfig, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 Log.d(TAG, "Wifi P2P Connection established.");
@@ -107,7 +109,6 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
             @Override
             public void onFailure(int reason) {
                 Log.d(TAG, "Failed to establish Wifi P2P Connection (reason " + Integer.toString(reason) + ")");
-                mIsTryingToConnect = false;
             }
         });
     }
@@ -132,9 +133,9 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
         if (networkInfo.isConnected() && !isConnected()) { /* this only means p2p is connected */
             Log.d(TAG, "No socket open. Trying to connect");
-            mIsTryingToConnect = true;
             mManager.requestConnectionInfo(mChannel, this);
         } else {
+            Log.d(TAG, "P2P Connection closed");
             this.disconnected();
         }
     }
@@ -158,7 +159,6 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         Log.d(TAG, "disconnecting");
 
         mIsConnected = false;
-        mIsTryingToConnect = false;
         mConnectionThread.cancel();
         mConnectionThread = null;
         mManager.removeGroup(mChannel, new VoidActionListener());
@@ -173,7 +173,6 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         Log.d(TAG, "connecting");
 
         mIsConnected = true;
-        mIsTryingToConnect = false;
         mConnectionThread = connectionThread;
         _handler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
     }

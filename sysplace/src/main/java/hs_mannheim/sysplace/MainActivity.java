@@ -35,9 +35,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     private String TAG = "MAIN ACTIVITY";
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private Runnable mServiceBroadcastingRunnable;
-    Handler mServiceBroadcastingHandler = new Handler();
-    private final int INTERVAL = 2000;
 
     public MainActivity() {
     }
@@ -75,33 +72,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     }
 
     private void startRegistration() {
-        mServiceBroadcastingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                mManager.discoverPeers(mChannel, new VoidActionListener());
-                mServiceBroadcastingHandler.postDelayed(mServiceBroadcastingRunnable, INTERVAL);
-            }
-        };
+        mManager.clearLocalServices(mChannel, new LogActionListener(TAG, "services cleared", "services NOT cleared"));
+        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", new HashMap<String, String>());
 
-
-        Map record = new HashMap();
-        record.put("Stuff", "More Stuff");
-
-        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", record);
-
-        //mManager.addLocalService(mChannel, serviceInfo, new LogActionListener(TAG, "Service registered", "Could not register service"));
-        mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                Log.d(TAG, "service added, starting peer discovery");
-               // mServiceBroadcastingHandler.postDelayed(mServiceBroadcastingRunnable, INTERVAL);
-            }
-
-            @Override
-            public void onFailure(int reason) {
-
-            }
-        });
+        mManager.addLocalService(mChannel, serviceInfo, new LogActionListener(TAG, "Service registered", "Could not register service"));
 
         // and for the discovery...
 
@@ -121,10 +95,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
             }
         };
 
-        mManager.setDnsSdResponseListeners(mChannel, servListener, txtListener);
+        mManager.setDnsSdResponseListeners(mChannel, servListener, null);
 
         WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-
         mManager.addServiceRequest(mChannel, serviceRequest, new LogActionListener(TAG, "Service Request added", "Service request could not be added. Turn on of Wifi, idiot."));
     }
 

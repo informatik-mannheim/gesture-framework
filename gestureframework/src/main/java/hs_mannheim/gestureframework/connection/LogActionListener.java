@@ -20,7 +20,7 @@ public class LogActionListener implements WifiP2pManager.ActionListener {
     }
 
     @Override
-    public void onFailure(int i) {
-        Log.d(mTag, mFailMessage);
+    public void onFailure(int reason) {
+        Log.d(mTag, String.format("%s (reason: %d)", mFailMessage, reason));
     }
 }

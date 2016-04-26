@@ -1,12 +1,15 @@
 package hs_mannheim.sysplace;
 
+import android.content.AsyncQueryHandler;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
 import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +22,8 @@ import java.util.Map;
 
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.InteractionApplication;
+import hs_mannheim.gestureframework.connection.LogActionListener;
+import hs_mannheim.gestureframework.connection.VoidActionListener;
 import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
@@ -37,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     private String TAG = "MAIN ACTIVITY";
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-
 
     public MainActivity() {
     }
@@ -61,85 +65,47 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         // HACK
         mChannel = ((WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection()).mChannel;
         mManager = ((WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection()).mManager;
+
+        registerLocalService();
+        registerServiceRequest();
+    }
+
+    private void registerServiceRequest() {
+        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
+        mManager.addServiceRequest(mChannel, serviceRequest, new LogActionListener(TAG, "Service Request added", "Service request could not be added. Turn on of Wifi, idiot."));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        startRegistration();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
-    private void startRegistration() {
+    private void registerLocalService() {
+        mManager.clearLocalServices(mChannel, new LogActionListener(TAG, "services cleared", "services NOT cleared"));
+        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", new HashMap<String, String>());
 
-        Map record = new HashMap();
-
-        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_sysplace._tcp", record);
-
-        mManager.addLocalService(mChannel, serviceInfo, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-              Log.d(TAG, "Service registered");
-            }
-
-            @Override
-            public void onFailure(int arg0) { }
-        });
-
-        // and for the discovery...
-
-        WifiP2pManager.DnsSdTxtRecordListener txtListener = new WifiP2pManager.DnsSdTxtRecordListener() {
-            @Override
-            public void onDnsSdTxtRecordAvailable(String fullDomain, Map record, WifiP2pDevice device) {
-
-                Log.d(TAG, "DnsSdTxtRecord available -" + record.toString());
-            }
-        };
+        mManager.addLocalService(mChannel, serviceInfo, new LogActionListener(TAG, "Service registered", "Could not register service"));
 
         WifiP2pManager.DnsSdServiceResponseListener servListener = new WifiP2pManager.DnsSdServiceResponseListener() {
             @Override
             public void onDnsSdServiceAvailable(String instanceName, String registrationType,
                                                 WifiP2pDevice resourceType) {
-                Log.d(TAG, "Service record available");
                 ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().connect(resourceType.deviceAddress);
+                Log.d(TAG, "Service record available");
             }
         };
 
-        mManager.setDnsSdResponseListeners(mChannel, servListener, txtListener);
-
-        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance("_sysplace._tcp");
-
-        mManager.addServiceRequest(mChannel,
-                serviceRequest,
-                new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                        Log.d(TAG, "Service Request Added");
-                    }
-
-                    @Override
-                    public void onFailure(int code) {
-                    }
-                });
+        mManager.setDnsSdResponseListeners(mChannel, servListener, null);
     }
 
     private void discoverService() {
-        mManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
-
-            @Override
-            public void onSuccess() {
-                Log.d(TAG, "Successfully started service discovery");
-            }
-
-            @Override
-            public void onFailure(int code) {
-            }});
-        }
+        mManager.discoverServices(mChannel, new LogActionListener(TAG, "Service discovery started", "Service discovery NOT started."));
+    }
 
     @Override
     public View getInteractionView() {

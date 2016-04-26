@@ -3,6 +3,8 @@ package hs_mannheim.gestureframework;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.wifi.p2p.WifiP2pManager;
+import android.util.Log;
+import android.view.View;
 
 import hs_mannheim.gestureframework.connection.PostOffice;
 import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
@@ -11,6 +13,8 @@ import hs_mannheim.gestureframework.gesture.bump.BumpDetector;
 import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.model.GestureDetector;
 import hs_mannheim.gestureframework.model.GestureDetectorBuilder;
 import hs_mannheim.gestureframework.model.GestureManager;

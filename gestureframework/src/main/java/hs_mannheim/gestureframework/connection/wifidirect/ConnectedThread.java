@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 import hs_mannheim.gestureframework.model.Packet;
 
@@ -42,43 +43,35 @@ public class ConnectedThread extends Thread {
         mChannel.connected(this);
     }
 
+    @Override
     public void run() {
-        ObjectInputStream objectInputStream = null;
+        ObjectInputStream objectInputStream;
         try {
             objectInputStream = new ObjectInputStream(mInStream);
         } catch (IOException e) {
-            e.printStackTrace();
-            Log.e(TAG, "some error");
-            this.cancel();
+            Log.e(TAG, "Error creating Input stream. Disconnecting.");
+            mChannel.disconnect();
+            return;
         }
 
         while (true) {
             try {
-                //TODO: This still crashes!
-                if(objectInputStream != null)
-                {
-                    Packet data = (Packet) objectInputStream.readObject();
-                    mChannel.receive(data);
-                }
-                else {
-                    this.cancel();
-                }
-
+                Packet data = (Packet) objectInputStream.readObject();
+                mChannel.receive(data);
             } catch (IOException e) {
                 Log.e(TAG, e.toString());
-                Log.e(TAG, "IOEx");
-                this.cancel();
+                mChannel.disconnect();
                 break;
             } catch (ClassNotFoundException e) {
                 Log.e(TAG, e.toString());
-                Log.e(TAG, "CNFEx");
-                this.cancel();
+                mChannel.disconnect();
                 break;
             } catch (NullPointerException e) {
                 Log.e(TAG, e.toString());
-                Log.e(TAG, "NPEx");
-                this.cancel();
+                mChannel.disconnect();
                 break;
+            } catch(Exception e) {
+                Log.e(TAG, "weird exception");
             }
         }
     }
@@ -90,7 +83,7 @@ public class ConnectedThread extends Thread {
      */
     public void write(Packet packet) {
         try {
-            if(mObjectOutputStream == null) {
+            if (mObjectOutputStream == null) {
                 mObjectOutputStream = new ObjectOutputStream(mOutStream);
             }
             mObjectOutputStream.writeObject(packet);
@@ -105,23 +98,13 @@ public class ConnectedThread extends Thread {
      */
     public void cancel() {
         try {
-            mSocket.close(); // does this really help?
 
-            if(mInStream != null) {
-                mInStream.close();
-                Log.d(TAG, "Closing InStream");
+            if (!mSocket.isClosed()) {
+                Log.d(TAG, "Closing Socket");
+                mSocket.close();
             }
-
-            if(mOutStream != null) {
-                mOutStream.close();
-                Log.d(TAG, "Closing OutStream");
-            }
-
-            if(mObjectOutputStream != null) {
-                mObjectOutputStream.close();
-            }
-
-            mChannel.disconnected();
+        } catch(SocketException ex) {
+            Log.d(TAG, "Nasty Socker Exception");
         } catch (IOException e) {
             Log.e(TAG, "Error closing client connection");
         }

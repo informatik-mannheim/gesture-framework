@@ -26,7 +26,7 @@ public class Client extends AsyncTask<Void, Void, Void> {
 
         try {
             Socket socket = new Socket();
-            socket.connect(new InetSocketAddress(this._host, this._port), 2000); // really?
+            socket.connect(new InetSocketAddress(this._host, this._port), 5000);
 
             new ConnectedThread(socket, _channel).start();
         } catch (IOException e) {

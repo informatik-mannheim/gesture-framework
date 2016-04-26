@@ -50,11 +50,9 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 handle_down(event, v);
-                Log.d("TOUCHEVENT", "View: " + v.getId());
                 return true;
             case MotionEvent.ACTION_UP:
                 handle_up(event);
@@ -69,14 +67,14 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
     private void handle_move(MotionEvent event) {
         for(SwipeEventListener listener: mListeners) {
-            listener.onSwiping(new TouchPoint(event));
+            listener.onSwiping(this, new TouchPoint(event));
         }
     }
 
     private void handle_down(MotionEvent event, View view){
         mStart = new TouchPoint(event);
         for(SwipeEventListener listener: mListeners) {
-            listener.onSwipeStart(new TouchPoint(event), view);
+            listener.onSwipeStart(this, new TouchPoint(event), view);
         }
     }
 
@@ -95,11 +93,11 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
             super.fireGestureDetected();
 
             for(SwipeEventListener listener: mListeners) {
-                listener.onSwipeDetected(swipeEvent);
+                listener.onSwipeDetected(this, swipeEvent);
             }
         } else {
             for (SwipeEventListener listener: mListeners) {
-                listener.onSwipeEnd(end);
+                listener.onSwipeEnd(this, end);
             }
         }
 
@@ -107,9 +105,9 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     }
 
     public interface SwipeEventListener {
-        void onSwipeDetected(SwipeEvent event);
-        void onSwiping(TouchPoint touchPoint);
-        void onSwipeStart(TouchPoint touchPoint, View view);
-        void onSwipeEnd(TouchPoint touchPoint);
+        void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event);
+        void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint);
+        void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view);
+        void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint);
     }
 }

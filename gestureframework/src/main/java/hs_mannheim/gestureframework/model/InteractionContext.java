@@ -1,24 +1,25 @@
 package hs_mannheim.gestureframework.model;
 
 import android.database.Observable;
+import android.view.View;
 
-public class InteractionContext extends Observable<AllEventsListener> implements GestureDetector.GestureEventListener, IPacketReceiver {
+import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
-    private final GestureDetector mGestureDetector;
+public class InteractionContext extends Observable<AllEventsListener> implements IPacketReceiver, GestureManager.GestureListener {
+
+    private final GestureManager mGestureManager;
     private final Selection mSelection;
     private final IConnection mConnection;
     private final IPostOffice mPostOffice;
 
-    public InteractionContext(GestureDetector gestureDetector,
-                              Selection selection,
-                              IConnection connection,
-                              IPostOffice postOffice) {
-
-        mGestureDetector = gestureDetector;
+    public InteractionContext(GestureManager gestureManager, Selection selection, IConnection connection, IPostOffice postOffice) {
+        mGestureManager = gestureManager;
         mSelection = selection;
         mConnection = connection;
         mPostOffice = postOffice; /* only PostOffice talks to the connection */
-        mGestureDetector.registerGestureEventListener(this);
+
+        mGestureManager.registerGestureEventListenerAll(this);
     }
 
     public IPostOffice getPostOffice() {
@@ -33,18 +34,45 @@ public class InteractionContext extends Observable<AllEventsListener> implements
         mSelection.updateSelection(data);
     }
 
-    public void updateViewContext(IViewContext viewContext) {
+    /*public void updateViewContext(IViewContext viewContext) {
         mGestureDetector.setViewContext(viewContext);
+    }*/
+    public void updateViewContextAll(IViewContext viewContext) {
+        mGestureManager.setViewContextAll(viewContext);
     }
 
-    public GestureDetector getGestureDetector(){
-        return this.mGestureDetector;
+    public void updateViewContext(GestureContext gestureContext, IViewContext viewContext) {
+        mGestureManager.setViewContext(gestureContext, viewContext);
+    }
+
+    public GestureDetector getGestureDetector(GestureContext gestureContext){
+        return this.mGestureManager.getGestureDetector(gestureContext);
     }
 
     @Override
     public void onGestureDetected() {
         notifyTransferStarted();
         mPostOffice.send(mSelection.getData());
+    }
+
+    @Override
+    public void onSwipeDetected(SwipeEvent event) {
+
+    }
+
+    @Override
+    public void onSwiping(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    public void onSwipeStart(TouchPoint touchPoint, View view) {
+
+    }
+
+    @Override
+    public void onSwipeEnd(TouchPoint touchPoint) {
+
     }
 
     private void notifyTransferStarted() {
@@ -61,5 +89,9 @@ public class InteractionContext extends Observable<AllEventsListener> implements
     @Override
     public boolean accept(PacketType type) {
         return false;
+    }
+
+    public GestureManager getGestureManager() {
+        return mGestureManager;
     }
 }

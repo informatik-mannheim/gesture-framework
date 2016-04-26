@@ -50,27 +50,6 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     }
 
     @Override
-    public void onSwipeDetected(SwipeEvent event) {
-        StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mViewContext.getDisplaySize());
-        mState.handle(stitchEvent);
-    }
-
-    @Override
-    public void onSwiping(TouchPoint touchPoint) {
-        // ignore for now.
-    }
-
-    @Override
-    public void onSwipeStart(TouchPoint touchPoint, View view) {
-        // ignore for now.
-    }
-
-    @Override
-    public void onSwipeEnd(TouchPoint touchPoint) {
-
-    }
-
-    @Override
     public void receive(Packet packet) {
         mState.handle(packet);
     }
@@ -93,6 +72,27 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     private void abortWaiting() {
         mHandler.removeCallbacks(mRunnable);
         mState = new IdleState();
+    }
+
+    @Override
+    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
+        StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mViewContext.getDisplaySize());
+        mState.handle(stitchEvent);
+    }
+
+    @Override
+    public void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    public void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view) {
+
+    }
+
+    @Override
+    public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
+
     }
 
     abstract class StitchState {

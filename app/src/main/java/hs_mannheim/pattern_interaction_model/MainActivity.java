@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.Selection;

@@ -2,26 +2,18 @@ package hs_mannheim.gestureframework;
 
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.hardware.SensorManager;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.util.Log;
-import android.view.View;
 
 import hs_mannheim.gestureframework.connection.PostOffice;
 import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
 import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
 import hs_mannheim.gestureframework.gesture.bump.BumpDetector;
-import hs_mannheim.gestureframework.gesture.bump.Threshold;
 import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
-import hs_mannheim.gestureframework.gesture.swipe.SwipeDirectionConstraint;
-import hs_mannheim.gestureframework.gesture.swipe.SwipeDurationConstraint;
-import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
-import hs_mannheim.gestureframework.gesture.swipe.SwipeMinDistanceConstraint;
-import hs_mannheim.gestureframework.gesture.swipe.SwipeOrientationConstraint;
-import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.model.GestureDetector;
+import hs_mannheim.gestureframework.model.GestureDetectorBuilder;
+import hs_mannheim.gestureframework.model.GestureManager;
 import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionContext;
@@ -33,7 +25,8 @@ public class ConfigurationBuilder {
     private IViewContext mViewContext;
     private IConnection mChannel;
     private Selection mSelection;
-    private GestureDetector mDetector;
+    private GestureManager mGestureManager;
+    private GestureDetectorBuilder mBuilder;
     private PostOffice mPostOffice;
 
     public ConfigurationBuilder(Context context, IViewContext viewContext) {
@@ -42,9 +35,14 @@ public class ConfigurationBuilder {
         mSelection = Selection.Empty;
     }
 
+    public void specifyGestureComposition(GestureDetector connectDetector, GestureDetector selectDetector, GestureDetector transferDetector, GestureDetector disconnectDetector){
+        mGestureManager = new GestureManager(connectDetector, selectDetector, transferDetector, disconnectDetector);
+    }
+
     public ConfigurationBuilder withBluetooth() {
         mChannel = new BluetoothChannel(BluetoothAdapter.getDefaultAdapter());
         mPostOffice = new PostOffice(mChannel);
+        mBuilder = new GestureDetectorBuilder(mPostOffice, mViewContext, mContext);
         return this;
     }
 
@@ -53,26 +51,7 @@ public class ConfigurationBuilder {
         WifiP2pManager.Channel channel = wifiP2pManager.initialize(mContext, mContext.getMainLooper(), null);
         mChannel = new WifiDirectChannel(wifiP2pManager, channel, mContext);
         mPostOffice = new PostOffice(mChannel);
-        return this;
-    }
-
-    public ConfigurationBuilder shake() {
-        mDetector = new ShakeDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), mViewContext);
-        return this;
-    }
-
-    public ConfigurationBuilder bump() {
-        mDetector = new BumpDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), Threshold.LOW, mViewContext);
-        return this;
-    }
-
-    public ConfigurationBuilder swipe() {
-        mDetector = createSwipeDetector(null);
-        return this;
-    }
-
-    public ConfigurationBuilder stitch() {
-        mDetector = createStitchDetector();
+        mBuilder = new GestureDetectorBuilder(mPostOffice, mViewContext, mContext);
         return this;
     }
 
@@ -82,49 +61,24 @@ public class ConfigurationBuilder {
     }
 
     public void buildAndRegister() {
-        InteractionContext interactionContext = new InteractionContext(mDetector, mSelection, mChannel, mPostOffice);
+
+        InteractionContext interactionContext = new InteractionContext(mGestureManager, mSelection, mChannel, mPostOffice);
         ((InteractionApplication) mContext).setInteractionContext(interactionContext);
     }
 
-    private StitchDetector createStitchDetector() {
-        StitchDetector stitchDetector = new StitchDetector(mPostOffice, mViewContext);
-        stitchDetector.addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.WEST));
-        stitchDetector.addConstraint(new SwipeDurationConstraint(1000));
-        return stitchDetector;
-
+    public SwipeDetector swipe(){
+        return mBuilder.createSwipeDetector();
     }
 
-    private SwipeDetector createSwipeDetector(SwipeDetector.SwipeEventListener listener) {
-        return new SwipeDetector(mViewContext)
-                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
-                .addConstraint(new SwipeDurationConstraint(1000))
-                .addConstraint(new SwipeMinDistanceConstraint(500))
-                .addSwipeListener(new DebugSwipeListener());
+    public BumpDetector bump(){
+        return mBuilder.createBumpDetector();
     }
 
-    public GestureDetector getDetector(){
-        return this.mDetector;
+    public StitchDetector stitch(){
+        return mBuilder.createStitchDetector();
     }
 
-    public class DebugSwipeListener implements SwipeDetector.SwipeEventListener {
-        @Override
-        public void onSwipeDetected(SwipeEvent event) {
-            Log.d("[SwipeDetector]", "Swipe Detected");
-        }
-
-        @Override
-        public void onSwiping(TouchPoint touchPoint) {
-            Log.d("[Swiping]", touchPoint.toString());
-        }
-
-        @Override
-        public void onSwipeStart(TouchPoint touchPoint, View view) {
-
-        }
-
-        @Override
-        public void onSwipeEnd(TouchPoint touchPoint) {
-
-        }
+    public ShakeDetector shake(){
+        return mBuilder.createShakeDetector();
     }
 }

@@ -9,9 +9,6 @@ import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.model.GestureDetector;
 
-/**
- * Created by Dominick Madden on 20.04.2016.
- */
 public class SwipeHandler implements SwipeDetector.SwipeEventListener{
 
     private GestureAnimation sendAnimation;
@@ -21,22 +18,22 @@ public class SwipeHandler implements SwipeDetector.SwipeEventListener{
     }
 
     @Override
-    public void onSwipeDetected(SwipeEvent event) {
+    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
         sendAnimation.play();
     }
 
     @Override
-    public void onSwiping(TouchPoint touchPoint) {
+    public void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint) {
         sendAnimation.onSwiping(touchPoint);
     }
 
     @Override
-    public void onSwipeStart(TouchPoint touchPoint, View view) {
+    public void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view) {
         sendAnimation.onSwipeStart(touchPoint);
     }
 
     @Override
-    public void onSwipeEnd(TouchPoint touchPoint) {
+    public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
         sendAnimation.onSwipeEnd(touchPoint);
     }
 }

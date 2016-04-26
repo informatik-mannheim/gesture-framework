@@ -21,14 +21,18 @@ import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.animation.PostCardFlipAnimationSend;
 import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+import hs_mannheim.gestureframework.model.GestureContext;
 import hs_mannheim.gestureframework.model.GestureDetector;
+import hs_mannheim.gestureframework.model.GestureManager;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionContext;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 
-public class ConnectedActivity extends AppCompatActivity implements  IViewContext, GestureDetector.GestureEventListener{
+public class ConnectedActivity extends AppCompatActivity implements  IViewContext, GestureManager.GestureListener{
 
     private static int PICK_IMAGE = 1;
     private ImageView imgView;
@@ -57,10 +61,10 @@ public class ConnectedActivity extends AppCompatActivity implements  IViewContex
         super.onResume();
         InteractionContext interactionContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
         interactionContext.getPostOffice().register(receiveHandler);
-        interactionContext.updateViewContext(this);
+        interactionContext.updateViewContextAll(this);
 
         //TODO: UGLY AF.. Hardcode SwipeDetector in or let GestureDetector fire events with more information.
-        GestureDetector gestureDetector = interactionContext.getGestureDetector();
+        GestureDetector gestureDetector = interactionContext.getGestureManager().getGestureDetector(GestureContext.TRANSFER);
         if(gestureDetector instanceof SwipeDetector){
             swipeDetector = (SwipeDetector) gestureDetector;
             swipeDetector.addSwipeListener(swipeHandler);
@@ -130,6 +134,26 @@ public class ConnectedActivity extends AppCompatActivity implements  IViewContex
 
     @Override
     public void onGestureDetected() {
-        //TODO: implement
+
+    }
+
+    @Override
+    public void onSwipeDetected(SwipeEvent event) {
+
+    }
+
+    @Override
+    public void onSwiping(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    public void onSwipeStart(TouchPoint touchPoint, View view) {
+
+    }
+
+    @Override
+    public void onSwipeEnd(TouchPoint touchPoint) {
+
     }
 }

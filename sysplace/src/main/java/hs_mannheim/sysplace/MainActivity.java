@@ -20,13 +20,19 @@ import java.util.Map;
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.InteractionApplication;
 import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+import hs_mannheim.gestureframework.model.GestureContext;
 import hs_mannheim.gestureframework.model.GestureDetector;
+import hs_mannheim.gestureframework.model.GestureDetectorBuilder;
+import hs_mannheim.gestureframework.model.GestureManager;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
+import hs_mannheim.gestureframework.model.Selection;
 
-public class MainActivity extends AppCompatActivity implements IViewContext, GestureDetector.GestureEventListener, IPacketReceiver {
+public class MainActivity extends AppCompatActivity implements IViewContext, GestureManager.GestureListener, IPacketReceiver {
 
     private String TAG = "MAIN ACTIVITY";
     private WifiP2pManager mManager;
@@ -45,10 +51,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         StrictMode.setThreadPolicy(policy);
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
+        builder.withWifiDirect();
+        builder.specifyGestureComposition(builder.bump(), null, builder.swipe(), null);
+        builder.select(new Selection(new Packet("Empty"))).buildAndRegister();
 
-        builder.withWifiDirect().swipe().buildAndRegister();
-
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getGestureDetector().registerGestureEventListener(this);
+        ((InteractionApplication) getApplicationContext()).getInteractionContext().getGestureManager().registerGestureEventListener(GestureContext.CONNECT, this);
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
 
         // HACK
@@ -148,6 +155,26 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     @Override
     public void onGestureDetected() {
         discoverService();
+    }
+
+    @Override
+    public void onSwipeDetected(SwipeEvent event) {
+
+    }
+
+    @Override
+    public void onSwiping(TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    public void onSwipeStart(TouchPoint touchPoint, View view) {
+
+    }
+
+    @Override
+    public void onSwipeEnd(TouchPoint touchPoint) {
+
     }
 
     public void disconnect(View view) {

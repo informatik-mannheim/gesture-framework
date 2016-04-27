@@ -122,8 +122,7 @@ public class ConnectedActivity extends AppCompatActivity implements  IViewContex
 
     @Override
     public View getInteractionView() {
-        //TODO: implement
-        return null;
+        return findViewById(R.id.imgView);
     }
 
     @Override

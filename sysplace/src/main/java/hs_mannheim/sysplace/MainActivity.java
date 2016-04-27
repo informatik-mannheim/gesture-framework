@@ -1,30 +1,25 @@
 package hs_mannheim.sysplace;
 
-import android.content.AsyncQueryHandler;
+import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Point;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pDeviceList;
-import android.net.wifi.p2p.WifiP2pManager;
-import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceInfo;
-import android.net.wifi.p2p.nsd.WifiP2pDnsSdServiceRequest;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.StrictMode;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.InteractionApplication;
-import hs_mannheim.gestureframework.connection.LogActionListener;
-import hs_mannheim.gestureframework.connection.VoidActionListener;
-import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
 import hs_mannheim.gestureframework.model.GestureDetector;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
@@ -33,9 +28,14 @@ import hs_mannheim.gestureframework.model.PacketType;
 
 public class MainActivity extends AppCompatActivity implements IViewContext, GestureDetector.GestureEventListener, IPacketReceiver {
 
-    private String TAG = "MAIN ACTIVITY";
-    private WifiP2pManager mManager;
-    private WifiP2pManager.Channel mChannel;
+    private String TAG = "[Main Activity]";
+    private BluetoothAdapter mBluetoothAdapter;
+    private BluetoothManager mBluetoothManager;
+    private final int REQUEST_ENABLE_BT = 100;
+
+    private static final int LOCATION_REQUEST = 1337;
+    private String mOldName;
+    private String mNewName;
 
     public MainActivity() {
     }
@@ -50,54 +50,83 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
 
-        builder.withWifiDirect().swipe().buildAndRegister();
+        builder.withBluetooth().swipe().buildAndRegister();
 
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getGestureDetector().registerGestureEventListener(this);
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
 
-        // HACK
-        mChannel = ((WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection()).mChannel;
-        mManager = ((WifiDirectChannel) ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection()).mManager;
+        mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        mBluetoothAdapter = mBluetoothManager.getAdapter();
 
-        registerLocalService();
-        registerServiceRequest();
+
+        // enable bluetooth
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST);
+
+
+        mOldName = mBluetoothAdapter.getName();
+        mNewName = "sysplace-" + mOldName;
     }
 
-    private void registerServiceRequest() {
-        WifiP2pDnsSdServiceRequest serviceRequest = WifiP2pDnsSdServiceRequest.newInstance();
-        mManager.addServiceRequest(mChannel, serviceRequest, new LogActionListener(TAG, "Service Request added", "Service request could not be added. Turn on of Wifi, idiot."));
+    BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                Log.d(TAG, "Found " + device.getAddress());
+
+                if (device.getName() != null && device.getName().startsWith("sysplace")) {
+                    Toast.makeText(MainActivity.this, "Found " + device.getName(), Toast.LENGTH_SHORT).show();
+                    mBluetoothAdapter.cancelDiscovery();
+                }
+            }
+        }
+    };
+
+    private void doBluetoothMagic() {
+        setDiscoverable();
+        mBluetoothAdapter.startDiscovery();
+    }
+
+    private void setDiscoverable() {
+        Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        startActivity(discoverableIntent);
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        super.onActivityReenter(resultCode, data);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        Log.d(TAG, "Renaming to " + mNewName);
+        mBluetoothAdapter.setName(mNewName);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(mReceiver);
+        Log.d(TAG, "Renaming to " + mOldName);
+        mBluetoothAdapter.setName(mOldName);
     }
 
-    private void registerLocalService() {
-        mManager.clearLocalServices(mChannel, new LogActionListener(TAG, "services cleared", "services NOT cleared"));
-        WifiP2pDnsSdServiceInfo serviceInfo = WifiP2pDnsSdServiceInfo.newInstance("_test", "_presence._tcp", new HashMap<String, String>());
-
-        mManager.addLocalService(mChannel, serviceInfo, new LogActionListener(TAG, "Service registered", "Could not register service"));
-
-        WifiP2pManager.DnsSdServiceResponseListener servListener = new WifiP2pManager.DnsSdServiceResponseListener() {
-            @Override
-            public void onDnsSdServiceAvailable(String instanceName, String registrationType,
-                                                WifiP2pDevice resourceType) {
-                ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().connect(resourceType.deviceAddress);
-                Log.d(TAG, "Service record available");
-            }
-        };
-
-        mManager.setDnsSdResponseListeners(mChannel, servListener, null);
-    }
-
-    private void discoverService() {
-        mManager.discoverServices(mChannel, new LogActionListener(TAG, "Service discovery started", "Service discovery NOT started."));
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
+        Log.d(TAG, "Renaming to " + mOldName);
+        mBluetoothAdapter.setName(mOldName);
     }
 
     @Override
@@ -113,8 +142,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
     @Override
     public void onGestureDetected() {
-        discoverService();
+        doBluetoothMagic();
     }
+
 
     public void disconnect(View view) {
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().disconnect();
@@ -123,13 +153,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     @Override
     public void receive(Packet packet) {
         Log.d(TAG, "Packet received!");
-        if(packet.getMessage().equals("Connection established")) {
+        if (packet.getMessage().equals("Connection established")) {
             ((TextView) findViewById(R.id.textView)).setText("Connected");
-        }
-        else if(packet.getMessage().equals("Connection lost")) {
+        } else if (packet.getMessage().equals("Connection lost")) {
             ((TextView) findViewById(R.id.textView)).setText("NOT Connected");
-        }
-        else {
+        } else {
             Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
@@ -140,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         return true;
     }
 
-    public void switchToConnectedActivity(View view){
+    public void switchToConnectedActivity(View view) {
         Intent intent = new Intent(this, ConnectedActivity.class);
         startActivity(intent);
     }

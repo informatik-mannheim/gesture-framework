@@ -4,14 +4,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Handler;
 import android.os.Looper;
-
 import android.os.Message;
 import android.util.Log;
 
 import java.util.UUID;
 
-import hs_mannheim.gestureframework.model.IConnectionListener;
 import hs_mannheim.gestureframework.model.IConnection;
+import hs_mannheim.gestureframework.model.IConnectionListener;
 import hs_mannheim.gestureframework.model.Packet;
 
 public class BluetoothChannel implements IConnection {
@@ -64,7 +63,19 @@ public class BluetoothChannel implements IConnection {
 
     @Override
     public void disconnect() {
-        // not implemented
+        if (!isConnected()) {
+            return;
+        }
+
+        mIsConnected = false;
+
+        Log.d(TAG, "disconnecting...");
+
+        // this will close the socket, NOT the P2P connection
+        mConnectionThread.cancel();
+        mConnectionThread = null;
+
+        mHandler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
     }
 
     public String getConnectedDevice() {
@@ -82,7 +93,7 @@ public class BluetoothChannel implements IConnection {
     }
 
     public void connect(ConnectionInfo connectionInfo) {
-        if(isConnected()) return;
+        if (isConnected()) return;
 
         mConnectedDevice = mBluetoothAdapter.getRemoteDevice(connectionInfo.getMacAddress());
 
@@ -97,21 +108,9 @@ public class BluetoothChannel implements IConnection {
         }
     }
 
+    // TODO: This interface is not needed anymore
     public void connect(String address) {
-        if (isConnected()) return;
-        
-        mConnectedDevice = mBluetoothAdapter.getRemoteDevice(address);
-
-        Log.d(TAG, String.format("Device to connect to: %s", mConnectedDevice));
-
-        //TODO: Fix this; the whole accept / connect stuff sucks.
-        if ("Nexus 4".equals("Nexus 4")) {
-            Log.d(TAG, "Connecting as server.");
-            new AcceptThread(this, mBluetoothAdapter).start();
-        } else {
-            Log.d(TAG, "Connecting as client.");
-            new ConnectThread(mConnectedDevice, this, mBluetoothAdapter).start();
-        }
+        // not supported
     }
 
     public void receive(Packet data) {
@@ -123,16 +122,5 @@ public class BluetoothChannel implements IConnection {
         mIsConnected = true;
         this.mConnectionThread = connectionThread;
         mHandler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
-    }
-
-
-    public void disconnected() {
-        this.mIsConnected = false;
-        this.mConnectionThread = null;
-        mHandler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
-    }
-
-    public void close() {
-        this.mConnectionThread.cancel();
     }
 }

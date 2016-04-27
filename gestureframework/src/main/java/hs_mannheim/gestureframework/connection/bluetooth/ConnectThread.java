@@ -8,7 +8,7 @@ import android.util.Log;
 import java.io.IOException;
 
 public class ConnectThread extends Thread {
-    private final String TAG = "[Bluetooth Connect Thread]";
+    private final String TAG = "[Bt ConnectThread]";
 
     private final BluetoothSocket mBluetoothSocket;
     private final BluetoothChannel mChannel;

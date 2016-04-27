@@ -10,11 +10,13 @@ public class ConnectionInfo {
         mIsServer = isServer;
     }
 
-    public static ConnectionInfo from(String myBluetoothName, String otherBluetoothName, String otherMacAddress) {
-        String[] myParts = myBluetoothName.split("-");
-        String[] otherParts = otherBluetoothName.split("-");
+    public static ConnectionInfo from(String myBluetoothName,
+                                      String otherBluetoothName,
+                                      String otherMacAddress) {
+        String[] myParts = "-".split(myBluetoothName);
+        String[] otherParts = "-".split(otherBluetoothName);
 
-        if(myParts.length != 3 || otherParts.length != 3) return null; // todo: make this suck less
+        if (myParts.length != 3 || otherParts.length != 3) return null; // todo: make this suck less
 
         int myRandom = Integer.parseInt(myParts[2]);
         int otherRandom = Integer.parseInt(otherParts[2]);
@@ -27,6 +29,7 @@ public class ConnectionInfo {
     public String getMacAddress() {
         return mMacAddress;
     }
+
     public boolean isServer() {
         return mIsServer;
     }

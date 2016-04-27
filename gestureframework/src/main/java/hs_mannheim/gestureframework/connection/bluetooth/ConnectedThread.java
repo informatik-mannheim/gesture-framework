@@ -15,7 +15,7 @@ import hs_mannheim.gestureframework.model.Packet;
  * Thread that runs on both client and server device to send and receive data through streams.
  */
 public class ConnectedThread extends Thread {
-    private final String TAG = "[Bluetooth Connected Thread]";
+    private final String TAG = "[Bluetooth ConnThread]";
 
     private final BluetoothSocket mSocket;
     private BluetoothChannel mChannel;

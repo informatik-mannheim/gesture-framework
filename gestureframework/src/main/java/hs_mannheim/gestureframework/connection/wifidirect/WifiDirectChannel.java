@@ -16,6 +16,7 @@ import android.os.Message;
 import android.util.Log;
 
 import hs_mannheim.gestureframework.connection.LogActionListener;
+import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
 import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.IConnectionListener;
 import hs_mannheim.gestureframework.model.Packet;
@@ -102,6 +103,11 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         mManager.connect(mChannel, config, new LogActionListener(TAG,
                 "Wifi P2P Connection established.",
                 "Failed to establish Wifi P2P Connection"));
+    }
+
+    @Override
+    public void connect(ConnectionInfo connectionInfo) {
+        // only works for bluetooth right now, have to change this anyways
     }
 
     /**

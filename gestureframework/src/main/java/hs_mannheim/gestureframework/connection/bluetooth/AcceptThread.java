@@ -8,7 +8,7 @@ import android.util.Log;
 import java.io.IOException;
 
 public class AcceptThread extends Thread {
-    private final String TAG = "[Bluetooth Accept Thread]";
+    private final String TAG = "[Bluetooth AccThread]";
     private final BluetoothServerSocket mmServerSocket;
     private BluetoothChannel mChannel;
 
@@ -18,7 +18,7 @@ public class AcceptThread extends Thread {
         BluetoothServerSocket tmp = null;
 
         try {
-            tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord("My App", BluetoothChannel.MY_UUID);
+            tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord("SysplaceApp", BluetoothChannel.MY_UUID);
         } catch (IOException e) {
             Log.e(TAG, "Could not open Server Socket");
         }

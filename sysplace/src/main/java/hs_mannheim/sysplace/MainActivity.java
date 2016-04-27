@@ -1,6 +1,7 @@
 package hs_mannheim.sysplace;
 
 import android.Manifest;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -10,7 +11,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.StrictMode;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,12 +21,18 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.InteractionApplication;
+import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
+import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.model.GestureContext;
 import hs_mannheim.gestureframework.model.GestureManager;
+import hs_mannheim.gestureframework.model.IConnection;
+import hs_mannheim.gestureframework.model.IConnectionListener;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.Packet;
@@ -35,11 +44,14 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     private String TAG = "[Main Activity]";
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothManager mBluetoothManager;
+
+
     private final int REQUEST_ENABLE_BT = 100;
 
     private static final int LOCATION_REQUEST = 1337;
     private String mOldName;
-    private String mNewName;
+    private String mCurrentName;
+    private IConnection mConn;
 
     public MainActivity() {
     }
@@ -67,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getGestureManager().registerGestureEventListener(GestureContext.CONNECT, this);
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
 
+        mConn = ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection();
+
         mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
 
@@ -82,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
 
         mOldName = mBluetoothAdapter.getName();
-        mNewName = "sysplace-" + mOldName;
+        mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
     }
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -93,7 +107,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.d(TAG, "Found " + device.getAddress());
 
-                if (device.getName() != null && device.getName().startsWith("sysplace")) {
+                if (device.getName() != null && device.getName().contains("-sysplace-")) {
+                    mConn.connect(ConnectionInfo.from(mCurrentName, device.getName(), device.getAddress()));
                     Toast.makeText(MainActivity.this, "Found " + device.getName(), Toast.LENGTH_SHORT).show();
                     mBluetoothAdapter.cancelDiscovery();
                 }
@@ -108,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
     private void setDiscoverable() {
         Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 10);
         startActivity(discoverableIntent);
     }
 
@@ -120,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
     protected void onResume() {
         super.onResume();
         registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-        Log.d(TAG, "Renaming to " + mNewName);
-        mBluetoothAdapter.setName(mNewName);
+        Log.d(TAG, "Renaming to " + mCurrentName);
+        mBluetoothAdapter.setName(mCurrentName);
     }
 
     @Override
@@ -228,3 +244,4 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
     }
 }
+

@@ -81,6 +81,22 @@ public class BluetoothChannel implements IConnection {
         }
     }
 
+    public void connect(ConnectionInfo connectionInfo) {
+        if(isConnected()) return;
+
+        mConnectedDevice = mBluetoothAdapter.getRemoteDevice(connectionInfo.getMacAddress());
+
+        Log.d(TAG, String.format("Device to connect to: %s", mConnectedDevice.getName()));
+
+        if (connectionInfo.isServer()) {
+            Log.d(TAG, "Connecting as server.");
+            new AcceptThread(this, mBluetoothAdapter).start();
+        } else {
+            Log.d(TAG, "Connecting as client.");
+            new ConnectThread(mConnectedDevice, this, mBluetoothAdapter).start();
+        }
+    }
+
     public void connect(String address) {
         if (isConnected()) return;
         

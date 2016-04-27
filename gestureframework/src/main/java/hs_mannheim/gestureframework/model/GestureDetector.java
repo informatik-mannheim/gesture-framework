@@ -15,7 +15,7 @@ public abstract class GestureDetector {
 
     protected void fireGestureDetected() {
         if(mListener != null) {
-            mListener.onGestureDetected();
+            mListener.onGestureDetected(this);
         }
     }
 
@@ -24,6 +24,6 @@ public abstract class GestureDetector {
     }
 
     public interface GestureEventListener {
-        void onGestureDetected();
+        void onGestureDetected(GestureDetector gestureDetector);
     }
 }

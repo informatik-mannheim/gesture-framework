@@ -8,18 +8,15 @@ import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
-/**
- * Created by Dominick Madden on 21.04.2016.
- */
 public class GestureManager implements GestureDetector.GestureEventListener, SwipeDetector.SwipeEventListener{
 
     private GestureDetector mConnectDetector, mSelectDetector, mTransferDetector, mDisconnectDetector;
 
     //TODO: Make those Threadsafe
-    private final ArrayList<GestureListener> mConnectListeners = new ArrayList<GestureListener>();
-    private final ArrayList<GestureListener> mSelectListeners = new ArrayList<GestureListener>();
-    private final ArrayList<GestureListener> mTransferListeners = new ArrayList<GestureListener>();
-    private final ArrayList<GestureListener> mDisconnectListeners = new ArrayList<GestureListener>();
+    private final ArrayList<IInteractionListener> mConnectListeners = new ArrayList<IInteractionListener>();
+    private final ArrayList<IInteractionListener> mSelectListeners = new ArrayList<IInteractionListener>();
+    private final ArrayList<IInteractionListener> mTransferListeners = new ArrayList<IInteractionListener>();
+    private final ArrayList<IInteractionListener> mDisconnectListeners = new ArrayList<IInteractionListener>();
 
     private IViewContext mViewContext;
 
@@ -100,7 +97,7 @@ public class GestureManager implements GestureDetector.GestureEventListener, Swi
     }
 
     //TODO: Threadsafe
-    public void registerGestureEventListenerAll(GestureListener gestureListener){
+    public void registerGestureEventListenerAll(IInteractionListener gestureListener){
         if (!mConnectListeners.contains(gestureListener)) {mConnectListeners.add(gestureListener);}
         if (!mSelectListeners.contains(gestureListener)) {mSelectListeners.add(gestureListener);}
         if (!mTransferListeners.contains(gestureListener)) {mTransferListeners.add(gestureListener);}
@@ -108,7 +105,20 @@ public class GestureManager implements GestureDetector.GestureEventListener, Swi
     }
 
     //TODO: Threadsafe!
-    public void registerGestureEventListener(GestureContext gestureContext, GestureListener gestureListener){
+    public void registerGestureEventListener(GestureContext gestureContext, IInteractionListener gestureListener){
+        switch (gestureContext) {
+            case CONNECT:
+                if (!mConnectListeners.contains(gestureListener)) {mConnectListeners.add(gestureListener);}
+            case SELECT:
+                if (!mSelectListeners.contains(gestureListener)) {mSelectListeners.add(gestureListener);}
+            case TRANSFER:
+                if (!mTransferListeners.contains(gestureListener)) {mTransferListeners.add(gestureListener);}
+            case DISCONNECT:
+                if (!mDisconnectListeners.contains(gestureListener)) {mDisconnectListeners.add(gestureListener);}
+        }
+    }
+
+    public void unregisterGestureEventListener(GestureContext gestureContext, IInteractionListener gestureListener){
         switch (gestureContext) {
             case CONNECT:
                 if (!mConnectListeners.contains(gestureListener)) {mConnectListeners.add(gestureListener);}
@@ -124,20 +134,20 @@ public class GestureManager implements GestureDetector.GestureEventListener, Swi
     @Override
     public void onGestureDetected(GestureDetector gestureDetector) {
         if(gestureDetector.equals(mConnectDetector)){
-            for(GestureListener gestureListener : mConnectListeners){
-                gestureListener.onGestureDetected();
+            for(IInteractionListener gestureListener : mConnectListeners){
+                gestureListener.onConnect();
             }
         } else if(gestureDetector.equals(mSelectDetector)){
-            for(GestureListener gestureListener : mSelectListeners){
-                gestureListener.onGestureDetected();
+            for(IInteractionListener gestureListener : mSelectListeners){
+                gestureListener.onSelect();
             }
         } else if(gestureDetector.equals(mTransferDetector)){
-            for(GestureListener gestureListener : mTransferListeners){
-                gestureListener.onGestureDetected();
+            for(IInteractionListener gestureListener : mTransferListeners){
+                gestureListener.onTransfer();
             }
         } else if(gestureDetector.equals(mDisconnectDetector)){
-            for(GestureListener gestureListener : mDisconnectListeners){
-                gestureListener.onGestureDetected();
+            for(IInteractionListener gestureListener : mDisconnectListeners){
+                gestureListener.onDisconnect();
             }
         }
     }

@@ -6,7 +6,8 @@ import android.view.View;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
-public class InteractionContext extends Observable<AllEventsListener> implements IPacketReceiver, GestureManager.GestureListener {
+
+public class InteractionContext extends Observable<AllEventsListener> implements IPacketReceiver, IInteractionListener {
 
     private final GestureManager mGestureManager;
     private final Selection mSelection;
@@ -34,9 +35,6 @@ public class InteractionContext extends Observable<AllEventsListener> implements
         mSelection.updateSelection(data);
     }
 
-    /*public void updateViewContext(IViewContext viewContext) {
-        mGestureDetector.setViewContext(viewContext);
-    }*/
     public void updateViewContextAll(IViewContext viewContext) {
         mGestureManager.setViewContextAll(viewContext);
     }
@@ -47,32 +45,6 @@ public class InteractionContext extends Observable<AllEventsListener> implements
 
     public GestureDetector getGestureDetector(GestureContext gestureContext){
         return this.mGestureManager.getGestureDetector(gestureContext);
-    }
-
-    @Override
-    public void onGestureDetected() {
-        notifyTransferStarted();
-        mPostOffice.send(mSelection.getData());
-    }
-
-    @Override
-    public void onSwipeDetected(SwipeEvent event) {
-
-    }
-
-    @Override
-    public void onSwiping(TouchPoint touchPoint) {
-
-    }
-
-    @Override
-    public void onSwipeStart(TouchPoint touchPoint, View view) {
-
-    }
-
-    @Override
-    public void onSwipeEnd(TouchPoint touchPoint) {
-
     }
 
     private void notifyTransferStarted() {
@@ -93,5 +65,26 @@ public class InteractionContext extends Observable<AllEventsListener> implements
 
     public GestureManager getGestureManager() {
         return mGestureManager;
+    }
+
+    @Override
+    public void onConnect() {
+        notifyTransferStarted();
+        mPostOffice.send(mSelection.getData());
+    }
+
+    @Override
+    public void onSelect() {
+
+    }
+
+    @Override
+    public void onTransfer() {
+
+    }
+
+    @Override
+    public void onDisconnect() {
+
     }
 }

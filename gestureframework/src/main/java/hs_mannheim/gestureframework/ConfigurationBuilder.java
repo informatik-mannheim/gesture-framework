@@ -39,8 +39,16 @@ public class ConfigurationBuilder {
         mSelection = Selection.Empty;
     }
 
-    public void specifyGestureComposition(GestureDetector connectDetector, GestureDetector selectDetector, GestureDetector transferDetector, GestureDetector disconnectDetector){
+    /**
+     *
+     * @param connectDetector
+     * @param selectDetector
+     * @param transferDetector
+     * @param disconnectDetector
+     */
+    public ConfigurationBuilder specifyGestureComposition(GestureDetector connectDetector, GestureDetector selectDetector, GestureDetector transferDetector, GestureDetector disconnectDetector){
         mGestureManager = new GestureManager(connectDetector, selectDetector, transferDetector, disconnectDetector);
+        return this;
     }
 
     public ConfigurationBuilder withBluetooth() {

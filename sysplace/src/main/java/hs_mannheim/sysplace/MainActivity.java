@@ -23,10 +23,8 @@ import java.util.Random;
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.InteractionApplication;
 import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
-import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
-import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.model.GestureContext;
-import hs_mannheim.gestureframework.model.GestureManager;
+import hs_mannheim.gestureframework.model.IInteractionListener;
 import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
@@ -34,7 +32,7 @@ import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 import hs_mannheim.gestureframework.model.Selection;
 
-public class MainActivity extends AppCompatActivity implements IViewContext, GestureManager.GestureListener, IPacketReceiver, IInteractionListener {
+public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, IInteractionListener {
 
     private String TAG = "[Main Activity]";
     private BluetoothAdapter mBluetoothAdapter;
@@ -59,9 +57,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         StrictMode.setThreadPolicy(policy);
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
-        builder.withBluetooth();
-        builder.specifyGestureComposition(builder.swipe(), null, builder.swipe(), null);
-        builder.select(new Selection(new Packet("Empty")));
+        builder.withBluetooth().specifyGestureComposition(builder.swipe(), null, builder.swipe(), null).select(new Selection(new Packet("Empty")));
 
         // SwipeListener sl = new SwipeListener(constraints) --> horizontal, < 1000ms, length = 300px
         // sl.registerSwipeListener(this) = ... --> implementes ISwipeListener
@@ -160,33 +156,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
         return null;
     }
 
-
-    @Override
-    public void onGestureDetected() {
-        doBluetoothMagic();
-    }
-
-    @Override
-    public void onSwipeDetected(SwipeEvent event) {
-        Log.d(TAG, "Doing bluetooth magic");
-        doBluetoothMagic();
-    }
-
-    @Override
-    public void onSwiping(TouchPoint touchPoint) {
-
-    }
-
-    @Override
-    public void onSwipeStart(TouchPoint touchPoint, View view) {
-
-    }
-
-    @Override
-    public void onSwipeEnd(TouchPoint touchPoint) {
-
-    }
-
     public void disconnect(View view) {
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().disconnect();
     }
@@ -220,7 +189,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, Ges
 
     @Override
     public void onConnect() {
-
+        Log.d(TAG, "Doing bluetooth magic");
+        doBluetoothMagic();
     }
 
     @Override

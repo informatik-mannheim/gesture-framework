@@ -1,11 +1,9 @@
 package hs_mannheim.pattern_interaction_model;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.Outline;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
@@ -14,26 +12,19 @@ import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
-import android.view.animation.Animation;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.gestureframework.animation.GestureAnimation;
-import hs_mannheim.gestureframework.animation.MovementSpring;
-import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
 import hs_mannheim.gestureframework.animation.PostCardFlipAnimationSend;
+import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+import hs_mannheim.gestureframework.model.GestureContext;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.ImagePacket;
@@ -46,7 +37,6 @@ import hs_mannheim.gestureframework.model.SerializableImage;
 public class InteractionActivity extends ActionBarActivity implements SwipeDetector.SwipeEventListener, IPacketReceiver, TextWatcher, IViewContext {
 
     public final static String MODEL = Build.MODEL;
-    private static final String TAG = "[InteractionActivity]";
     private ImageView mImageView, mImageViewCopy;
     private GestureAnimation sendAnimation, receiveAnimation;
     private SwipeDetector mSwipeDetector;
@@ -64,14 +54,13 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         mImageView = (ImageView) findViewById(R.id.ivPic);
 
 
-
         ///////////////////////////// TODO: Do this somewhere else (configurator)
         shouldSendCopy = true;
         this.sendAnimation = new PostCardFlipAnimationSend(this, mImageView);
         this.receiveAnimation = new PostcardFlipAnimationReceive(this, mImageView);
         /////////////////////////////
 
-        if (shouldSendCopy){
+        if (shouldSendCopy) {
             //TODO: this part should be in the framework, not the app
             mImageViewCopy = (ImageView) findViewById(R.id.imageViewCopy);
 
@@ -84,13 +73,13 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         super.onResume();
         InteractionContext interactionContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
         interactionContext.getPostOffice().register(this);
-        interactionContext.updateViewContext(this);
+        interactionContext.updateViewContextAll(this);
 
         clearImage(mImageView);
 
         //TODO: VERY HACKY! works only for swipe
 
-        mSwipeDetector = (SwipeDetector) interactionContext.getGestureDetector();
+        mSwipeDetector = (SwipeDetector) interactionContext.getGestureManager().getGestureDetector(GestureContext.CONNECT);
         mSwipeDetector.addSwipeListener(this);
     }
 
@@ -99,55 +88,6 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         super.onPause();
         mSwipeDetector.removeSwipeListener(this);
         ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().unregister(this);
-    }
-
-    //TODO: restrict drag and drop to imageview
-    boolean swipeStartedOnRightView = true;
-
-    @Override
-    public void onSwipeDetected(SwipeEvent event) {
-        //if (swipeStartedOnRightView) {
-            //Toast.makeText(this, event.toString(), Toast.LENGTH_SHORT).show();
-
-            ValueAnimator grayAwayAnimation = ValueAnimator.ofInt(150, 0);
-            grayAwayAnimation.setDuration(2000);
-            grayAwayAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    mImageViewCopy.setColorFilter(Color.argb((int) valueAnimator.getAnimatedValue(), 200, 200, 200));
-                }
-            });
-            grayAwayAnimation.start();
-            sendAnimation.play();
-        //}
-    }
-
-    @Override
-    public void onSwiping(TouchPoint touchPoint) {
-        //if (swipeStartedOnRightView) {
-            sendAnimation.onSwiping(touchPoint);
-        //}
-    }
-
-
-    @Override
-    public void onSwipeStart(TouchPoint touchPoint, View view) {
-        //if(view.equals(mImageView)) {
-        //    swipeStartedOnRightView = true;
-            mImageViewCopy.setVisibility(View.VISIBLE);
-            mImageViewCopy.setColorFilter(Color.argb(150, 200, 200, 200));
-            sendAnimation.onSwipeStart(touchPoint);
-        //} else {
-        //    swipeStartedOnRightView = false;
-        //}
-
-    }
-
-    @Override
-    public void onSwipeEnd(TouchPoint touchPoint) {
-        //if (swipeStartedOnRightView) {
-            sendAnimation.onSwipeEnd(touchPoint);
-        //}
     }
 
     public void startBluetoothActivity(View view) {
@@ -217,10 +157,41 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         ((InteractionApplication) getApplicationContext()).getInteractionContext().updateSelection(new ImagePacket(image));
     }
 
-    public void playReceiveAnim(View view){
+    public void playReceiveAnim(View view) {
         loadImage(view);
         BitmapDrawable drawable = (BitmapDrawable) mImageView.getDrawable();
         Bitmap bitmap = Bitmap.createBitmap(drawable.getBitmap());
         receiveAnimation.play(bitmap);
+    }
+
+    @Override
+    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
+        ValueAnimator grayAwayAnimation = ValueAnimator.ofInt(150, 0);
+        grayAwayAnimation.setDuration(2000);
+        grayAwayAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mImageViewCopy.setColorFilter(Color.argb((int) valueAnimator.getAnimatedValue(), 200, 200, 200));
+            }
+        });
+        grayAwayAnimation.start();
+        sendAnimation.play();
+    }
+
+    @Override
+    public void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint) {
+        sendAnimation.onSwiping(touchPoint);
+    }
+
+    @Override
+    public void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view) {
+        mImageViewCopy.setVisibility(View.VISIBLE);
+        mImageViewCopy.setColorFilter(Color.argb(150, 200, 200, 200));
+        sendAnimation.onSwipeStart(touchPoint);
+    }
+
+    @Override
+    public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
+        sendAnimation.onSwipeEnd(touchPoint);
     }
 }

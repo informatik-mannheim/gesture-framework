@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">SysPlace</string>
+    <string name="btn_disconnect">Disconnect</string>
+    <string name="btn_ping">Ping</string>
+    <string name="btn_sendPhoto">Goto Next</string>
 </resources>

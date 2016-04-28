@@ -17,14 +17,16 @@
         android:id="@+id/textView"
         android:layout_alignEnd="@+id/btn_disconnect"
         android:layout_alignParentStart="true"
-        android:textSize="32dp" />
+        android:textSize="32dp"
+        android:textColor="@android:color/holo_red_dark"/>
 
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/btn_disconnect"
-        android:text="Disconnect"
+        android:text="@string/btn_disconnect"
+        android:enabled="false"
         android:onClick="disconnect"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
@@ -32,9 +34,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
+        android:text="@string/btn_sendPhoto"
+        android:id="@+id/btn_send_photo"
         android:clickable="true"
+        android:enabled="false"
         android:onClick="switchToConnectedActivity"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
@@ -42,9 +45,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ping"
+        android:text="@string/btn_ping"
+        android:enabled="false"
         android:onClick="ping"
-        android:id="@+id/button2"
+        android:id="@+id/btn_ping"
         android:layout_alignTop="@+id/btn_disconnect"
         android:layout_centerHorizontal="true" />
 

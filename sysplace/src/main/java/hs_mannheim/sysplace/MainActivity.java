@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -15,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +48,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     private SysplaceContext mSysplaceContext;
     private MultipleTouchView mInteractionView;
+    private TextView mTextView;
+    private Button mPingButton;
+    private Button mPhotoButton;
+    private Button mDisconnectButton;
 
     public MainActivity() {
     }
@@ -62,6 +68,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mOldName = mBluetoothAdapter.getName();
         mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
         mInteractionView = new MultipleTouchView(findViewById(R.id.layout_main)); // TODO: handle this somewhere else!
+
+        mTextView = ((TextView) findViewById(R.id.textView));
+        mPingButton = ((Button) findViewById(R.id.btn_ping));
+        mPhotoButton = ((Button) findViewById(R.id.btn_send_photo));
+        mDisconnectButton = ((Button) findViewById(R.id.btn_disconnect));
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
@@ -140,14 +151,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(mReceiver);
-        Log.d(TAG, "Renaming to " + mOldName);
-        mBluetoothAdapter.setName(mOldName);
-    }
-
-    @Override
     public MultipleTouchView getInteractionView() {
         return mInteractionView;
     }
@@ -163,15 +166,23 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     @Override
     public void receive(Packet packet) {
-        Log.d(TAG, "Packet received!");
+        Log.d(TAG, "Packet received: " + packet.getMessage());
         if (packet.getMessage().equals("Connection established")) {
-            ((TextView) findViewById(R.id.textView)).setText("Connected");
+            mTextView.setText("Connected");
+            mTextView.setTextColor(Color.GREEN);
+            mPingButton.setEnabled(true);
+            mPhotoButton.setEnabled(true);
+            mDisconnectButton.setEnabled(true);
+
         } else if (packet.getMessage().equals("Connection lost")) {
-            ((TextView) findViewById(R.id.textView)).setText("NOT Connected");
+            mTextView.setText("NOT Connected");
+            mTextView.setTextColor(Color.RED);
+            mPingButton.setEnabled(false);
+            mPhotoButton.setEnabled(false);
+            mDisconnectButton.setEnabled(false);
         } else {
             Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override

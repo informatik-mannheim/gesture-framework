@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -47,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     private String mCurrentName;
     private IConnection mConn;
 
-    private SysplaceContext mSysplaceContext;
     private MultipleTouchView mInteractionView;
     private TextView mTextView;
     private Button mPingButton;
@@ -65,10 +63,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
-        mOldName = mBluetoothAdapter.getName();
-        mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
-        mInteractionView = new MultipleTouchView(findViewById(R.id.layout_main)); // TODO: handle this somewhere else!
+        bootstrapBluetooth();
+
+        // TODO: handle this somewhere else!
+        mInteractionView = new MultipleTouchView(findViewById(R.id.layout_main));
 
         mTextView = ((TextView) findViewById(R.id.textView));
         mPingButton = ((Button) findViewById(R.id.btn_ping));
@@ -78,25 +76,17 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
                 .withBluetooth()
-                .specifyGestureComposition(builder.swipeLeftRight(), builder.doubleTap(), builder.swipeUpDown(), builder.bump())
+                .toConnect(builder.swipeLeftRight())
+                .toSelect(builder.doubleTap())
+                .toTransfer(builder.swipeUpDown())
+                .toDisconnect(builder.bump())
                 .select(new Selection(new Packet("Photo transferred")))
+                .registerForLifecycleEvents(this)
+                .registerPacketReceiver(this)
                 .buildAndRegister();
 
-        mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
-        mSysplaceContext.registerForLifecycleEvents(this);
-        mSysplaceContext.registerPacketReceiver(this);
-        mConn = mSysplaceContext.getConnection(); // TODO: should be forbidden
-
-        // TODO: enable bluetooth - move this out of here
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST);
-
+        // TODO: should be forbidden
+        mConn = ((InteractionApplication) getApplicationContext()).getSysplaceContext().getConnection();
     }
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -117,6 +107,17 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         }
     };
 
+    private void bootstrapBluetooth() {
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
+
+        mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
+        mOldName = mBluetoothAdapter.getName();
+        mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
+    }
+
     private void doBluetoothMagic() {
         setDiscoverable();
         mBluetoothAdapter.startDiscovery();
@@ -128,11 +129,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 10);
             startActivity(discoverableIntent);
         }
-    }
-
-    @Override
-    public void onActivityReenter(int resultCode, Intent data) {
-        super.onActivityReenter(resultCode, data);
     }
 
     @Override
@@ -197,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     public void ping(View view) {
-        mSysplaceContext.send(new Packet("Ping!"));
+        ((InteractionApplication) getApplicationContext()).getSysplaceContext().send(new Packet("Ping!"));
     }
 
     @Override

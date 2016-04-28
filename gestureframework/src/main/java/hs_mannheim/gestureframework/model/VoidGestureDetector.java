@@ -1,10 +1,14 @@
 package hs_mannheim.gestureframework.model;
 
 /**
- * Created by Dominick Madden on 21.04.2016.
+ * Stub implementation of {@link GestureDetector} that does nothing.
  */
 public class VoidGestureDetector extends GestureDetector{
-    public VoidGestureDetector(IViewContext viewContext) {
-        super(viewContext);
+
+    /**
+     * viewContext is always null as this should never do anything.
+     */
+    public VoidGestureDetector() {
+        super(null);
     }
 }

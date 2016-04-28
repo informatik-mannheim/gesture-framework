@@ -32,6 +32,13 @@ public class GestureManager implements GestureDetector.GestureEventListener,
         setGestureDetector(LifecycleEvent.DISCONNECT, disconnectDetector);
     }
 
+    public GestureManager() {
+        setGestureDetector(LifecycleEvent.CONNECT, new VoidGestureDetector());
+        setGestureDetector(LifecycleEvent.SELECT, new VoidGestureDetector());
+        setGestureDetector(LifecycleEvent.TRANSFER, new VoidGestureDetector());
+        setGestureDetector(LifecycleEvent.DISCONNECT, new VoidGestureDetector());
+    }
+
     /**
      * Set a {@link IViewContext} for a specific LifecycleEvent registered.
      * @param lifecycleEvent The {@link LifecycleEvent} to set the {@link IViewContext} for.
@@ -70,7 +77,7 @@ public class GestureManager implements GestureDetector.GestureEventListener,
      */
     public void setGestureDetector(LifecycleEvent lifecycleEvent, GestureDetector gestureDetector) {
         if (gestureDetector == null) {
-            gestureDetector = new VoidGestureDetector(null);
+            gestureDetector = new VoidGestureDetector();
         }
 
         gestureDetector.registerGestureEventListener(this);

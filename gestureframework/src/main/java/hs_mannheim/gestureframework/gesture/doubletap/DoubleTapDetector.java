@@ -1,11 +1,7 @@
 package hs_mannheim.gestureframework.gesture.doubletap;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
-import junit.framework.Test;
 
 import hs_mannheim.gestureframework.model.GestureDetector;
 import hs_mannheim.gestureframework.model.IViewContext;

@@ -40,8 +40,7 @@ public class AcceptThread extends Thread {
             }
 
             if (socket != null) {
-                ConnectedThread connectedThread = new ConnectedThread(socket, mChannel);
-                connectedThread.start();
+                new ConnectedThread(socket, mChannel).start();
 
                 try {
                     mmServerSocket.close();
@@ -51,14 +50,6 @@ public class AcceptThread extends Thread {
                 }
                 break;
             }
-        }
-    }
-
-    public void cancel() {
-        try {
-            mmServerSocket.close();
-        } catch (IOException e) {
-            Log.e(TAG, "Error closing Server Socket");
         }
     }
 }

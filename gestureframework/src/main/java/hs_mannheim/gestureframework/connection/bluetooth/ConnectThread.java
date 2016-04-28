@@ -13,17 +13,22 @@ public class ConnectThread extends Thread {
     private final BluetoothSocket mBluetoothSocket;
     private final BluetoothChannel mChannel;
     private final BluetoothAdapter mBluetoothAdapter;
+    private final BluetoothDevice mDevice;
+
+    private final int WAIT_TIME = 1000;
+    private static int RETRIES = 3;
 
     public ConnectThread(BluetoothDevice device, BluetoothChannel channel, BluetoothAdapter bluetoothAdapter) {
         mBluetoothAdapter = bluetoothAdapter;
         mChannel = channel;
+        mDevice = device;
 
         mBluetoothAdapter.cancelDiscovery();
 
         BluetoothSocket tmp = null;
 
         try {
-            tmp = device.createInsecureRfcommSocketToServiceRecord(BluetoothChannel.MY_UUID);
+            tmp = mDevice.createRfcommSocketToServiceRecord(BluetoothChannel.MY_UUID);
         } catch (IOException e) {
             Log.d(TAG, "Could not connect");
         }
@@ -35,10 +40,24 @@ public class ConnectThread extends Thread {
             // block
             mBluetoothSocket.connect();
         } catch (IOException connectException) {
-            Log.d(TAG, String.format("Could not connect: %s", connectException.getMessage()));
+            Log.e(TAG, String.format("Could not connect: %s", connectException.getMessage()));
+
+            try {
+                Log.d(TAG, String.format("Next try (%d left)", RETRIES));
+                Thread.sleep(WAIT_TIME);
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (RETRIES > 0) {
+                new ConnectThread(mDevice, mChannel, mBluetoothAdapter).start();
+                RETRIES--;
+            } else {
+                RETRIES = 3;
+            }
 
             this.cancel();
-
             return;
         }
 

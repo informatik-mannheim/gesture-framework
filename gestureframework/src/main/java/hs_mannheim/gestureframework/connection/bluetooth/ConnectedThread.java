@@ -24,7 +24,7 @@ public class ConnectedThread extends Thread {
     private ObjectOutputStream mObjectOutputStream;
 
     public ConnectedThread(BluetoothSocket socket, BluetoothChannel channel) {
-        Log.d(TAG, "Starting Thread.");
+        Log.d(TAG, "Establishing Connection.");
         mSocket = socket;
         mChannel = channel;
 
@@ -45,20 +45,26 @@ public class ConnectedThread extends Thread {
     }
 
     public void run() {
+
         ObjectInputStream objectInputStream = null;
         try {
+            // this blocks until first use; have in mind when canceling
             objectInputStream = new ObjectInputStream(mInStream);
+            objectInputStream.read(); // phantom read
+
         } catch (IOException e) {
             mChannel.disconnect();
-            Log.e(TAG, "Error: " +  e.getMessage());
+            Log.e(TAG, "Error: " + e.getMessage());
         }
 
         while (true) {
             try {
+                // this is also gonna crash
                 if (objectInputStream != null) {
                     mChannel.receive((Packet) objectInputStream.readObject());
                 }
             } catch (IOException e) {
+                e.printStackTrace();
                 Log.e(TAG, "IO Exception: " + e.getMessage());
                 mChannel.disconnect();
                 break;

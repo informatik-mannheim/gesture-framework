@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -176,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
         } else if (packet.getMessage().equals("Connection lost")) {
             mTextView.setText("NOT Connected");
-            mTextView.setTextColor(Color.RED);
+            mTextView.setTextColor(getResources().getColor(android.R.color.holo_red_light, null));
             mPingButton.setEnabled(false);
             mPhotoButton.setEnabled(false);
             mDisconnectButton.setEnabled(false);

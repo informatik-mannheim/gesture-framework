@@ -36,7 +36,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     private boolean mIsConnected;
     private IConnectionListener mListener;
-    private ConnectedThread mConnectionThread;
+    private ConnectedThread mConnectedThread;
 
     public WifiDirectChannel(WifiP2pManager manager,
                              WifiP2pManager.Channel channel,
@@ -160,8 +160,8 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         Log.d(TAG, "disconnecting");
 
         // this will close the socket, NOT the P2P connection
-        mConnectionThread.cancel();
-        mConnectionThread = null;
+        mConnectedThread.cancel();
+        mConnectedThread = null;
 
         closeP2PConnection();
 
@@ -193,7 +193,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
         Log.d(TAG, "connecting");
 
-        mConnectionThread = connectionThread;
+        mConnectedThread = connectionThread;
         _handler.obtainMessage(MSG_CONNECTION_ESTABLISHED).sendToTarget();
     }
 
@@ -204,7 +204,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     @Override
     public void transfer(Packet packet) {
         if (isConnected()) {
-            mConnectionThread.write(packet);
+            mConnectedThread.write(packet);
         }
     }
 }

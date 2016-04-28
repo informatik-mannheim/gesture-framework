@@ -6,7 +6,7 @@ import android.view.View;
 import hs_mannheim.gestureframework.model.GestureDetector;
 import hs_mannheim.gestureframework.model.IViewContext;
 
-public class DoubleTapDetector extends GestureDetector implements View.OnTouchListener{
+public class DoubleTapDetector extends GestureDetector implements View.OnTouchListener {
     private long lastTapTime = 0;
     private static final long MAX_DELTA = 300;
 
@@ -22,10 +22,9 @@ public class DoubleTapDetector extends GestureDetector implements View.OnTouchLi
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-
-        if(motionEvent.getAction() == MotionEvent.ACTION_UP){
+        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
             long tapTime = System.currentTimeMillis();
-            if(tapTime - lastTapTime < MAX_DELTA){
+            if (tapTime - lastTapTime < MAX_DELTA) {
                 fireGestureDetected();
             }
             lastTapTime = tapTime;

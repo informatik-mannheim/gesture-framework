@@ -77,8 +77,13 @@ public class ConfigurationBuilder {
         ((InteractionApplication) mContext).setInteractionContext(sysplaceContext);
     }
 
-    public SwipeDetector swipe(){
-        return mBuilder.createSwipeDetector();
+
+    public SwipeDetector swipeLeftRight(){
+        return mBuilder.createSwipeLeftRightDetector();
+    }
+
+    public SwipeDetector swipeUpDown(){
+        return mBuilder.createSwipeUpDownDetector();
     }
 
     public BumpDetector bump(){

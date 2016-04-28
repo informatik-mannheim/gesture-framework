@@ -78,8 +78,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
                 .withBluetooth()
-                .specifyGestureComposition(builder.swipe(), builder.doubleTap(), builder.swipe(), builder.bump())
-                .select(new Selection(new Packet("Empty")))
+                .specifyGestureComposition(builder.swipeLeftRight(), builder.doubleTap(), builder.swipeUpDown(), builder.bump())
+                .select(new Selection(new Packet("Photo transferred")))
                 .buildAndRegister();
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
@@ -208,18 +208,17 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     @Override
     public void onSelect() {
-        Log.d(TAG, "Select Happened");
-        // open picture chooser and select picture and update it on context
+        Toast.makeText(this, "SELECT", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onTransfer() {
-        Log.d(TAG, "Transfer Happened");
+        Toast.makeText(this, "TRANSFER", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onDisconnect() {
-        Log.d(TAG, "Disconnect Happened");
+        Toast.makeText(this, "DISCONNECT", Toast.LENGTH_SHORT).show();
     }
 }
 

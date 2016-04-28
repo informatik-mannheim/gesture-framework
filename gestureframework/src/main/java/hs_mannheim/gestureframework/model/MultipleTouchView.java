@@ -7,8 +7,6 @@ import android.view.View;
 
 public class MultipleTouchView extends Observable<View.OnTouchListener> implements View.OnTouchListener {
     private final View mView;
-    private boolean mWasHandled = false;
-
 
     public MultipleTouchView(View view)  {
         mView = view;
@@ -17,17 +15,11 @@ public class MultipleTouchView extends Observable<View.OnTouchListener> implemen
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
-        mWasHandled = false;
-
         for (View.OnTouchListener listener : mObservers) {
-            boolean wasHandled = listener.onTouch(view, motionEvent);
-
-            if(!mWasHandled && wasHandled) {
-                mWasHandled = true;
-            }
+            listener.onTouch(view, motionEvent);
         }
 
-        return mWasHandled;
+        return true;
     }
 
     @Override

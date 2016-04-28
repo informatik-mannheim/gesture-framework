@@ -79,7 +79,6 @@ public class SysplaceContext extends Observable<AllEventsListener> implements IP
     public void onConnect() {
         // initiate bluetooth handshake?
         notifyTransferStarted();
-        mPostOffice.send(mSelection.getData());
     }
 
     @Override
@@ -89,7 +88,7 @@ public class SysplaceContext extends Observable<AllEventsListener> implements IP
 
     @Override
     public void onTransfer() {
-
+        mPostOffice.send(mSelection.getData());
     }
 
     @Override

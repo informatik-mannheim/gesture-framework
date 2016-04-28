@@ -11,6 +11,7 @@ import hs_mannheim.gestureframework.gesture.bump.Threshold;
 import hs_mannheim.gestureframework.gesture.doubletap.DoubleTapDetector;
 import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
+import hs_mannheim.gestureframework.gesture.stitch.StitchEdgeConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDirectionConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDurationConstraint;
@@ -44,9 +45,17 @@ public class GestureDetectorBuilder{
     }
 
     //TODO: Add constraints as parameters
-    public SwipeDetector createSwipeDetector() {
+    public SwipeDetector createSwipeLeftRightDetector() {
         return new SwipeDetector(mViewContext)
                 .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.HORIZONTAL))
+                .addConstraint(new SwipeDurationConstraint(1000))
+                .addConstraint(new SwipeMinDistanceConstraint(200))
+                .addSwipeListener(new GestureDetectorBuilder.DebugSwipeListener());
+    }
+
+    public SwipeDetector createSwipeUpDownDetector() {
+        return new SwipeDetector(mViewContext)
+                .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.VERTICAL))
                 .addConstraint(new SwipeDurationConstraint(1000))
                 .addConstraint(new SwipeMinDistanceConstraint(200))
                 .addSwipeListener(new GestureDetectorBuilder.DebugSwipeListener());

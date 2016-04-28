@@ -24,6 +24,7 @@ public class ConnectedThread extends Thread {
     private ObjectOutputStream mObjectOutputStream;
 
     public ConnectedThread(BluetoothSocket socket, BluetoothChannel channel) {
+        Log.d(TAG, "Starting Thread.");
         mSocket = socket;
         mChannel = channel;
 

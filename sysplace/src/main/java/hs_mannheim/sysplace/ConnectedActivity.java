@@ -1,16 +1,12 @@
 package hs_mannheim.sysplace;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -21,18 +17,12 @@ import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.animation.PostCardFlipAnimationSend;
 import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
-import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
-import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-import hs_mannheim.gestureframework.model.GestureContext;
 import hs_mannheim.gestureframework.model.GestureDetector;
-import hs_mannheim.gestureframework.model.GestureManager;
-import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
-import hs_mannheim.gestureframework.model.InteractionContext;
-import hs_mannheim.gestureframework.model.Packet;
-import hs_mannheim.gestureframework.model.PacketType;
+import hs_mannheim.gestureframework.model.LifecycleEvent;
+import hs_mannheim.gestureframework.model.SysplaceContext;
 
-public class ConnectedActivity extends AppCompatActivity implements  IViewContext, GestureManager.GestureListener{
+public class ConnectedActivity extends AppCompatActivity implements  IViewContext {
 
     private static int PICK_IMAGE = 1;
     private ImageView imgView;
@@ -59,12 +49,12 @@ public class ConnectedActivity extends AppCompatActivity implements  IViewContex
     @Override
     protected void onResume() {
         super.onResume();
-        InteractionContext interactionContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
-        interactionContext.getPostOffice().register(receiveHandler);
-        interactionContext.updateViewContextAll(this);
+        SysplaceContext sysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
+
+        sysplaceContext.updateViewContextAll(this);
 
         //TODO: UGLY AF.. Hardcode SwipeDetector in or let GestureDetector fire events with more information.
-        GestureDetector gestureDetector = interactionContext.getGestureManager().getGestureDetector(GestureContext.TRANSFER);
+        GestureDetector gestureDetector = sysplaceContext.getGestureManager().getGestureDetectorFor(LifecycleEvent.TRANSFER);
         if(gestureDetector instanceof SwipeDetector){
             swipeDetector = (SwipeDetector) gestureDetector;
             swipeDetector.addSwipeListener(swipeHandler);
@@ -75,7 +65,6 @@ public class ConnectedActivity extends AppCompatActivity implements  IViewContex
     protected void onPause() {
         super.onPause();
         swipeDetector.removeSwipeListener(swipeHandler);
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().unregister(receiveHandler);
     }
 
     /**
@@ -129,30 +118,5 @@ public class ConnectedActivity extends AppCompatActivity implements  IViewContex
     public Point getDisplaySize() {
         //TODO: implement
         return null;
-    }
-
-    @Override
-    public void onGestureDetected() {
-
-    }
-
-    @Override
-    public void onSwipeDetected(SwipeEvent event) {
-
-    }
-
-    @Override
-    public void onSwiping(TouchPoint touchPoint) {
-
-    }
-
-    @Override
-    public void onSwipeStart(TouchPoint touchPoint, View view) {
-
-    }
-
-    @Override
-    public void onSwipeEnd(TouchPoint touchPoint) {
-
     }
 }

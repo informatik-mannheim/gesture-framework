@@ -15,6 +15,8 @@ public class AcceptThread extends Thread {
     public AcceptThread(BluetoothChannel channel, BluetoothAdapter bluetoothAdapter) {
         this.mChannel = channel;
 
+        bluetoothAdapter.cancelDiscovery();
+
         BluetoothServerSocket tmp = null;
 
         try {

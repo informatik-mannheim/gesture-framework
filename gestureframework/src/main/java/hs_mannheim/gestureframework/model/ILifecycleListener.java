@@ -1,6 +1,6 @@
 package hs_mannheim.gestureframework.model;
 
-public interface IInteractionListener {
+public interface ILifecycleListener {
     void onConnect();
     void onSelect();
     void onTransfer();

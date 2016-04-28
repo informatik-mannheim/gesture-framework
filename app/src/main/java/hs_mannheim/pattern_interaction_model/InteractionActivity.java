@@ -24,11 +24,11 @@ import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-import hs_mannheim.gestureframework.model.GestureContext;
+import hs_mannheim.gestureframework.model.LifecycleEvent;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.ImagePacket;
-import hs_mannheim.gestureframework.model.InteractionContext;
+import hs_mannheim.gestureframework.model.SysplaceContext;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 import hs_mannheim.gestureframework.model.SerializableImage;
@@ -71,15 +71,15 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
     @Override
     protected void onResume() {
         super.onResume();
-        InteractionContext interactionContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
-        interactionContext.getPostOffice().register(this);
-        interactionContext.updateViewContextAll(this);
+        SysplaceContext sysplaceContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
+
+        sysplaceContext.updateViewContextAll(this);
 
         clearImage(mImageView);
 
         //TODO: VERY HACKY! works only for swipe
 
-        mSwipeDetector = (SwipeDetector) interactionContext.getGestureManager().getGestureDetector(GestureContext.CONNECT);
+        mSwipeDetector = (SwipeDetector) sysplaceContext.getGestureManager().getGestureDetectorFor(LifecycleEvent.CONNECT);
         mSwipeDetector.addSwipeListener(this);
     }
 
@@ -87,7 +87,7 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
     protected void onPause() {
         super.onPause();
         mSwipeDetector.removeSwipeListener(this);
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().unregister(this);
+
     }
 
     public void startBluetoothActivity(View view) {

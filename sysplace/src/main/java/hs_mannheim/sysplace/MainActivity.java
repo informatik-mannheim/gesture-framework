@@ -23,16 +23,16 @@ import java.util.Random;
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.InteractionApplication;
 import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
-import hs_mannheim.gestureframework.model.GestureContext;
-import hs_mannheim.gestureframework.model.IInteractionListener;
 import hs_mannheim.gestureframework.model.IConnection;
+import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 import hs_mannheim.gestureframework.model.Selection;
+import hs_mannheim.gestureframework.model.SysplaceContext;
 
-public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, IInteractionListener {
+public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, ILifecycleListener {
 
     private String TAG = "[Main Activity]";
     private BluetoothAdapter mBluetoothAdapter;
@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     private String mOldName;
     private String mCurrentName;
     private IConnection mConn;
+
+    private SysplaceContext mSysplaceContext;
 
     public MainActivity() {
     }
@@ -57,22 +59,20 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         StrictMode.setThreadPolicy(policy);
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
-        builder.withBluetooth().specifyGestureComposition(builder.swipe(), null, builder.swipe(), null).select(new Selection(new Packet("Empty")));
+        builder
+                .withBluetooth()
+                .specifyGestureComposition(builder.swipe(), null, builder.bump(), null)
+                .select(new Selection(new Packet("Empty")))
+                .buildAndRegister();
 
-        // SwipeListener sl = new SwipeListener(constraints) --> horizontal, < 1000ms, length = 300px
-        // sl.registerSwipeListener(this) = ... --> implementes ISwipeListener
-        // framework.setConnectGesture(swipeListener)
-        // framework.onConnect(this) --> implements ILifecycleListener (oder sogar: IConnectListener, ITransferListener ....)
-        // --> connect()
-
-        builder.buildAndRegister();
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getGestureManager().registerGestureEventListener(GestureContext.CONNECT, this);
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().register(this);
-
-        mConn = ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection();
+        mConn = ((InteractionApplication) getApplicationContext()).getSysplaceContext().getConnection(); // forbidden
 
         mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
+
+        mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
+        mSysplaceContext.registerForLifecycleEvents(this);
+        mSysplaceContext.registerPacketReceiver(this);
 
         // enable bluetooth
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     public void disconnect(View view) {
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection().disconnect();
+        ((InteractionApplication) getApplicationContext()).getSysplaceContext().getConnection().disconnect();
     }
 
     @Override
@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     public void ping(View view) {
-        ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice().send(new Packet("Ping!"));
+        mSysplaceContext.send(new Packet("Ping!"));
     }
 
     @Override
@@ -200,13 +200,12 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     @Override
     public void onTransfer() {
-
+        Log.d(TAG, "onTransfer");
     }
 
     @Override
     public void onDisconnect() {
-        int zuwenig = 0;
-        int zuviel = 0;
+
     }
 }
 

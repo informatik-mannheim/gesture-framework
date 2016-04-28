@@ -18,10 +18,11 @@ public class ConnectThread extends Thread {
         mBluetoothAdapter = bluetoothAdapter;
         mChannel = channel;
 
+        mBluetoothAdapter.cancelDiscovery();
+
         BluetoothSocket tmp = null;
 
         try {
-            // MY_UUID is the app's UUID string, also used by the server code
             tmp = device.createInsecureRfcommSocketToServiceRecord(BluetoothChannel.MY_UUID);
         } catch (IOException e) {
             Log.d(TAG, "Could not connect");
@@ -30,9 +31,6 @@ public class ConnectThread extends Thread {
     }
 
     public void run() {
-        // Cancel discovery because it will slow down the connection
-        mBluetoothAdapter.cancelDiscovery();
-
         try {
             // block
             mBluetoothSocket.connect();

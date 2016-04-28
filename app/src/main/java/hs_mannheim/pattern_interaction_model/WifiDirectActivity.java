@@ -8,7 +8,7 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,13 +19,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import hs_mannheim.gestureframework.model.IPacketReceiver;
-import hs_mannheim.gestureframework.model.IPostOffice;
-import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
+import hs_mannheim.gestureframework.model.IPacketReceiver;
+import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 
-public class WifiDirectActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
+public class WifiDirectActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
     private String TAG = "[WifiDirectActivity]";
 
     private WifiP2pManager mManager;
@@ -34,7 +33,6 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     private WifiDirectChannel mConnection;
 
     private IntentFilter mIntentFilter;
-    private IPostOffice mPostOffice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +42,6 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
         mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(this, getMainLooper(), null);
 
-        mPostOffice = ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice();
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -75,10 +72,13 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     public void discoverPeers(View view) {
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
-            public void onSuccess() {}
+            public void onSuccess() {
+            }
 
             @Override
-            public void onFailure(int reason) {Log.d(TAG, "Peer discovery failed");}
+            public void onFailure(int reason) {
+                Log.d(TAG, "Peer discovery failed");
+            }
         });
     }
 
@@ -86,14 +86,13 @@ public class WifiDirectActivity extends ActionBarActivity implements AdapterView
     protected void onResume() {
         super.onResume();
         registerReceiver(mReceiver, mIntentFilter);
-        mPostOffice.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
-        mPostOffice.unregister(this);
+
     }
 
     public void listDevices(WifiP2pDeviceList peers) {

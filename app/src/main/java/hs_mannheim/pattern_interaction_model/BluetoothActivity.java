@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,12 +22,11 @@ import java.util.ArrayList;
 import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
 import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
-import hs_mannheim.gestureframework.model.IPostOffice;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 
 
-public class BluetoothActivity extends ActionBarActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
+public class BluetoothActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, IPacketReceiver {
     private int REQUEST_ENABLE_BT = 0xfe;
 
     private BluetoothAdapter mBluetoothAdapter;
@@ -37,7 +37,6 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
 
     private Button mStartDiscoveryButton;
     private IntentFilter mIntentFilter;
-    private IPostOffice mPostOffice;
     private IConnection mConnection;
 
     @Override
@@ -50,7 +49,6 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
 
         checkBluetoothAvailability();
 
-        mPostOffice = ((InteractionApplication) getApplicationContext()).getInteractionContext().getPostOffice();
         mConnection = ((InteractionApplication) getApplicationContext()).getInteractionContext().getConnection();
 
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_expandable_list_item_1, devices);
@@ -95,7 +93,7 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     }
 
     public void startDiscovery(View view) {
-        if(mBluetoothAdapter.isDiscovering()) {
+        if (mBluetoothAdapter.isDiscovering()) {
             mBluetoothAdapter.cancelDiscovery();
         }
 
@@ -110,10 +108,6 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
         mConnection.connect(address);
     }
 
-    public void sendHallo(View view) {
-        mPostOffice.send(new Packet("Hallo!\n"));
-    }
-
     private void showToast(final String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
@@ -122,19 +116,12 @@ public class BluetoothActivity extends ActionBarActivity implements AdapterView.
     protected void onResume() {
         super.onResume();
         registerReceiver(mBroadcastReceiver, mIntentFilter);
-        mPostOffice.register(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mBroadcastReceiver);
-        mPostOffice.unregister(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onResume();
     }
 
     @Override

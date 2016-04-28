@@ -1,6 +1,5 @@
 package hs_mannheim.sysplace;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
@@ -12,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -33,11 +31,9 @@ import hs_mannheim.gestureframework.model.MultipleTouchView;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 import hs_mannheim.gestureframework.model.Selection;
-import hs_mannheim.gestureframework.model.SysplaceContext;
 
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, ILifecycleListener {
     protected final int REQUEST_ENABLE_BT = 100;
-    protected final int LOCATION_REQUEST = 1337;
 
     private String TAG = "[Main Activity]";
 
@@ -164,21 +160,24 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     @Override
     public void receive(Packet packet) {
         Log.d(TAG, "Packet received: " + packet.getMessage());
-        if (packet.getMessage().equals("Connection established")) {
-            mTextView.setText("Connected");
-            mTextView.setTextColor(Color.GREEN);
-            mPingButton.setEnabled(true);
-            mPhotoButton.setEnabled(true);
-            mDisconnectButton.setEnabled(true);
-
-        } else if (packet.getMessage().equals("Connection lost")) {
-            mTextView.setText("NOT Connected");
-            mTextView.setTextColor(getResources().getColor(android.R.color.holo_red_light, null));
-            mPingButton.setEnabled(false);
-            mPhotoButton.setEnabled(false);
-            mDisconnectButton.setEnabled(false);
-        } else {
-            Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
+        switch (packet.getMessage()) {
+            case "Connection established":
+                mTextView.setText(R.string.connected_info);
+                mTextView.setTextColor(Color.GREEN);
+                mPingButton.setEnabled(true);
+                mPhotoButton.setEnabled(true);
+                mDisconnectButton.setEnabled(true);
+                break;
+            case "Connection lost":
+                mTextView.setText(R.string.not_connected_info);
+                mTextView.setTextColor(getResources().getColor(android.R.color.holo_red_light, null));
+                mPingButton.setEnabled(false);
+                mPhotoButton.setEnabled(false);
+                mDisconnectButton.setEnabled(false);
+                break;
+            default:
+                Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 

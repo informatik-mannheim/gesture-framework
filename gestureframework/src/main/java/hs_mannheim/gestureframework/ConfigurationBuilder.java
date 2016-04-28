@@ -37,7 +37,8 @@ public class ConfigurationBuilder {
     }
 
     /**
-     *
+     * Sets one {@link GestureDetector} for every
+     * {@link hs_mannheim.gestureframework.model.LifecycleEvent}.
      * @param connectDetector
      * @param selectDetector
      * @param transferDetector

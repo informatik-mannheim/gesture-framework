@@ -11,7 +11,6 @@ import hs_mannheim.gestureframework.gesture.bump.Threshold;
 import hs_mannheim.gestureframework.gesture.doubletap.DoubleTapDetector;
 import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
-import hs_mannheim.gestureframework.gesture.stitch.StitchEdgeConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDirectionConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDurationConstraint;
@@ -20,16 +19,13 @@ import hs_mannheim.gestureframework.gesture.swipe.SwipeMinDistanceConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeOrientationConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
-/**
- * Created by Dominick Madden on 21.04.2016.
- */
-public class GestureDetectorBuilder{
+public class GestureDetectorBuilder {
 
     PostOffice mPostOffice;
     IViewContext mViewContext;
     Context mContext;
 
-    public GestureDetectorBuilder(PostOffice postOffice, IViewContext viewContext, Context context){
+    public GestureDetectorBuilder(PostOffice postOffice, IViewContext viewContext, Context context) {
         this.mPostOffice = postOffice;
         this.mViewContext = viewContext;
         this.mContext = context;
@@ -67,10 +63,10 @@ public class GestureDetectorBuilder{
 
     //TODO: Add threshold as param?
     public BumpDetector createBumpDetector() {
-        return new BumpDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), Threshold.LOW, mViewContext);
+        return new BumpDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), Threshold.HORST, mViewContext);
     }
 
-    public DoubleTapDetector createDoubleTapDetector(){
+    public DoubleTapDetector createDoubleTapDetector() {
         return new DoubleTapDetector(mViewContext);
     }
 

@@ -26,7 +26,6 @@ public class GestureDetectorBuilder{
     PostOffice mPostOffice;
     IViewContext mViewContext;
     Context mContext;
-    GestureDetector mDetector;
 
     public GestureDetectorBuilder(PostOffice postOffice, IViewContext viewContext, Context context){
         this.mPostOffice = postOffice;

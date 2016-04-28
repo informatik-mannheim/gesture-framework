@@ -28,6 +28,7 @@ import hs_mannheim.gestureframework.model.LifecycleEvent;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.ImagePacket;
+import hs_mannheim.gestureframework.model.MultipleTouchView;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
@@ -41,8 +42,6 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
     private GestureAnimation sendAnimation, receiveAnimation;
     private SwipeDetector mSwipeDetector;
 
-    private boolean shouldSendCopy;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +54,7 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
 
 
         ///////////////////////////// TODO: Do this somewhere else (configurator)
-        shouldSendCopy = true;
+        boolean shouldSendCopy = true;
         this.sendAnimation = new PostCardFlipAnimationSend(this, mImageView);
         this.receiveAnimation = new PostcardFlipAnimationReceive(this, mImageView);
         /////////////////////////////
@@ -131,8 +130,8 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
     }
 
     @Override
-    public View getInteractionView() {
-        return findViewById(R.id.layout_interaction);
+    public MultipleTouchView getInteractionView() {
+        return new MultipleTouchView(findViewById(R.id.layout_interaction));
     }
 
     @Override

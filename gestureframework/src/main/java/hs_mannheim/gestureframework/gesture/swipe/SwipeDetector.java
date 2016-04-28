@@ -1,6 +1,5 @@
 package hs_mannheim.gestureframework.gesture.swipe;
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -9,7 +8,7 @@ import java.util.ArrayList;
 import hs_mannheim.gestureframework.model.GestureDetector;
 import hs_mannheim.gestureframework.model.IViewContext;
 
-public class SwipeDetector extends GestureDetector implements View.OnTouchListener{
+public class SwipeDetector extends GestureDetector implements View.OnTouchListener {
 
     //TODO: make this thread safe
     private final ArrayList<SwipeConstraint> mSwipeConstraints;
@@ -20,7 +19,6 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
     public SwipeDetector(IViewContext viewContext) {
         super(viewContext);
-        mViewContext.getInteractionView().setOnTouchListener(this);
         mSwipeConstraints = new ArrayList<>();
         mListeners = new ArrayList<>();
     }
@@ -33,7 +31,7 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     @Override
     public void setViewContext(IViewContext viewContext) {
         super.setViewContext(viewContext);
-        mViewContext.getInteractionView().setOnTouchListener(this);
+        mViewContext.getInteractionView().registerObserver(this);
     }
 
     //TODO: Threadsafe
@@ -66,14 +64,14 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     }
 
     private void handle_move(MotionEvent event) {
-        for(SwipeEventListener listener: mListeners) {
+        for (SwipeEventListener listener : mListeners) {
             listener.onSwiping(this, new TouchPoint(event));
         }
     }
 
-    private void handle_down(MotionEvent event, View view){
+    private void handle_down(MotionEvent event, View view) {
         mStart = new TouchPoint(event);
-        for(SwipeEventListener listener: mListeners) {
+        for (SwipeEventListener listener : mListeners) {
             listener.onSwipeStart(this, new TouchPoint(event), view);
         }
     }
@@ -89,14 +87,14 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
             if (!constraint.isValid(swipeEvent)) isSwipe = false;
         }
 
-        if(isSwipe) {
+        if (isSwipe) {
             super.fireGestureDetected();
 
-            for(SwipeEventListener listener: mListeners) {
+            for (SwipeEventListener listener : mListeners) {
                 listener.onSwipeDetected(this, swipeEvent);
             }
         } else {
-            for (SwipeEventListener listener: mListeners) {
+            for (SwipeEventListener listener : mListeners) {
                 listener.onSwipeEnd(this, end);
             }
         }
@@ -106,8 +104,11 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
     public interface SwipeEventListener {
         void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event);
+
         void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint);
+
         void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view);
+
         void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint);
     }
 }

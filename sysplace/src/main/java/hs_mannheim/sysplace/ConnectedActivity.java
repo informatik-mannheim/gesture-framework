@@ -21,6 +21,7 @@ import hs_mannheim.gestureframework.model.GestureDetector;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.LifecycleEvent;
 import hs_mannheim.gestureframework.model.SysplaceContext;
+import hs_mannheim.gestureframework.model.MultipleTouchView;
 
 public class ConnectedActivity extends AppCompatActivity implements  IViewContext {
 
@@ -110,8 +111,8 @@ public class ConnectedActivity extends AppCompatActivity implements  IViewContex
     }
 
     @Override
-    public View getInteractionView() {
-        return findViewById(R.id.imgView);
+    public MultipleTouchView getInteractionView() {
+        return new MultipleTouchView(findViewById(R.id.imgView));
     }
 
     @Override

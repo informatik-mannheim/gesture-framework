@@ -27,6 +27,7 @@ import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
 import hs_mannheim.gestureframework.model.IViewContext;
+import hs_mannheim.gestureframework.model.MultipleTouchView;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 import hs_mannheim.gestureframework.model.Selection;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     private IConnection mConn;
 
     private SysplaceContext mSysplaceContext;
+    private MultipleTouchView mInteractionView;
 
     public MainActivity() {
     }
@@ -56,20 +58,24 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
+        mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
+        mOldName = mBluetoothAdapter.getName();
+        mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
+        mInteractionView = new MultipleTouchView(findViewById(R.id.layout_main)); // TODO: handle this somewhere else!
+
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
                 .withBluetooth()
-                .specifyGestureComposition(builder.swipe(), builder.bump(), builder.bump(), builder.bump())
+                .specifyGestureComposition(builder.swipe(), builder.bump(), builder.swipe(), builder.bump())
                 .select(new Selection(new Packet("Empty")))
                 .buildAndRegister();
 
-        mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
         mSysplaceContext.registerForLifecycleEvents(this);
         mSysplaceContext.registerPacketReceiver(this);
-        mConn = mSysplaceContext.getConnection(); // should be forbidden
+        mConn = mSysplaceContext.getConnection(); // TODO: should be forbidden
 
-        // enable bluetooth
+        // TODO: enable bluetooth - move this out of here
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -79,8 +85,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                         Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST);
 
-        mOldName = mBluetoothAdapter.getName();
-        mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
     }
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -144,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     @Override
-    public View getInteractionView() {
-        return findViewById(R.id.layout_main);
+    public MultipleTouchView getInteractionView() {
+        return mInteractionView;
     }
 
     @Override
@@ -193,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     @Override
     public void onSelect() {
         Log.d(TAG, "Select Happened");
+        // open picture chooser and select picture and update it on context
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.model.IViewContext;
+import hs_mannheim.gestureframework.model.MultipleTouchView;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.Selection;
 
@@ -73,8 +74,8 @@ public class MainActivity extends ActionBarActivity implements IViewContext {
     }
 
     @Override
-    public View getInteractionView() {
-        return findViewById(R.id.layout_main);
+    public MultipleTouchView getInteractionView() {
+        return new MultipleTouchView(findViewById(R.id.layout_main));
     }
 
     @Override

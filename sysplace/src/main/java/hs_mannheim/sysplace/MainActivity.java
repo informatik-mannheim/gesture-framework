@@ -33,14 +33,12 @@ import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, ILifecycleListener {
+    protected final int REQUEST_ENABLE_BT = 100;
+    protected final int LOCATION_REQUEST = 1337;
 
     private String TAG = "[Main Activity]";
+
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothManager mBluetoothManager;
-
-    private final int REQUEST_ENABLE_BT = 100;
-
-    private static final int LOCATION_REQUEST = 1337;
     private String mOldName;
     private String mCurrentName;
     private IConnection mConn;
@@ -61,18 +59,15 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
                 .withBluetooth()
-                .specifyGestureComposition(builder.swipe(), null, builder.bump(), null)
+                .specifyGestureComposition(builder.swipe(), builder.bump(), builder.bump(), builder.bump())
                 .select(new Selection(new Packet("Empty")))
                 .buildAndRegister();
 
-        mConn = ((InteractionApplication) getApplicationContext()).getSysplaceContext().getConnection(); // forbidden
-
-        mBluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        mBluetoothAdapter = mBluetoothManager.getAdapter();
-
+        mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
         mSysplaceContext.registerForLifecycleEvents(this);
         mSysplaceContext.registerPacketReceiver(this);
+        mConn = mSysplaceContext.getConnection(); // should be forbidden
 
         // enable bluetooth
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
@@ -95,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 Log.d(TAG, "Found " + device.getAddress());
+
+                // TODO: if the server is faster, the client can not connect. Fix this.
 
                 if (device.getName() != null && device.getName().contains("-sysplace-")) {
                     mConn.connect(ConnectionInfo.from(mCurrentName, device.getName(), device.getAddress()));
@@ -189,23 +186,23 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     @Override
     public void onConnect() {
-        Log.d(TAG, "Doing bluetooth magic");
+        Log.d(TAG, "Connect Happened");
         doBluetoothMagic();
     }
 
     @Override
     public void onSelect() {
-
+        Log.d(TAG, "Select Happened");
     }
 
     @Override
     public void onTransfer() {
-        Log.d(TAG, "onTransfer");
+        Log.d(TAG, "Transfer Happened");
     }
 
     @Override
     public void onDisconnect() {
-
+        Log.d(TAG, "Disconnect Happened");
     }
 }
 

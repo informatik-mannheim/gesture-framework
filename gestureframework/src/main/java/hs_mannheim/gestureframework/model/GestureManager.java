@@ -1,10 +1,11 @@
 package hs_mannheim.gestureframework.model;
 
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
@@ -13,14 +14,12 @@ import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 public class GestureManager implements GestureDetector.GestureEventListener,
         SwipeDetector.SwipeEventListener {
 
-    private static final String TAG = "[GestureManager]";
-    private GestureDetector mConnectDetector, mSelectDetector, mTransferDetector, mDisconnectDetector;
-
+    private final Map<LifecycleEvent, GestureDetector> mDetectors = new HashMap<>();
     private final List<ILifecycleListener> mLifeCycleEventListeners = new ArrayList<>();
 
-    private IViewContext mViewContext;
-
     /**
+     * Builds a new instance of the {@link GestureManager} and registers a {@link GestureDetector}
+     * for every {@link LifecycleEvent}.
      * @param connectDetector    nullable
      * @param selectDetector     nullable
      * @param transferDetector   nullable
@@ -31,31 +30,25 @@ public class GestureManager implements GestureDetector.GestureEventListener,
         setGestureDetector(LifecycleEvent.SELECT, selectDetector);
         setGestureDetector(LifecycleEvent.TRANSFER, transferDetector);
         setGestureDetector(LifecycleEvent.DISCONNECT, disconnectDetector);
-
-        mConnectDetector.registerGestureEventListener(this);
-        mSelectDetector.registerGestureEventListener(this);
-        mTransferDetector.registerGestureEventListener(this);
-        mDisconnectDetector.registerGestureEventListener(this);
     }
 
+    /**
+     * Set a {@link IViewContext} for a specific LifecycleEvent registered.
+     * @param lifecycleEvent The {@link LifecycleEvent} to set the {@link IViewContext} for.
+     * @param viewContext The {@link IViewContext} to set.
+     */
     public void setViewContext(LifecycleEvent lifecycleEvent, IViewContext viewContext) {
-        switch (lifecycleEvent) {
-            case CONNECT:
-                mConnectDetector.setViewContext(viewContext);
-            case SELECT:
-                mSelectDetector.setViewContext(viewContext);
-            case TRANSFER:
-                mTransferDetector.setViewContext(viewContext);
-            case DISCONNECT:
-                mDisconnectDetector.setViewContext(viewContext);
-        }
+        mDetectors.get(lifecycleEvent).setViewContext(viewContext);
     }
 
+    /**
+     * Set the same {@link IViewContext} on every GestureDetector registered.
+     * @param viewContext The {@link IViewContext} to set.
+     */
     public void setViewContextAll(IViewContext viewContext) {
-        mConnectDetector.setViewContext(viewContext);
-        mSelectDetector.setViewContext(viewContext);
-        mTransferDetector.setViewContext(viewContext);
-        mDisconnectDetector.setViewContext(viewContext);
+        for (GestureDetector detector : mDetectors.values()) {
+            detector.setViewContext(viewContext);
+        }
     }
 
     /**
@@ -65,18 +58,7 @@ public class GestureManager implements GestureDetector.GestureEventListener,
      * @return The desired {@link GestureDetector}. Might be a {@link VoidGestureDetector}!
      */
     public GestureDetector getGestureDetectorFor(LifecycleEvent lifecycleEvent) {
-        switch (lifecycleEvent) {
-            case CONNECT:
-                return mConnectDetector;
-            case SELECT:
-                return mSelectDetector;
-            case TRANSFER:
-                return mTransferDetector;
-            case DISCONNECT:
-                return mDisconnectDetector;
-            default:
-                return new VoidGestureDetector(mViewContext);
-        }
+        return mDetectors.get(lifecycleEvent);
     }
 
     /**
@@ -87,33 +69,18 @@ public class GestureManager implements GestureDetector.GestureEventListener,
      * @param gestureDetector The GestureDetector to register to the given GestureContext
      */
     public void setGestureDetector(LifecycleEvent lifecycleEvent, GestureDetector gestureDetector) {
-        if(gestureDetector == null) {
-            gestureDetector = new VoidGestureDetector(mViewContext);
+        if (gestureDetector == null) {
+            gestureDetector = new VoidGestureDetector(null);
         }
 
-        switch (lifecycleEvent) {
-            case CONNECT:
-                mConnectDetector = gestureDetector;
-                mConnectDetector.registerGestureEventListener(this);
-                break;
-            case SELECT:
-                mSelectDetector = gestureDetector;
-                mSelectDetector.registerGestureEventListener(this);
-                break;
-            case TRANSFER:
-                mTransferDetector = gestureDetector;
-                mTransferDetector.registerGestureEventListener(this);
-                break;
-            case DISCONNECT:
-                mDisconnectDetector = gestureDetector;
-                mDisconnectDetector.registerGestureEventListener(this);
-                break;
-        }
+        gestureDetector.registerGestureEventListener(this);
+        mDetectors.put(lifecycleEvent, gestureDetector);
     }
 
     /**
      * Registers a listener for all LifecycleEvents.
      * TODO: make this Threadsafe
+     *
      * @param lifecycleListener the listener to register
      */
     public void registerLifecycleListener(ILifecycleListener lifecycleListener) {
@@ -123,6 +90,7 @@ public class GestureManager implements GestureDetector.GestureEventListener,
     /**
      * Unregisters a listener for all LifecycleEvents.
      * TODO: make this Threadsafe
+     *
      * @param lifecycleListener the listener to register
      */
     public void unregisterLifecycleListener(ILifecycleListener lifecycleListener) {
@@ -131,18 +99,34 @@ public class GestureManager implements GestureDetector.GestureEventListener,
         }
     }
 
+    private LifecycleEvent getLifecycleEventFor(GestureDetector detector) {
+        for (Map.Entry<LifecycleEvent, GestureDetector> entry : mDetectors.entrySet()) {
+            if (entry.getValue().equals(detector)) {
+                return entry.getKey();
+            }
+        }
+
+        return null; //WOOOHOOO
+    }
+
     @Override
     public void onGestureDetected(GestureDetector gestureDetector) {
         for (ILifecycleListener gestureListener : mLifeCycleEventListeners) {
-            if (gestureDetector.equals(mConnectDetector)) {
-                gestureListener.onConnect();
-                Log.d(TAG, "Connect Gesture fired");
-            } else if (gestureDetector.equals(mSelectDetector)) {
-                gestureListener.onSelect();
-            } else if (gestureDetector.equals(mTransferDetector)) {
-                gestureListener.onTransfer();
-            } else if (gestureDetector.equals(mDisconnectDetector)) {
-                gestureListener.onDisconnect();
+            switch (getLifecycleEventFor(gestureDetector)) {
+                case CONNECT:
+                    gestureListener.onConnect();
+                    break;
+                case SELECT:
+                    gestureListener.onSelect();
+                    break;
+                case TRANSFER:
+                    gestureListener.onTransfer();
+                    break;
+                case DISCONNECT:
+                    gestureListener.onDisconnect();
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -167,3 +151,5 @@ public class GestureManager implements GestureDetector.GestureEventListener,
 
     }
 }
+
+

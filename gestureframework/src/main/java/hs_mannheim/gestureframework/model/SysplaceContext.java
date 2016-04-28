@@ -26,7 +26,6 @@ public class SysplaceContext extends Observable<AllEventsListener> implements IP
         mPostOffice = postOffice; /* only PostOffice talks to the connection */
 
         mConnection.register(mPostOffice);
-
         mGestureManager.registerLifecycleListener(this);
     }
 
@@ -44,10 +43,6 @@ public class SysplaceContext extends Observable<AllEventsListener> implements IP
 
     public void updateViewContext(LifecycleEvent lifecycleEvent, IViewContext viewContext) {
         mGestureManager.setViewContext(lifecycleEvent, viewContext);
-    }
-
-    public GestureDetector getGestureDetector(LifecycleEvent lifecycleEvent) {
-        return this.mGestureManager.getGestureDetectorFor(lifecycleEvent);
     }
 
     private void notifyTransferStarted() {

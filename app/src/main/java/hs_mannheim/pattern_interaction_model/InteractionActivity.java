@@ -73,7 +73,7 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
         super.onResume();
         SysplaceContext sysplaceContext = ((InteractionApplication) getApplicationContext()).getInteractionContext();
 
-        sysplaceContext.updateViewContextAll(this);
+        //sysplaceContext.updateViewContextAll(this);
 
         clearImage(mImageView);
 

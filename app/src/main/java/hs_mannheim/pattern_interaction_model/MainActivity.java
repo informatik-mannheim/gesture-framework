@@ -74,7 +74,7 @@ public class MainActivity extends ActionBarActivity implements IViewContext {
     }
 
     @Override
-    public MultipleTouchView getInteractionView() {
+    public MultipleTouchView getMultipleTouchView() {
         return new MultipleTouchView(findViewById(R.id.layout_main));
     }
 

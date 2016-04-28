@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
                 .withBluetooth()
-                .specifyGestureComposition(builder.swipe(), builder.bump(), builder.swipe(), builder.bump())
+                .specifyGestureComposition(builder.swipe(), builder.doubleTap(), builder.swipe(), builder.bump())
                 .select(new Selection(new Packet("Empty")))
                 .buildAndRegister();
 
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     @Override
-    public MultipleTouchView getInteractionView() {
+    public MultipleTouchView getMultipleTouchView() {
         return mInteractionView;
     }
 

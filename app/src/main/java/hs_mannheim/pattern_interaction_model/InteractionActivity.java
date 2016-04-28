@@ -130,7 +130,7 @@ public class InteractionActivity extends ActionBarActivity implements SwipeDetec
     }
 
     @Override
-    public MultipleTouchView getInteractionView() {
+    public MultipleTouchView getMultipleTouchView() {
         return new MultipleTouchView(findViewById(R.id.layout_interaction));
     }
 

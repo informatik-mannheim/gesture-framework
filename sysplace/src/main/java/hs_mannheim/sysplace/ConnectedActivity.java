@@ -111,7 +111,7 @@ public class ConnectedActivity extends AppCompatActivity implements  IViewContex
     }
 
     @Override
-    public MultipleTouchView getInteractionView() {
+    public MultipleTouchView getMultipleTouchView() {
         return new MultipleTouchView(findViewById(R.id.imgView));
     }
 

@@ -8,6 +8,7 @@ import hs_mannheim.gestureframework.connection.PostOffice;
 import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
 import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
 import hs_mannheim.gestureframework.gesture.bump.BumpDetector;
+import hs_mannheim.gestureframework.gesture.doubletap.DoubleTapDetector;
 import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
@@ -42,7 +43,10 @@ public class ConfigurationBuilder {
      * @param transferDetector
      * @param disconnectDetector
      */
-    public ConfigurationBuilder specifyGestureComposition(GestureDetector connectDetector, GestureDetector selectDetector, GestureDetector transferDetector, GestureDetector disconnectDetector){
+    public ConfigurationBuilder specifyGestureComposition(GestureDetector connectDetector,
+                                                          GestureDetector selectDetector,
+                                                          GestureDetector transferDetector,
+                                                          GestureDetector disconnectDetector){
         mGestureManager = new GestureManager(connectDetector, selectDetector, transferDetector, disconnectDetector);
         return this;
     }
@@ -87,5 +91,9 @@ public class ConfigurationBuilder {
 
     public ShakeDetector shake(){
         return mBuilder.createShakeDetector();
+    }
+
+    public DoubleTapDetector doubleTap(){
+        return mBuilder.createDoubleTapDetector();
     }
 }

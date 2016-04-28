@@ -8,6 +8,7 @@ import android.view.View;
 import hs_mannheim.gestureframework.connection.PostOffice;
 import hs_mannheim.gestureframework.gesture.bump.BumpDetector;
 import hs_mannheim.gestureframework.gesture.bump.Threshold;
+import hs_mannheim.gestureframework.gesture.doubletap.DoubleTapDetector;
 import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
@@ -58,6 +59,10 @@ public class GestureDetectorBuilder{
     //TODO: Add threshold as param?
     public BumpDetector createBumpDetector() {
         return new BumpDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), Threshold.LOW, mViewContext);
+    }
+
+    public DoubleTapDetector createDoubleTapDetector(){
+        return new DoubleTapDetector(mViewContext);
     }
 
     public class DebugSwipeListener implements SwipeDetector.SwipeEventListener {

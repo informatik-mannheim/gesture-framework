@@ -64,7 +64,6 @@ public class ConnectedThread extends Thread {
                     mChannel.receive((Packet) objectInputStream.readObject());
                 }
             } catch (IOException e) {
-                e.printStackTrace();
                 Log.e(TAG, "IO Exception: " + e.getMessage());
                 mChannel.disconnect();
                 break;

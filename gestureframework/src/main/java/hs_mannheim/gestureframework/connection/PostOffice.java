@@ -1,7 +1,6 @@
 package hs_mannheim.gestureframework.connection;
 
 import android.database.Observable;
-import android.util.Log;
 
 import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
@@ -60,19 +59,30 @@ public class PostOffice extends Observable<IPacketReceiver> implements IPostOffi
         }
     }
 
+    /**
+     * If the {@link IConnection} tells us that the connection was lost, propagate it on the bus by
+     * sending a {@link ConnectionLostPacket}.
+     */
     @Override
     public void onConnectionLost() {
-        receive(new Packet("Connection lost"));
+        receive(new ConnectionLostPacket());
     }
 
+    /**
+     * If the {@link IConnection} tells us that the connection was established, propagate it on
+     * the bus by sending a {@link ConnectionEstablishedPacket}.
+     */
     @Override
     public void onConnectionEstablished() {
-        receive(new Packet("Connection established"));
+        receive(new ConnectionEstablishedPacket());
     }
 
+    /**
+     * If the {@link IConnection} has any {@link Packet} for us, propagate it on the bus.
+     * @param packet The received {@link Packet}.
+     */
     @Override
     public void onDataReceived(Packet packet) {
-        Log.d("[PostOffice]", "Received packet: " + packet.toString());
         receive(packet);
     }
 }

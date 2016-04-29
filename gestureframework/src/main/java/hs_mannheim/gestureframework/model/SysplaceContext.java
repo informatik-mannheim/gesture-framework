@@ -1,16 +1,13 @@
 package hs_mannheim.gestureframework.model;
 
-import android.database.Observable;
-
-public class SysplaceContext extends Observable<AllEventsListener> implements IPacketReceiver, ILifecycleListener, ISysplaceContext {
+public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISysplaceContext {
 
     private final GestureManager mGestureManager;
     private final Selection mSelection;
     private final IConnection mConnection;
     private final IPostOffice mPostOffice;
 
-
-    /***
+    /**
      * The InteractionContext is the one and only global object to manage all Sysplace related
      * Gestures, corresponding events, states etc.
      *
@@ -25,8 +22,8 @@ public class SysplaceContext extends Observable<AllEventsListener> implements IP
         mConnection = connection;
         mPostOffice = postOffice; /* only PostOffice talks to the connection */
 
-        mConnection.register(mPostOffice);
         mGestureManager.registerLifecycleListener(this);
+        mPostOffice.register(mGestureManager);
     }
 
     public IConnection getConnection() {
@@ -43,12 +40,6 @@ public class SysplaceContext extends Observable<AllEventsListener> implements IP
 
     public void updateViewContext(LifecycleEvent lifecycleEvent, IViewContext viewContext) {
         mGestureManager.setViewContext(lifecycleEvent, viewContext);
-    }
-
-    private void notifyTransferStarted() {
-        for (AllEventsListener listener : mObservers) {
-            listener.onTransferStarted();
-        }
     }
 
     @Override
@@ -77,8 +68,7 @@ public class SysplaceContext extends Observable<AllEventsListener> implements IP
 
     @Override
     public void onConnect() {
-        // initiate bluetooth handshake?
-        notifyTransferStarted();
+
     }
 
     @Override

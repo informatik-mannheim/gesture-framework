@@ -1,7 +1,6 @@
 package hs_mannheim.gestureframework.model;
 
 import android.database.Observable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,11 +19,5 @@ public class MultipleTouchView extends Observable<View.OnTouchListener> implemen
         }
 
         return true;
-    }
-
-    @Override
-    public void registerObserver(View.OnTouchListener observer) {
-        super.registerObserver(observer);
-        Log.d("MTV", "Registered a new observer: " + observer.toString());
     }
 }

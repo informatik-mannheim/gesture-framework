@@ -77,7 +77,13 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
     @Override
     public void register(IConnectionListener listener) {
+        //TODO: This should allow more than one listener. Have a look at the Bluetooth Version.
         this.mListener = listener;
+    }
+
+    @Override
+    public void unregister(IConnectionListener listener) {
+        this.mListener = null;
     }
 
     @Override

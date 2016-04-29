@@ -7,7 +7,7 @@ public class Packet implements Serializable {
     private final String mMessage;
 
     public Packet(String message) {
-        mPacketType = PacketType.PlainStringPacket;
+        mPacketType = PacketType.PlainString;
         mMessage = message;
     }
 

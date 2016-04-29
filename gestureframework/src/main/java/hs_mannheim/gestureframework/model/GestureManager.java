@@ -12,10 +12,11 @@ import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
 public class GestureManager implements GestureDetector.GestureEventListener,
-        SwipeDetector.SwipeEventListener {
+        SwipeDetector.SwipeEventListener, IPacketReceiver {
 
     private final Map<LifecycleEvent, GestureDetector> mDetectors = new HashMap<>();
     private final List<ILifecycleListener> mLifeCycleEventListeners = new ArrayList<>();
+    private boolean mConnected = false;
 
     /**
      * Builds a new instance of the {@link GestureManager} and registers a {@link GestureDetector}
@@ -121,15 +122,24 @@ public class GestureManager implements GestureDetector.GestureEventListener,
         for (ILifecycleListener gestureListener : mLifeCycleEventListeners) {
             switch (getLifecycleEventFor(gestureDetector)) {
                 case CONNECT:
+                    if(mConnected) {
+                        return;
+                    }
                     gestureListener.onConnect();
                     break;
                 case SELECT:
                     gestureListener.onSelect();
                     break;
                 case TRANSFER:
+                    if(!mConnected) {
+                        return;
+                    }
                     gestureListener.onTransfer();
                     break;
                 case DISCONNECT:
+                    if(!mConnected) {
+                        return;
+                    }
                     gestureListener.onDisconnect();
                     break;
                 default:
@@ -156,5 +166,15 @@ public class GestureManager implements GestureDetector.GestureEventListener,
     @Override
     public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
 
+    }
+
+    @Override
+    public void receive(Packet packet) {
+        mConnected = packet.getType() == PacketType.ConnectionEstablished;
+    }
+
+    @Override
+    public boolean accept(PacketType type) {
+        return type == PacketType.ConnectionEstablished || type == PacketType.ConnectionLost;
     }
 }

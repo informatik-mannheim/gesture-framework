@@ -1,5 +1,5 @@
 package hs_mannheim.gestureframework.model;
 
 public enum PacketType {
-    PlainStringPacket, StitchSyn, Image, StitchAck
+    PlainString, StitchSyn, Image, ConnectionLost, ConnectionEstablished, StitchAck
 }

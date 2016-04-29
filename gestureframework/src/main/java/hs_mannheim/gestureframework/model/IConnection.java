@@ -8,5 +8,6 @@ public interface IConnection {
     boolean isConnected();
     void transfer(Packet data);
     void register(IConnectionListener listener);
+    void unregister(IConnectionListener listener);
     void disconnect();
 }

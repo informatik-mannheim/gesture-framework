@@ -2,10 +2,12 @@ package hs_mannheim.gestureframework.connection.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.database.Observable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
 
 import java.util.UUID;
 
@@ -13,7 +15,7 @@ import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.IConnectionListener;
 import hs_mannheim.gestureframework.model.Packet;
 
-public class BluetoothChannel implements IConnection {
+public class BluetoothChannel extends Observable<IConnectionListener> implements IConnection {
 
     public final static UUID MY_UUID = UUID.fromString("0566981a-1c02-11e5-9a21-1697f925ec7b");
     private final int MSG_DATA_RECEIVED = 0x0A;
@@ -25,14 +27,12 @@ public class BluetoothChannel implements IConnection {
     private final Handler mHandler;
     private BluetoothDevice mConnectedDevice;
     private BluetoothAdapter mBluetoothAdapter;
-    private IConnectionListener mListener;
 
     private boolean mIsConnected = false;
     private ConnectedThread mConnectionThread;
 
     public BluetoothChannel(BluetoothAdapter bluetoothAdapter) {
         mBluetoothAdapter = bluetoothAdapter;
-        mListener = null;
         mHandler = createListenerHandler();
     }
 
@@ -42,23 +42,25 @@ public class BluetoothChannel implements IConnection {
             public void handleMessage(Message message) {
                 switch (message.what) {
                     case MSG_DATA_RECEIVED:
-                        mListener.onDataReceived((Packet) message.obj);
+                        for (IConnectionListener listener : mObservers) {
+                            listener.onDataReceived((Packet) message.obj);
+                        }
                         break;
                     case MSG_CONNECTION_ESTABLISHED:
-                        mListener.onConnectionEstablished();
+                        for (IConnectionListener listener : mObservers) {
+                            listener.onConnectionEstablished();
+                        }
                         break;
                     case MSG_CONNECTION_LOST:
-                        mListener.onConnectionLost();
+                        for (IConnectionListener listener : mObservers) {
+                            listener.onConnectionLost();
+                        }
                         break;
                     default:
                         break;
                 }
             }
         };
-    }
-
-    public void register(IConnectionListener listener) {
-        this.mListener = listener;
     }
 
     @Override
@@ -90,6 +92,16 @@ public class BluetoothChannel implements IConnection {
         if (mIsConnected) {
             mConnectionThread.write(message);
         }
+    }
+
+    @Override
+    public void register(IConnectionListener listener) {
+        registerObserver(listener);
+    }
+
+    @Override
+    public void unregister(IConnectionListener listener) {
+        unregisterObserver(listener);
     }
 
     public void connect(ConnectionInfo connectionInfo) {

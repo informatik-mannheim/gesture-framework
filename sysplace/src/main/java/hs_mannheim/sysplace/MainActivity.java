@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .withBluetooth()
                 .toConnect(builder.swipeLeftRight())
                 .toSelect(builder.doubleTap())
-                .toTransfer(builder.swipeUpDown())
+                .toTransfer(builder.stitch())
                 .toDisconnect(builder.bump())
                 .select(new Selection(new Packet("Photo Received")))
                 .registerForLifecycleEvents(this)
@@ -150,7 +151,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     @Override
     public Point getDisplaySize() {
-        return null;
+        //TODO: this only works properly in portrait mode. We have to subtract everything that
+        // does not belong to the App (such as the StatusBar)
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return new Point(metrics.widthPixels, metrics.heightPixels);
     }
 
     public void disconnect(View view) {

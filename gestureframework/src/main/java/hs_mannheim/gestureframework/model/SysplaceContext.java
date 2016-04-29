@@ -82,7 +82,7 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
 
     @Override
     public void onDisconnect() {
-
+        mConnection.disconnect();
     }
 
     @Override

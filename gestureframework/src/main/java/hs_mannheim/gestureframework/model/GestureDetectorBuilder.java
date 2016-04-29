@@ -11,6 +11,8 @@ import hs_mannheim.gestureframework.gesture.bump.Threshold;
 import hs_mannheim.gestureframework.gesture.doubletap.DoubleTapDetector;
 import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
+import hs_mannheim.gestureframework.gesture.stitch.StitchEdgeConstraint;
+import hs_mannheim.gestureframework.gesture.stitch.StitchEvent;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDirectionConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDurationConstraint;

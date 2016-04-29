@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .toSelect(builder.doubleTap())
                 .toTransfer(builder.swipeUpDown())
                 .toDisconnect(builder.bump())
-                .select(new Selection(new Packet("Photo transferred")))
+                .select(new Selection(new Packet("Photo Received")))
                 .registerForLifecycleEvents(this)
                 .registerPacketReceiver(this)
                 .buildAndRegister();

@@ -191,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 mPhotoButton.setEnabled(false);
                 mDisconnectButton.setEnabled(false);
                 break;
+            case Image:
+                // because the other View displays images
+                break;
             default:
                 Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
                 break;

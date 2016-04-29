@@ -16,8 +16,12 @@ import java.io.InputStream;
 import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.animation.PostCardFlipAnimationSend;
 import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
+import hs_mannheim.gestureframework.messaging.IPacketReceiver;
+import hs_mannheim.gestureframework.messaging.ImagePacket;
 import hs_mannheim.gestureframework.messaging.Packet;
+import hs_mannheim.gestureframework.messaging.SerializableImage;
 import hs_mannheim.gestureframework.model.ILifecycleListener;
+import hs_mannheim.gestureframework.model.ISysplaceContext;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.model.LifecycleEvent;
@@ -25,11 +29,12 @@ import hs_mannheim.gestureframework.model.MultipleTouchView;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 
-public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener {
+public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener, IPacketReceiver {
 
     private static int PICK_IMAGE = 1;
     private ImageView imgView;
     private GestureAnimation sendAnimation, receiveAnimation;
+    private SysplaceContext mSysplaceContext;
 
     //private SwipeHandler swipeHandler;
     //private SwipeDetector swipeDetector;
@@ -45,12 +50,12 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         imgView = (ImageView) findViewById(R.id.imgView);
         mViewContext = new MultipleTouchView(findViewById(R.id.imgView));
 
-        SysplaceContext sysplaceContext = ((InteractionApplication) getApplicationContext())
-                .getSysplaceContext();
+        mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
 
-        sysplaceContext.registerForLifecycleEvents(this);
-        sysplaceContext.getGestureManager().setViewContext(LifecycleEvent.SELECT, this);
-        sysplaceContext.getGestureManager().setViewContext(LifecycleEvent.TRANSFER, this);
+        mSysplaceContext.registerForLifecycleEvents(this);
+        mSysplaceContext.registerPacketReceiver(this);
+        mSysplaceContext.getGestureManager().setViewContext(LifecycleEvent.SELECT, this);
+        mSysplaceContext.getGestureManager().setViewContext(LifecycleEvent.TRANSFER, this);
     }
 
     @Override
@@ -114,12 +119,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                imgView = (ImageView) findViewById(R.id.imgView);
-                imgView.setImageBitmap(bitmap);
-
-                ((InteractionApplication) getApplicationContext())
-                        .getSysplaceContext().select(new Selection(new Packet("Chosen image")));
-
+                updatePicture(bitmap);
 
                 // can not set animations before the picture data is ready.
                // sendAnimation = new PostCardFlipAnimationSend(this, imgView);
@@ -133,6 +133,12 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         } catch (Exception e) {
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private void updatePicture(Bitmap bitmap) {
+        imgView = (ImageView) findViewById(R.id.imgView);
+        imgView.setImageBitmap(bitmap);
+        mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(bitmap))));
     }
 
     @Override
@@ -153,7 +159,6 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void onSelect() {
-        Log.d(TAG, "EVENT");
         chooseImage();
     }
 
@@ -165,5 +170,15 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     @Override
     public void onDisconnect() {
 
+    }
+
+    @Override
+    public void receive(Packet packet) {
+        updatePicture(((ImagePacket) packet).getImage().getImage());
+    }
+
+    @Override
+    public boolean accept(Packet.PacketType type) {
+        return type == Packet.PacketType.Image;
     }
 }

@@ -1,1 +1,1 @@
-include ':app', ':gestureframework', ':sysplace'
+include ':gestureframework', ':sysplace'

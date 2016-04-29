@@ -1,7 +1,4 @@
-package hs_mannheim.gestureframework.connection;
-
-import hs_mannheim.gestureframework.model.Packet;
-import hs_mannheim.gestureframework.model.PacketType;
+package hs_mannheim.gestureframework.messaging;
 
 public class ConnectionLostPacket extends Packet {
     public ConnectionLostPacket() {

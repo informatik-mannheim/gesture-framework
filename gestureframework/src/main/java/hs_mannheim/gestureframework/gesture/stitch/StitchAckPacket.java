@@ -1,7 +1,6 @@
 package hs_mannheim.gestureframework.gesture.stitch;
 
-import hs_mannheim.gestureframework.model.Packet;
-import hs_mannheim.gestureframework.model.PacketType;
+import hs_mannheim.gestureframework.messaging.Packet;
 
 public class StitchAckPacket extends Packet {
     public StitchAckPacket() {

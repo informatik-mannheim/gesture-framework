@@ -1,4 +1,6 @@
-package hs_mannheim.gestureframework.model;
+package hs_mannheim.gestureframework.messaging;
+
+import hs_mannheim.gestureframework.connection.IConnectionListener;
 
 public interface IPostOffice extends IConnectionListener {
     void send(Packet packet);

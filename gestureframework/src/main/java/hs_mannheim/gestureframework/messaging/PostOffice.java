@@ -1,11 +1,7 @@
-package hs_mannheim.gestureframework.connection;
+package hs_mannheim.gestureframework.messaging;
 
 import android.database.Observable;
-
-import hs_mannheim.gestureframework.model.IConnection;
-import hs_mannheim.gestureframework.model.IPacketReceiver;
-import hs_mannheim.gestureframework.model.IPostOffice;
-import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.connection.IConnection;
 
 /**
  * Manages all packet traffic in an interaction context. It can send packages over a connection or

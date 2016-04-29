@@ -7,7 +7,7 @@ import android.hardware.SensorManager;
 import android.util.FloatMath;
 import android.util.Log;
 
-import hs_mannheim.gestureframework.model.GestureDetector;
+import hs_mannheim.gestureframework.gesture.GestureDetector;
 import hs_mannheim.gestureframework.model.IViewContext;
 
 public class ShakeDetector extends GestureDetector implements SensorEventListener {

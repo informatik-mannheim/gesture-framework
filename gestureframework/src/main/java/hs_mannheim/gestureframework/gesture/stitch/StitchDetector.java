@@ -8,12 +8,11 @@ import hs_mannheim.gestureframework.gesture.swipe.SwipeConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-import hs_mannheim.gestureframework.model.GestureDetector;
-import hs_mannheim.gestureframework.model.IPacketReceiver;
-import hs_mannheim.gestureframework.model.IPostOffice;
+import hs_mannheim.gestureframework.gesture.GestureDetector;
+import hs_mannheim.gestureframework.messaging.IPacketReceiver;
+import hs_mannheim.gestureframework.messaging.IPostOffice;
 import hs_mannheim.gestureframework.model.IViewContext;
-import hs_mannheim.gestureframework.model.Packet;
-import hs_mannheim.gestureframework.model.PacketType;
+import hs_mannheim.gestureframework.messaging.Packet;
 
 /**
  * Detector for synchronous Stitch Gestures. Needs connection to another device to have a handshake
@@ -55,8 +54,8 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     }
 
     @Override
-    public boolean accept(PacketType type) {
-        return type.equals(PacketType.StitchSyn) || type.equals(PacketType.StitchAck);
+    public boolean accept(Packet.PacketType type) {
+        return type.equals(Packet.PacketType.StitchSyn) || type.equals(Packet.PacketType.StitchAck);
     }
 
     public void startWait() {
@@ -128,7 +127,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
         @Override
         /* Is this the ACK we are waiting for? */
         void handle(Packet packet) {
-            if (packet.getType().equals(PacketType.StitchAck)) {
+            if (packet.getType().equals(Packet.PacketType.StitchAck)) {
                 fireGestureDetected();
                 abortWaiting();
             }
@@ -165,7 +164,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
         @Override
         /* Checks whether the packet is the corresponding SYN after a recognized INBOUND swipe */
         void handle(Packet packet) {
-            if (packet.getType().equals(PacketType.StitchSyn)) {
+            if (packet.getType().equals(Packet.PacketType.StitchSyn)) {
                 Log.d(TAG, "Received outbound package after inbound recognize. Sending ack.");
                 mPostOffice.send(new StitchAckPacket());
                 fireGestureDetected();

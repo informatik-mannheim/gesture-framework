@@ -12,12 +12,12 @@ import android.widget.Toast;
 
 import java.io.InputStream;
 
-import hs_mannheim.gestureframework.InteractionApplication;
+import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.animation.PostCardFlipAnimationSend;
 import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
-import hs_mannheim.gestureframework.model.GestureDetector;
+import hs_mannheim.gestureframework.gesture.GestureDetector;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.LifecycleEvent;
 import hs_mannheim.gestureframework.model.SysplaceContext;

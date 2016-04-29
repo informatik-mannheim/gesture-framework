@@ -2,12 +2,10 @@ package hs_mannheim.sysplace;
 
 import android.view.View;
 
-import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-import hs_mannheim.gestureframework.model.GestureDetector;
 
 public class SwipeHandler implements SwipeDetector.SwipeEventListener{
 

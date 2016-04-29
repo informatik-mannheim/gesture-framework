@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.messaging.Packet;
 
 public class ConnectedThread extends Thread {
     private final String TAG = "[WifiP2P ConnThread]";

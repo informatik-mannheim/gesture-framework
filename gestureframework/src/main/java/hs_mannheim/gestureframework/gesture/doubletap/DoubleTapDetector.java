@@ -4,7 +4,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import hs_mannheim.gestureframework.model.GestureDetector;
+import hs_mannheim.gestureframework.gesture.GestureDetector;
 import hs_mannheim.gestureframework.model.IViewContext;
 
 public class DoubleTapDetector extends GestureDetector implements View.OnTouchListener {

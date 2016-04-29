@@ -9,7 +9,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
-import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.messaging.Packet;
 
 /**
  * Thread that runs on both client and server device to send and receive data through streams.

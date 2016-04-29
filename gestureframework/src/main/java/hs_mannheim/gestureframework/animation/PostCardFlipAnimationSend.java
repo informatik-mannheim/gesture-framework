@@ -2,22 +2,15 @@ package hs_mannheim.gestureframework.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.animation.TimeInterpolator;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.R;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-import hs_mannheim.gestureframework.model.ImagePacket;
-import hs_mannheim.gestureframework.model.SerializableImage;
 
 /**
  * Simple SEND Animation

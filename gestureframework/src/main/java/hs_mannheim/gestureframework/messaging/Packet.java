@@ -1,4 +1,4 @@
-package hs_mannheim.gestureframework.model;
+package hs_mannheim.gestureframework.messaging;
 
 import java.io.Serializable;
 
@@ -27,5 +27,9 @@ public class Packet implements Serializable {
     @Override
     public String toString() {
         return String.format("Message of type: %s containing: %s\n", mPacketType, mMessage);
+    }
+
+    public enum PacketType {
+        PlainString, StitchSyn, Image, ConnectionLost, ConnectionEstablished, StitchAck
     }
 }

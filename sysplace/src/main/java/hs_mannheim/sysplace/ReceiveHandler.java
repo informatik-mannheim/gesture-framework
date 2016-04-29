@@ -1,9 +1,8 @@
 package hs_mannheim.sysplace;
 
 import hs_mannheim.gestureframework.animation.GestureAnimation;
-import hs_mannheim.gestureframework.model.IPacketReceiver;
-import hs_mannheim.gestureframework.model.Packet;
-import hs_mannheim.gestureframework.model.PacketType;
+import hs_mannheim.gestureframework.messaging.IPacketReceiver;
+import hs_mannheim.gestureframework.messaging.Packet;
 
 /**
  * Created by Dominick Madden on 20.04.2016.
@@ -22,7 +21,7 @@ public class ReceiveHandler implements IPacketReceiver {
     }
 
     @Override
-    public boolean accept(PacketType type) {
+    public boolean accept(Packet.PacketType type) {
         return false;
     }
 }

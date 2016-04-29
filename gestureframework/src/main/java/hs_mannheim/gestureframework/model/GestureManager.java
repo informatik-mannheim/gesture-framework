@@ -7,9 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import hs_mannheim.gestureframework.gesture.GestureDetector;
+import hs_mannheim.gestureframework.gesture.VoidGestureDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+import hs_mannheim.gestureframework.messaging.IPacketReceiver;
+import hs_mannheim.gestureframework.messaging.Packet;
 
 public class GestureManager implements GestureDetector.GestureEventListener,
         SwipeDetector.SwipeEventListener, IPacketReceiver {
@@ -170,11 +174,11 @@ public class GestureManager implements GestureDetector.GestureEventListener,
 
     @Override
     public void receive(Packet packet) {
-        mConnected = packet.getType() == PacketType.ConnectionEstablished;
+        mConnected = packet.getType() == Packet.PacketType.ConnectionEstablished;
     }
 
     @Override
-    public boolean accept(PacketType type) {
-        return type == PacketType.ConnectionEstablished || type == PacketType.ConnectionLost;
+    public boolean accept(Packet.PacketType type) {
+        return type == Packet.PacketType.ConnectionEstablished || type == Packet.PacketType.ConnectionLost;
     }
 }

@@ -1,4 +1,4 @@
-package hs_mannheim.gestureframework.model;
+package hs_mannheim.gestureframework.messaging;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

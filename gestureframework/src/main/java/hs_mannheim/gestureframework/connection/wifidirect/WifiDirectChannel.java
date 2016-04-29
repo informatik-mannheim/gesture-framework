@@ -15,11 +15,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import hs_mannheim.gestureframework.connection.LogActionListener;
 import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
-import hs_mannheim.gestureframework.model.IConnection;
-import hs_mannheim.gestureframework.model.IConnectionListener;
-import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.messaging.Packet;
+import hs_mannheim.gestureframework.connection.IConnection;
+import hs_mannheim.gestureframework.connection.IConnectionListener;
 
 public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         WifiP2pManager.ConnectionInfoListener {
@@ -106,9 +105,17 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
 
         // The result will be the WIFI_P2P_CONNECTION_CHANGED_ACTION broadcast event
         // for which we have to be registered.
-        mManager.connect(mChannel, config, new LogActionListener(TAG,
-                "Wifi P2P Connection established.",
-                "Failed to establish Wifi P2P Connection"));
+        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "Wifi P2P Connection established.");
+            }
+
+            @Override
+            public void onFailure(int i) {
+                Log.d(TAG, "Failed to establish Wifi P2P Connection");
+            }
+        });
     }
 
     @Override
@@ -119,6 +126,7 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     /**
      * The Broadcast event WIFI_P2P_CONNECTION_CHANGED_ACTION was received, so we know that either a
      * P2P group was formed or closed, depending on the value of the EXTRA_NETWORK_INFO.
+     *
      * @param context
      * @param intent
      */
@@ -187,7 +195,17 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
                 @Override
                 public void onGroupInfoAvailable(WifiP2pGroup group) {
                     if (group != null && mManager != null && mChannel != null && group.isGroupOwner()) {
-                        mManager.removeGroup(mChannel, new LogActionListener(TAG, "P2P Group removed", "P2P Group NOT removed"));
+                        mManager.removeGroup(mChannel, new WifiP2pManager.ActionListener() {
+                            @Override
+                            public void onSuccess() {
+                                Log.d(TAG, "P2P Group removed");
+                            }
+
+                            @Override
+                            public void onFailure(int i) {
+                                Log.d(TAG, "P2P Group NOT removed");
+                            }
+                        });
                     }
                 }
             });

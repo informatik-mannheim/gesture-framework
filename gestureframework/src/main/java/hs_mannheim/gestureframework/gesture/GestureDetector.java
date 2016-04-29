@@ -1,4 +1,6 @@
-package hs_mannheim.gestureframework.model;
+package hs_mannheim.gestureframework.gesture;
+
+import hs_mannheim.gestureframework.model.IViewContext;
 
 public abstract class GestureDetector {
 

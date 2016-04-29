@@ -25,16 +25,15 @@ import android.widget.Toast;
 import java.util.Random;
 
 import hs_mannheim.gestureframework.ConfigurationBuilder;
-import hs_mannheim.gestureframework.InteractionApplication;
+import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
-import hs_mannheim.gestureframework.model.IConnection;
+import hs_mannheim.gestureframework.connection.IConnection;
 import hs_mannheim.gestureframework.model.ILifecycleListener;
-import hs_mannheim.gestureframework.model.IPacketReceiver;
+import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.model.ISysplaceContext;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.MultipleTouchView;
-import hs_mannheim.gestureframework.model.Packet;
-import hs_mannheim.gestureframework.model.PacketType;
+import hs_mannheim.gestureframework.messaging.Packet;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     @Override
-    public boolean accept(PacketType type) {
+    public boolean accept(Packet.PacketType type) {
         return true;
     }
 

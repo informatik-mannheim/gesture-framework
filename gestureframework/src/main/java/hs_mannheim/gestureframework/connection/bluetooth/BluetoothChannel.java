@@ -7,13 +7,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 
 import java.util.UUID;
 
-import hs_mannheim.gestureframework.model.IConnection;
-import hs_mannheim.gestureframework.model.IConnectionListener;
-import hs_mannheim.gestureframework.model.Packet;
+import hs_mannheim.gestureframework.connection.IConnection;
+import hs_mannheim.gestureframework.connection.IConnectionListener;
+import hs_mannheim.gestureframework.messaging.Packet;
 
 public class BluetoothChannel extends Observable<IConnectionListener> implements IConnection {
 

@@ -1,5 +1,7 @@
 package hs_mannheim.gestureframework.model;
 
+import hs_mannheim.gestureframework.messaging.Packet;
+
 public class Selection {
 
     private Packet _packet;

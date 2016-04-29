@@ -8,7 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import hs_mannheim.gestureframework.model.GestureDetector;
+import hs_mannheim.gestureframework.gesture.GestureDetector;
 import hs_mannheim.gestureframework.model.IViewContext;
 
 public class BumpDetector extends GestureDetector implements SensorEventListener {

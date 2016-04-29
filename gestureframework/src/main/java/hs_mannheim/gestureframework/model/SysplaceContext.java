@@ -1,5 +1,10 @@
 package hs_mannheim.gestureframework.model;
 
+import hs_mannheim.gestureframework.connection.IConnection;
+import hs_mannheim.gestureframework.messaging.IPacketReceiver;
+import hs_mannheim.gestureframework.messaging.IPostOffice;
+import hs_mannheim.gestureframework.messaging.Packet;
+
 public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISysplaceContext {
 
     private final GestureManager mGestureManager;
@@ -55,7 +60,7 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
     }
 
     @Override
-    public boolean accept(PacketType type) {
+    public boolean accept(Packet.PacketType type) {
         return false;
     }
 

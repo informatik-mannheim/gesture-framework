@@ -1,4 +1,4 @@
-package hs_mannheim.gestureframework;
+package hs_mannheim.gestureframework.model;
 
 import android.app.Application;
 

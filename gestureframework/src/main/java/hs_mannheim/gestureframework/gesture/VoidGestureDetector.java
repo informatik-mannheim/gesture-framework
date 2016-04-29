@@ -1,4 +1,6 @@
-package hs_mannheim.gestureframework.model;
+package hs_mannheim.gestureframework.gesture;
+
+import hs_mannheim.gestureframework.gesture.GestureDetector;
 
 /**
  * Stub implementation of {@link GestureDetector} that does nothing.

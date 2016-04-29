@@ -1,6 +1,7 @@
-package hs_mannheim.gestureframework.model;
+package hs_mannheim.gestureframework.connection;
 
 import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
+import hs_mannheim.gestureframework.messaging.Packet;
 
 public interface IConnection {
     void connect(String address);

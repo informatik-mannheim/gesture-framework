@@ -52,4 +52,13 @@
         android:layout_alignTop="@+id/btn_disconnect"
         android:layout_centerHorizontal="true" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/et_tosend"
+        android:layout_above="@+id/btn_disconnect"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        />
+
 </RelativeLayout>

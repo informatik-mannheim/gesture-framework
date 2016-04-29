@@ -12,10 +12,13 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,13 +30,13 @@ import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
 import hs_mannheim.gestureframework.model.IConnection;
 import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.model.IPacketReceiver;
+import hs_mannheim.gestureframework.model.ISysplaceContext;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.MultipleTouchView;
 import hs_mannheim.gestureframework.model.Packet;
 import hs_mannheim.gestureframework.model.PacketType;
 import hs_mannheim.gestureframework.model.Selection;
-
-import static hs_mannheim.gestureframework.model.PacketType.ConnectionLost;
+import hs_mannheim.gestureframework.model.SysplaceContext;
 
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, ILifecycleListener {
     protected final int REQUEST_ENABLE_BT = 100;
@@ -50,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     private Button mPingButton;
     private Button mPhotoButton;
     private Button mDisconnectButton;
+    private EditText mTextfield;
+    private SysplaceContext mSysplaceContext;
 
     public MainActivity() {
     }
@@ -71,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mPingButton = ((Button) findViewById(R.id.btn_ping));
         mPhotoButton = ((Button) findViewById(R.id.btn_send_photo));
         mDisconnectButton = ((Button) findViewById(R.id.btn_disconnect));
+        mTextfield = ((EditText) findViewById(R.id.et_tosend));
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
@@ -79,13 +85,17 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .toSelect(builder.doubleTap())
                 .toTransfer(builder.swipeUpDown())
                 .toDisconnect(builder.bump())
-                .select(new Selection(new Packet("Photo Received")))
+                .select(Selection.Empty)
                 .registerForLifecycleEvents(this)
                 .registerPacketReceiver(this)
                 .buildAndRegister();
 
+        mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
+
         // TODO: should be forbidden
-        mConn = ((InteractionApplication) getApplicationContext()).getSysplaceContext().getConnection();
+        mConn = mSysplaceContext.getConnection();
+
+        mTextfield.addTextChangedListener(new SelectTextWatcher(mSysplaceContext));
     }
 
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -161,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     public void disconnect(View view) {
-        ((InteractionApplication) getApplicationContext()).getSysplaceContext().getConnection().disconnect();
+        mSysplaceContext.getConnection().disconnect();
     }
 
     @Override
@@ -220,6 +230,33 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     @Override
     public void onDisconnect() {
         Toast.makeText(this, "DISCONNECT", Toast.LENGTH_SHORT).show();
+    }
+
+    public class SelectTextWatcher implements TextWatcher {
+        private final ISysplaceContext mSysplaceContext;
+
+        public SelectTextWatcher(ISysplaceContext sysplaceContext) {
+            mSysplaceContext = sysplaceContext;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            // ignore
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (s.toString().isEmpty()) {
+                mSysplaceContext.select(Selection.Empty);
+            } else {
+                mSysplaceContext.select(new Selection(new Packet(s.toString())));
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            // ignore
+        }
     }
 }
 

@@ -11,7 +11,7 @@ public class Packet implements Serializable {
         mMessage = message;
     }
 
-    public Packet(PacketType packetType, String message) {
+    protected Packet(PacketType packetType, String message) {
         mPacketType = packetType;
         mMessage = message;
     }

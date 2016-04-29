@@ -3,9 +3,9 @@ package hs_mannheim.gestureframework.model;
 public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISysplaceContext {
 
     private final GestureManager mGestureManager;
-    private final Selection mSelection;
     private final IConnection mConnection;
     private final IPostOffice mPostOffice;
+    private Selection mSelection;
 
     /**
      * The InteractionContext is the one and only global object to manage all Sysplace related
@@ -18,20 +18,17 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
      */
     public SysplaceContext(GestureManager gestureManager, Selection selection, IConnection connection, IPostOffice postOffice) {
         mGestureManager = gestureManager;
-        mSelection = selection;
         mConnection = connection;
         mPostOffice = postOffice; /* only PostOffice talks to the connection */
 
         mGestureManager.registerLifecycleListener(this);
         mPostOffice.register(mGestureManager);
+
+        select(selection);
     }
 
     public IConnection getConnection() {
         return this.mConnection;
-    }
-
-    public void updateSelection(Packet data) {
-        mSelection.updateSelection(data);
     }
 
     public void updateViewContextAll(IViewContext viewContext) {
@@ -78,12 +75,19 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
 
     @Override
     public void onTransfer() {
-        mPostOffice.send(mSelection.getData());
+        if(mSelection != Selection.Empty) {
+            mPostOffice.send(mSelection.getData());
+        }
     }
 
     @Override
     public void onDisconnect() {
 
+    }
+
+    @Override
+    public void select(Selection selection) {
+        mSelection = selection;
     }
 
     /**

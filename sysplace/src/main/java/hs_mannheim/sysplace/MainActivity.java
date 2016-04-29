@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -213,6 +214,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     @Override
     public void onConnect() {
         Log.d(TAG, "Connect Happened");
+
+        //startService(new Intent(this, BluetoothPairingService.class));
+
         doBluetoothMagic();
     }
 

@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .buildAndRegister();
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
-        mTextfield.addTextChangedListener(new SelectTextWatcher(mSysplaceContext));
+        mTextfield.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
     }
 
     // TODO: move elsewhere
@@ -109,6 +109,20 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mBluetoothAdapter.setName(mOldName);
     }
 
+    public void ping(View view) {
+        ((InteractionApplication) getApplicationContext()).getSysplaceContext().send(new Packet("Ping!"));
+    }
+
+    public void switchToConnectedActivity(View view) {
+        startActivity(new Intent(this, ConnectedActivity.class));
+    }
+
+    public void disconnect(View view) {
+        mSysplaceContext.getConnection().disconnect();
+    }
+
+    // IViewContext Stuff
+
     @Override
     public MultipleTouchView getMultipleTouchView() {
         return mInteractionView;
@@ -123,8 +137,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         return new Point(metrics.widthPixels, metrics.heightPixels);
     }
 
-    public void disconnect(View view) {
-        mSysplaceContext.getConnection().disconnect();
+    // IPacketReceiver Stuff
+
+    @Override
+    public boolean accept(Packet.PacketType type) {
+        return true;
     }
 
     @Override
@@ -153,19 +170,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         }
     }
 
-    @Override
-    public boolean accept(Packet.PacketType type) {
-        return true;
-    }
-
-    public void switchToConnectedActivity(View view) {
-        Intent intent = new Intent(this, ConnectedActivity.class);
-        startActivity(intent);
-    }
-
-    public void ping(View view) {
-        ((InteractionApplication) getApplicationContext()).getSysplaceContext().send(new Packet("Ping!"));
-    }
+    // ILifecycleListener Stuff
 
     @Override
     public void onConnect() {
@@ -188,33 +193,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     @Override
     public void onDisconnect() {
         Toast.makeText(this, "DISCONNECT", Toast.LENGTH_SHORT).show();
-    }
-
-    public class SelectTextWatcher implements TextWatcher {
-        private final ISysplaceContext mSysplaceContext;
-
-        public SelectTextWatcher(ISysplaceContext sysplaceContext) {
-            mSysplaceContext = sysplaceContext;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            // ignore
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.toString().isEmpty()) {
-                mSysplaceContext.select(Selection.Empty);
-            } else {
-                mSysplaceContext.select(new Selection(new Packet(s.toString())));
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            // ignore
-        }
     }
 }
 

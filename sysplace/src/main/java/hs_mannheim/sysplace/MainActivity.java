@@ -1,13 +1,9 @@
 package hs_mannheim.sysplace;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -26,27 +22,23 @@ import android.widget.Toast;
 import java.util.Random;
 
 import hs_mannheim.gestureframework.ConfigurationBuilder;
-import hs_mannheim.gestureframework.model.InteractionApplication;
-import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
 import hs_mannheim.gestureframework.connection.IConnection;
-import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
+import hs_mannheim.gestureframework.messaging.Packet;
+import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.model.ISysplaceContext;
 import hs_mannheim.gestureframework.model.IViewContext;
+import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.model.MultipleTouchView;
-import hs_mannheim.gestureframework.messaging.Packet;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, ILifecycleListener {
-    protected final int REQUEST_ENABLE_BT = 100;
-
     private String TAG = "[Main Activity]";
 
     private BluetoothAdapter mBluetoothAdapter;
     private String mOldName;
     private String mCurrentName;
-    private IConnection mConn;
 
     private MultipleTouchView mInteractionView;
     private TextView mTextView;
@@ -69,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
         bootstrapBluetooth();
 
-        // TODO: handle this somewhere else!
+        // TODO: don't let the client do this, should be somewhere in the framework
         mInteractionView = new MultipleTouchView(findViewById(R.id.layout_main));
 
         mTextView = ((TextView) findViewById(R.id.textView));
@@ -91,59 +83,20 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .buildAndRegister();
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
-
-        // TODO: should be forbidden
-        mConn = mSysplaceContext.getConnection();
-
         mTextfield.addTextChangedListener(new SelectTextWatcher(mSysplaceContext));
     }
 
-    BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.d(TAG, "Found " + device.getAddress());
-
-                // TODO: if the server is faster, the client can not connect. Fix this.
-
-                if (device.getName() != null && device.getName().contains("-sysplace-")) {
-                    mConn.connect(ConnectionInfo.from(mCurrentName, device.getName(), device.getAddress()));
-                    Toast.makeText(MainActivity.this, "Found " + device.getName(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    };
-
+    // TODO: move elsewhere
     private void bootstrapBluetooth() {
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-
         mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         mOldName = mBluetoothAdapter.getName();
         mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
     }
 
-    private void doBluetoothMagic() {
-        setDiscoverable();
-        mBluetoothAdapter.startDiscovery();
-    }
-
-    private void setDiscoverable() {
-        if (!(mBluetoothAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)) {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 10);
-            startActivity(discoverableIntent);
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        // TODO: move elsewhere
         Log.d(TAG, "Renaming to " + mCurrentName);
         mBluetoothAdapter.setName(mCurrentName);
     }
@@ -151,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     @Override
     protected void onStop() {
         super.onStop();
-        unregisterReceiver(mReceiver);
+        // TODO: move elsewhere
         Log.d(TAG, "Renaming to " + mOldName);
         mBluetoothAdapter.setName(mOldName);
     }
@@ -216,11 +169,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     @Override
     public void onConnect() {
-        Log.d(TAG, "Connect Happened");
+        Toast.makeText(this, "CONNECT", Toast.LENGTH_SHORT).show();
 
-        //startService(new Intent(this, BluetoothPairingService.class));
-
-        doBluetoothMagic();
+        // TODO: move elsewhere
+        startService(new Intent(this, BluetoothPairingService.class));
     }
 
     @Override

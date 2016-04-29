@@ -1,6 +1,9 @@
 package hs_mannheim.gestureframework.connection.bluetooth;
 
-public class ConnectionInfo {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class ConnectionInfo implements Parcelable {
 
     private static final String DELIMITER = "-";
     public static ConnectionInfo INVALID_CONNECTION_INFO = new ConnectionInfo(null, false);
@@ -11,6 +14,13 @@ public class ConnectionInfo {
     private ConnectionInfo(String macAddress, boolean isServer) {
         mMacAddress = macAddress;
         mIsServer = isServer;
+    }
+
+    public ConnectionInfo(Parcel in) {
+        boolean[] booleans = new boolean[1];
+        in.readBooleanArray(booleans);
+        mMacAddress = in.readString();
+        mIsServer = booleans[0];
     }
 
     public static ConnectionInfo from(String myBluetoothName,
@@ -37,5 +47,32 @@ public class ConnectionInfo {
 
     public boolean isServer() {
         return mIsServer;
+    }
+
+    //
+    // The Parcelable Stuff
+    //
+
+    public static final Creator<ConnectionInfo> CREATOR = new Creator<ConnectionInfo>() {
+        @Override
+        public ConnectionInfo createFromParcel(Parcel in) {
+            return new ConnectionInfo(in);
+        }
+
+        @Override
+        public ConnectionInfo[] newArray(int size) {
+            return new ConnectionInfo[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(getMacAddress());
+        dest.writeBooleanArray(new boolean[] {isServer()});
     }
 }

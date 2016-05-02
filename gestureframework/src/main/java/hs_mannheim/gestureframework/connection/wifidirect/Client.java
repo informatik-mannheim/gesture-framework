@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class Client extends AsyncTask<Void, Void, Void> {
-    private final String TAG = "[WifiP2P Client]";
+    private static final String TAG = "[WifiP2P Client]";
     private InetAddress _host;
     private int _port;
     private WifiDirectChannel _channel;

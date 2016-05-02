@@ -11,7 +11,7 @@ import hs_mannheim.gestureframework.model.InteractionApplication;
 
 public class BluetoothBroadcastReceiver extends BroadcastReceiver {
 
-    private String TAG = "[Bt Broadcast Receiver]";
+    private static final String TAG = "[Bt Broadcast Receiver]";
 
     @Override
     public void onReceive(Context context, Intent intent) {

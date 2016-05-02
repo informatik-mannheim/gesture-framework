@@ -13,7 +13,7 @@ import java.net.SocketException;
 import hs_mannheim.gestureframework.messaging.Packet;
 
 public class ConnectedThread extends Thread {
-    private final String TAG = "[WifiP2P ConnThread]";
+    private static final String TAG = "[WifiP2P ConnThread]";
 
     private final Socket mSocket;
     private final WifiDirectChannel mChannel;

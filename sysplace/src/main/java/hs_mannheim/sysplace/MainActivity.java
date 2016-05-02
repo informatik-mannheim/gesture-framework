@@ -24,7 +24,7 @@ import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver {
-    String TAG = "[Main Activity]";
+    private static final String TAG = "[Main Activity]";
 
     private TextView mTextView;
     private EditText mEditText;

@@ -27,7 +27,6 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
     private static final int MSG_CONNECTION_LOST = 0xCC;
 
     private final String TAG = "[WifiP2P Channel]";
-    private final IntentFilter mIntentFilter;
     private final Handler _handler;
 
     public WifiP2pManager mManager;
@@ -43,11 +42,11 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
         this.mManager = manager;
         this.mChannel = channel;
 
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        IntentFilter p2pChangedIntentFilter = new IntentFilter();
+        p2pChangedIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
 
         //TODO: This crashes when containing activity is paused
-        context.registerReceiver(this, mIntentFilter);
+        context.registerReceiver(this, p2pChangedIntentFilter);
 
         this._handler = createListenerHandler();
     }
@@ -127,8 +126,8 @@ public class WifiDirectChannel extends BroadcastReceiver implements IConnection,
      * The Broadcast event WIFI_P2P_CONNECTION_CHANGED_ACTION was received, so we know that either a
      * P2P group was formed or closed, depending on the value of the EXTRA_NETWORK_INFO.
      *
-     * @param context
-     * @param intent
+     * @param context The {@link Context} from which the intent was send.
+     * @param intent The intent that was received.
      */
     @Override
     public void onReceive(Context context, Intent intent) {

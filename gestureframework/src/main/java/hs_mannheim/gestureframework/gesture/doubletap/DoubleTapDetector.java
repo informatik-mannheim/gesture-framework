@@ -41,7 +41,6 @@ public class DoubleTapDetector extends GestureDetector implements View.OnTouchLi
                 break;
             case MotionEvent.ACTION_UP:
                 mLastUp = MotionEvent.obtain(motionEvent);
-
                 break;
             case MotionEvent.ACTION_MOVE:
                 int moveDistanceX = Math.abs((int) mLastDown.getX() - (int) motionEvent.getX());

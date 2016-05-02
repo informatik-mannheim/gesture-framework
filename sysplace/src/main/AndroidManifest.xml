@@ -34,7 +34,7 @@
         <activity android:name=".ConnectedActivity" />
 
         <service
-            android:name=".BluetoothPairingService"
+            android:name="hs_mannheim.gestureframework.connection.BluetoothPairingService"
             android:exported="false"
             android:label="Bluetooth Pairing Service">
         </service>

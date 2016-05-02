@@ -147,7 +147,8 @@ public class ConfigurationBuilder {
             sysplaceContext.registerPacketReceiver(mPacketReceiver);
         }
 
-        ((InteractionApplication) mContext).setInteractionContext(sysplaceContext);
+        InteractionApplication interactionApplication = (InteractionApplication) mContext;
+        interactionApplication.setInteractionContext(sysplaceContext);
     }
 
     /**

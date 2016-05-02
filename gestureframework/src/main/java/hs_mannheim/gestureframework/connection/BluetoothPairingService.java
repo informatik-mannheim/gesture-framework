@@ -1,21 +1,17 @@
-package hs_mannheim.sysplace;
+package hs_mannheim.gestureframework.connection;
 
 import android.app.IntentService;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
 
-import java.util.Random;
-
-import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
-
+/**
+ * Service that starts device discovery to find other Bluetooth devices.
+ * A broadcast receiver listening for ACTION_FOUND intents will receiver a notification when
+ * devices are found.
+ */
 public class BluetoothPairingService extends IntentService {
 
     private final String TAG = "[Bt Pairing Service]";
@@ -28,18 +24,17 @@ public class BluetoothPairingService extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public void onCreate() {
+        super.onCreate();
         mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
+    }
 
-        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivity(enableBtIntent);
-        }
-
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        Log.d(TAG, "Starting discovery");
         setDiscoverable();
         mBluetoothAdapter.startDiscovery();
     }
-
 
     private void setDiscoverable() {
         if (!(mBluetoothAdapter.getScanMode() == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)) {

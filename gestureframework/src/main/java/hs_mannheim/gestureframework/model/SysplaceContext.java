@@ -1,5 +1,8 @@
 package hs_mannheim.gestureframework.model;
 
+import android.content.Intent;
+
+import hs_mannheim.gestureframework.connection.BluetoothPairingService;
 import hs_mannheim.gestureframework.connection.IConnection;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.IPostOffice;
@@ -11,6 +14,7 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
     private final IConnection mConnection;
     private final IPostOffice mPostOffice;
     private Selection mSelection;
+    private InteractionApplication mApplication;
 
     /**
      * The InteractionContext is the one and only global object to manage all Sysplace related
@@ -70,7 +74,7 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
 
     @Override
     public void onConnect() {
-
+        mApplication.startService(new Intent(mApplication, BluetoothPairingService.class));
     }
 
     @Override
@@ -113,5 +117,17 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
     @Override
     public void registerForLifecycleEvents(ILifecycleListener listener) {
         mGestureManager.registerLifecycleListener(listener);
+    }
+
+    public void setApplication(InteractionApplication application) {
+        mApplication = application;
+    }
+
+    public void applicationPaused() {
+        mApplication.toggleName(false);
+    }
+
+    public void applicationResumed() {
+        mApplication.toggleName(true);
     }
 }

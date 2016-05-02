@@ -22,8 +22,6 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
             Log.d(TAG, "Found " + device.getAddress());
 
-            // TODO: if the server is faster, the client can not connect. Fix this.
-
             if (device.getName() != null && device.getName().contains("-sysplace-")) {
                 BluetoothManager manager = ((BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE));
                 ConnectionInfo info = (ConnectionInfo.from(manager.getAdapter().getName(), device.getName(), device.getAddress()));

@@ -87,9 +87,10 @@ public class ConnectedThread extends Thread {
             }
 
             mObjectOutputStream.writeObject(message);
+            mObjectOutputStream.flush();
             mObjectOutputStream.reset();
         } catch (IOException e) {
-            Log.e(TAG, "Error sending data to remote device");
+            Log.e(TAG, "Error sending data to remote device: " + message.toString());
         }
     }
 

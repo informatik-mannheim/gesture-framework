@@ -27,7 +27,6 @@ public class SyncBumpDetector extends GestureDetector implements IPacketReceiver
         mState = new IdleState();
     }
 
-
     @Override
     public void receive(Packet packet) {
         mState.handle(packet);
@@ -61,6 +60,7 @@ public class SyncBumpDetector extends GestureDetector implements IPacketReceiver
 
     abstract class BumpState {
         abstract void handle(Packet packet);
+
         abstract void handleBump();
     }
 
@@ -69,7 +69,7 @@ public class SyncBumpDetector extends GestureDetector implements IPacketReceiver
         @Override
         /* Must be a SYN packet that arrived before any local bump */
         void handle(Packet packet) {
-            if(packet.getType() == Packet.PacketType.BumpSyn) {
+            if (packet.getType() == Packet.PacketType.BumpSyn) {
                 startWait();
                 mState = new PrematureInState();
             }
@@ -78,6 +78,7 @@ public class SyncBumpDetector extends GestureDetector implements IPacketReceiver
         @Override
         /* Local bump, no SYN. Sending SYN and waiting for ACK */
         void handleBump() {
+            Log.d(TAG, "Bump. Sending SYN");
             mPostOffice.send(new BumpSynPacket());
             startWait();
             mState = new OutState();
@@ -89,9 +90,9 @@ public class SyncBumpDetector extends GestureDetector implements IPacketReceiver
         /* Is this the ACK we are waiting for? */
         void handle(Packet packet) {
             if (packet.getType() == Packet.PacketType.BumpSyn) {
+                Log.d(TAG, "Receiving SYN, Sending ACK.");
                 mPostOffice.send(new BumpAckPacket());
-                fireGestureDetected();
-                abortWaiting();
+                mState = new WaitingForAckState();
             }
         }
 
@@ -114,8 +115,23 @@ public class SyncBumpDetector extends GestureDetector implements IPacketReceiver
         /* The local bump happenend, send ack packet. */
         void handleBump() {
             mPostOffice.send(new BumpAckPacket());
-            fireGestureDetected();
-            abortWaiting();
+            mState = new WaitingForAckState();
+        }
+    }
+
+    class WaitingForAckState extends BumpState {
+        @Override
+        void handle(Packet packet) {
+            if (packet.getType().equals(Packet.PacketType.BumpAck)) {
+                Log.d(TAG, "Receiving ACK, Fire Gesture.");
+                fireGestureDetected();
+                abortWaiting();
+            }
+        }
+
+        @Override
+        void handleBump() {
+            // ignore
         }
     }
 }

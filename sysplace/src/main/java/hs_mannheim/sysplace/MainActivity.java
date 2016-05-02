@@ -19,9 +19,9 @@ import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.Packet;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionApplication;
-import hs_mannheim.gestureframework.model.ViewWrapper;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
+import hs_mannheim.gestureframework.model.ViewWrapper;
 
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver {
     private static final String TAG = "[Main Activity]";
@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .withBluetooth()
                 .toConnect(builder.swipeLeftRight())
                 .toSelect(builder.doubleTap())
-                .toTransfer(builder.swipeUpDown())
-                .toDisconnect(builder.bump())
+                .toTransfer(builder.stitch())
+                .toDisconnect(builder.syncBump())
                 .select(Selection.Empty)
                 .registerForLifecycleEvents(new ToastLifecycleListener(this))
                 .registerPacketReceiver(this)
@@ -130,11 +130,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 mPhotoButton.setEnabled(false);
                 mDisconnectButton.setEnabled(false);
                 break;
-            case Image:
-                // because the other View displays images
+            case PlainString:
+                Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
                 break;
             default:
-                Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
                 break;
         }
     }

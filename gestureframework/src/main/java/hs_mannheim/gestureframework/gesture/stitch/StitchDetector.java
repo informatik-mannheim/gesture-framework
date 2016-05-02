@@ -4,22 +4,23 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
+import hs_mannheim.gestureframework.gesture.GestureDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-import hs_mannheim.gestureframework.gesture.GestureDetector;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.IPostOffice;
-import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.messaging.Packet;
+import hs_mannheim.gestureframework.model.IViewContext;
 
 /**
  * Detector for synchronous Stitch Gestures. Needs connection to another device to have a handshake
  * if the stitch succeeded.
  */
-public class StitchDetector extends GestureDetector implements SwipeDetector.SwipeEventListener, IPacketReceiver {
-    private final int WAIT_TIME = 2000;
+public class StitchDetector extends GestureDetector
+        implements SwipeDetector.SwipeEventListener, IPacketReceiver {
+    private static final int WAIT_TIME = 2000;
     private static final String TAG = "[StitchDetector]";
     private SwipeDetector mSwipeDetector;
     private IPostOffice mPostOffice;
@@ -96,6 +97,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
     abstract class StitchState {
         abstract void handle(Packet packet);
+
         abstract void handle(StitchEvent event);
     }
 

@@ -4,25 +4,26 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.wifi.p2p.WifiP2pManager;
 
-import hs_mannheim.gestureframework.messaging.PostOffice;
+import hs_mannheim.gestureframework.connection.IConnection;
 import hs_mannheim.gestureframework.connection.bluetooth.BluetoothChannel;
 import hs_mannheim.gestureframework.connection.wifidirect.WifiDirectChannel;
+import hs_mannheim.gestureframework.gesture.GestureDetector;
+import hs_mannheim.gestureframework.gesture.GestureDetectorBuilder;
 import hs_mannheim.gestureframework.gesture.bump.BumpDetector;
+import hs_mannheim.gestureframework.gesture.bump.SyncBumpDetector;
 import hs_mannheim.gestureframework.gesture.doubletap.DoubleTapDetector;
 import hs_mannheim.gestureframework.gesture.shake.ShakeDetector;
 import hs_mannheim.gestureframework.gesture.stitch.StitchDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
-import hs_mannheim.gestureframework.gesture.GestureDetector;
-import hs_mannheim.gestureframework.gesture.GestureDetectorBuilder;
-import hs_mannheim.gestureframework.model.GestureManager;
-import hs_mannheim.gestureframework.connection.IConnection;
-import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
+import hs_mannheim.gestureframework.messaging.PostOffice;
+import hs_mannheim.gestureframework.model.GestureManager;
+import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.model.LifecycleEvent;
-import hs_mannheim.gestureframework.model.SysplaceContext;
 import hs_mannheim.gestureframework.model.Selection;
+import hs_mannheim.gestureframework.model.SysplaceContext;
 
 public class ConfigurationBuilder {
 
@@ -39,8 +40,9 @@ public class ConfigurationBuilder {
     /**
      * Helps bootstrapping and registering a {@link SysplaceContext} to the current
      * {@link InteractionApplication}
-     * @param context The context of the current application.
-     *                Needs to be an {@link InteractionApplication}.
+     *
+     * @param context     The context of the current application.
+     *                    Needs to be an {@link InteractionApplication}.
      * @param viewContext An {@link IViewContext} that is needed to register for View-related
      *                    events such as {@link android.view.MotionEvent}.
      */
@@ -53,6 +55,7 @@ public class ConfigurationBuilder {
 
     /**
      * Choose Bluetooth for connecting devices.
+     *
      * @return The {@link ConfigurationBuilder} instance.
      */
     public ConfigurationBuilder withBluetooth() {
@@ -64,6 +67,7 @@ public class ConfigurationBuilder {
 
     /**
      * Choose Wifi P2P for connecting devices.
+     *
      * @return The {@link ConfigurationBuilder} instance.
      */
     @SuppressWarnings("unused")
@@ -78,6 +82,7 @@ public class ConfigurationBuilder {
 
     /**
      * Specify which GestureDetector triggers the {@link LifecycleEvent} CONNECT.
+     *
      * @param gestureDetector The {@link GestureDetector}.
      * @return The {@link ConfigurationBuilder} instance.
      */
@@ -88,6 +93,7 @@ public class ConfigurationBuilder {
 
     /**
      * Specify which GestureDetector triggers the {@link LifecycleEvent} SELECT.
+     *
      * @param gestureDetector The {@link GestureDetector}.
      * @return The {@link ConfigurationBuilder} instance.
      */
@@ -98,6 +104,7 @@ public class ConfigurationBuilder {
 
     /**
      * Specify which GestureDetector triggers the {@link LifecycleEvent} TRANSFER.
+     *
      * @param gestureDetector The {@link GestureDetector}.
      * @return The {@link ConfigurationBuilder} instance.
      */
@@ -108,6 +115,7 @@ public class ConfigurationBuilder {
 
     /**
      * Specify which GestureDetector triggers the {@link LifecycleEvent} DISCONNECT.
+     *
      * @param gestureDetector The {@link GestureDetector}.
      * @return The {@link ConfigurationBuilder} instance.
      */
@@ -118,6 +126,7 @@ public class ConfigurationBuilder {
 
     /**
      * Make an initial {@link Selection} that will be transferred on TRANSFER.
+     *
      * @param selection The {@link Selection} to be transferred on TRANSFER.
      * @return The {@link ConfigurationBuilder} instance.
      */
@@ -141,10 +150,10 @@ public class ConfigurationBuilder {
      */
     public void buildAndRegister() {
         SysplaceContext sysplaceContext = new SysplaceContext(mGestureManager, mSelection, mChannel, mPostOffice);
-        if(mLifecycleListener != null) {
+        if (mLifecycleListener != null) {
             sysplaceContext.registerForLifecycleEvents(mLifecycleListener);
         }
-        if(mPacketReceiver != null) {
+        if (mPacketReceiver != null) {
             sysplaceContext.registerPacketReceiver(mPacketReceiver);
         }
 
@@ -154,51 +163,62 @@ public class ConfigurationBuilder {
 
     /**
      * Helper to quickly get a left-right {@link SwipeDetector}.
+     *
      * @return A {@link SwipeDetector} instance.
      */
-    public SwipeDetector swipeLeftRight(){
+    public SwipeDetector swipeLeftRight() {
         return mBuilder.createSwipeLeftRightDetector();
     }
 
     /**
      * Helper to quickly get an up-down {@link SwipeDetector}.
+     *
      * @return A {@link SwipeDetector} instance.
      */
-    public SwipeDetector swipeUpDown(){
+    public SwipeDetector swipeUpDown() {
         return mBuilder.createSwipeUpDownDetector();
     }
 
     /**
      * Helper to quickly get a {@link BumpDetector}.
+     *
      * @return A {@link BumpDetector} instance.
      */
-    public BumpDetector bump(){
+    public BumpDetector bump() {
         return mBuilder.createBumpDetector();
     }
 
     /**
      * Helper to quickly get a {@link StitchDetector}.
+     *
      * @return A {@link StitchDetector} instance.
      */
     @SuppressWarnings("unused")
-    public StitchDetector stitch(){
+    public StitchDetector stitch() {
         return mBuilder.createStitchDetector();
+    }
+
+    public SyncBumpDetector syncBump() {
+        BumpDetector bumpDetector = mBuilder.createBumpDetector();
+        return new SyncBumpDetector(mPostOffice, mViewContext, bumpDetector);
     }
 
     /**
      * Helper to quickly get a {@link ShakeDetector}.
+     *
      * @return A {@link ShakeDetector} instance.
      */
     @SuppressWarnings("unused")
-    public ShakeDetector shake(){
+    public ShakeDetector shake() {
         return mBuilder.createShakeDetector();
     }
 
     /**
      * Helper to quickly get a {@link DoubleTapDetector}.
+     *
      * @return A {@link DoubleTapDetector} instance.
      */
-    public DoubleTapDetector doubleTap(){
+    public DoubleTapDetector doubleTap() {
         return mBuilder.createDoubleTapDetector();
     }
 }

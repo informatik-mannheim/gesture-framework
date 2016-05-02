@@ -30,6 +30,6 @@ public class Packet implements Serializable {
     }
 
     public enum PacketType {
-        PlainString, StitchSyn, Image, ConnectionLost, ConnectionEstablished, StitchAck
+        PlainString, StitchSyn, StitchAck, BumpSyn, BumpAck, Image, ConnectionLost, ConnectionEstablished
     }
 }

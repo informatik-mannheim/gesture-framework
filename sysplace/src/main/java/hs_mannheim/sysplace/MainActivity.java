@@ -1,10 +1,12 @@
 package hs_mannheim.sysplace;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .withBluetooth()
                 .toConnect(builder.swipeLeftRight())
                 .toSelect(builder.doubleTap())
-                .toTransfer(builder.stitch())
+                .toTransfer(builder.swipeUpDown())
                 .toDisconnect(builder.syncBump())
                 .select(Selection.Empty)
                 .registerForLifecycleEvents(new ToastLifecycleListener(this))
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 mPingButton.setEnabled(true);
                 mPhotoButton.setEnabled(true);
                 mDisconnectButton.setEnabled(true);
+                ((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(700);
                 break;
             case ConnectionLost:
                 mTextView.setText(R.string.not_connected_info);
@@ -129,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 mPingButton.setEnabled(false);
                 mPhotoButton.setEnabled(false);
                 mDisconnectButton.setEnabled(false);
+                ((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(350);
                 break;
             case PlainString:
                 Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();

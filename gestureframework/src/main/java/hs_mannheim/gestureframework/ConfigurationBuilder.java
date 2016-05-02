@@ -66,6 +66,7 @@ public class ConfigurationBuilder {
      * Choose Wifi P2P for connecting devices.
      * @return The {@link ConfigurationBuilder} instance.
      */
+    @SuppressWarnings("unused")
     public ConfigurationBuilder withWifiDirect() {
         WifiP2pManager wifiP2pManager = (WifiP2pManager) mContext.getSystemService(Context.WIFI_P2P_SERVICE);
         WifiP2pManager.Channel channel = wifiP2pManager.initialize(mContext, mContext.getMainLooper(), null);
@@ -118,7 +119,7 @@ public class ConfigurationBuilder {
     /**
      * Make an initial {@link Selection} that will be transferred on TRANSFER.
      * @param selection The {@link Selection} to be transferred on TRANSFER.
-     * @return
+     * @return The {@link ConfigurationBuilder} instance.
      */
     public ConfigurationBuilder select(Selection selection) {
         mSelection = selection;
@@ -153,7 +154,7 @@ public class ConfigurationBuilder {
 
     /**
      * Helper to quickly get a left-right {@link SwipeDetector}.
-     * @return
+     * @return A {@link SwipeDetector} instance.
      */
     public SwipeDetector swipeLeftRight(){
         return mBuilder.createSwipeLeftRightDetector();
@@ -161,7 +162,7 @@ public class ConfigurationBuilder {
 
     /**
      * Helper to quickly get an up-down {@link SwipeDetector}.
-     * @return
+     * @return A {@link SwipeDetector} instance.
      */
     public SwipeDetector swipeUpDown(){
         return mBuilder.createSwipeUpDownDetector();
@@ -169,7 +170,7 @@ public class ConfigurationBuilder {
 
     /**
      * Helper to quickly get a {@link BumpDetector}.
-     * @return
+     * @return A {@link BumpDetector} instance.
      */
     public BumpDetector bump(){
         return mBuilder.createBumpDetector();
@@ -177,23 +178,25 @@ public class ConfigurationBuilder {
 
     /**
      * Helper to quickly get a {@link StitchDetector}.
-     * @return
+     * @return A {@link StitchDetector} instance.
      */
+    @SuppressWarnings("unused")
     public StitchDetector stitch(){
         return mBuilder.createStitchDetector();
     }
 
     /**
      * Helper to quickly get a {@link ShakeDetector}.
-     * @return
+     * @return A {@link ShakeDetector} instance.
      */
+    @SuppressWarnings("unused")
     public ShakeDetector shake(){
         return mBuilder.createShakeDetector();
     }
 
     /**
      * Helper to quickly get a {@link DoubleTapDetector}.
-     * @return
+     * @return A {@link DoubleTapDetector} instance.
      */
     public DoubleTapDetector doubleTap(){
         return mBuilder.createDoubleTapDetector();

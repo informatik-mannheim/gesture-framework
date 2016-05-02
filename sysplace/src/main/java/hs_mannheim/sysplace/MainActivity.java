@@ -1,6 +1,5 @@
 package hs_mannheim.sysplace;
 
-import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -18,33 +17,28 @@ import android.widget.Toast;
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.Packet;
-import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.model.MultipleTouchView;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 
-public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, ILifecycleListener {
-    private String TAG = "[Main Activity]";
-
-    private BluetoothAdapter mBluetoothAdapter;
-    private String mOldName;
-    private String mCurrentName;
+public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver {
+    String TAG = "[Main Activity]";
 
     private MultipleTouchView mInteractionView;
     private TextView mTextView;
     private Button mPingButton;
     private Button mPhotoButton;
     private Button mDisconnectButton;
-    private EditText mTextfield;
     private SysplaceContext mSysplaceContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         Log.d(TAG, "App starts");
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -57,7 +51,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mPingButton = ((Button) findViewById(R.id.btn_ping));
         mPhotoButton = ((Button) findViewById(R.id.btn_send_photo));
         mDisconnectButton = ((Button) findViewById(R.id.btn_disconnect));
-        mTextfield = ((EditText) findViewById(R.id.et_tosend));
+        mTextView = ((EditText) findViewById(R.id.et_tosend));
+        mTextView.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
@@ -67,12 +62,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .toTransfer(builder.swipeUpDown())
                 .toDisconnect(builder.bump())
                 .select(Selection.Empty)
-                .registerForLifecycleEvents(this)
+                .registerForLifecycleEvents(new ToastLifecycleListener(this))
                 .registerPacketReceiver(this)
                 .buildAndRegister();
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
-        mTextfield.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
     }
 
     @Override
@@ -146,28 +140,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
                 break;
         }
-    }
-
-    // ILifecycleListener Stuff
-
-    @Override
-    public void onConnect() {
-        Toast.makeText(this, "CONNECT", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onSelect() {
-        Toast.makeText(this, "SELECT", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onTransfer() {
-        Toast.makeText(this, "TRANSFER", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDisconnect() {
-        Toast.makeText(this, "DISCONNECT", Toast.LENGTH_SHORT).show();
     }
 }
 

@@ -8,7 +8,7 @@ import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.IPostOffice;
 import hs_mannheim.gestureframework.messaging.Packet;
 
-public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISysplaceContext {
+public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
 
     private final GestureManager mGestureManager;
     private final IConnection mConnection;
@@ -25,7 +25,10 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
      * @param connection The underlying connection for Peer-To-Peer communication
      * @param postOffice The broker for messages between devices
      */
-    public SysplaceContext(GestureManager gestureManager, Selection selection, IConnection connection, IPostOffice postOffice) {
+    public SysplaceContext(GestureManager gestureManager,
+                           Selection selection,
+                           IConnection connection,
+                           IPostOffice postOffice) {
         mGestureManager = gestureManager;
         mConnection = connection;
         mPostOffice = postOffice; /* only PostOffice talks to the connection */
@@ -40,10 +43,12 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
         return this.mConnection;
     }
 
+    @SuppressWarnings("unused")
     public void updateViewContextAll(IViewContext viewContext) {
         mGestureManager.setViewContextAll(viewContext);
     }
 
+    @SuppressWarnings("unused")
     public void updateViewContext(LifecycleEvent lifecycleEvent, IViewContext viewContext) {
         mGestureManager.setViewContext(lifecycleEvent, viewContext);
     }
@@ -56,16 +61,6 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
     @Override
     public void unregisterPacketReceiver(IPacketReceiver packetReceiver) {
         mPostOffice.unregister(packetReceiver);
-    }
-
-    @Override
-    public void receive(Packet packet) {
-        //todo: register to postoffice and distribute stuff
-    }
-
-    @Override
-    public boolean accept(Packet.PacketType type) {
-        return false;
     }
 
     public GestureManager getGestureManager() {

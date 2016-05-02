@@ -31,7 +31,7 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     @Override
     public void setViewContext(IViewContext viewContext) {
         super.setViewContext(viewContext);
-        mViewContext.getMultipleTouchView().registerObserver(this);
+        mViewContext.getView().registerObserver(this);
     }
 
     //TODO: Threadsafe

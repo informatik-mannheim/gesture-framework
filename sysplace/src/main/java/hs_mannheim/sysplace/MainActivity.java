@@ -19,15 +19,15 @@ import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.Packet;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionApplication;
-import hs_mannheim.gestureframework.model.MultipleTouchView;
+import hs_mannheim.gestureframework.model.ViewWrapper;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver {
     String TAG = "[Main Activity]";
 
-    private MultipleTouchView mInteractionView;
     private TextView mTextView;
+    private EditText mEditText;
     private Button mPingButton;
     private Button mPhotoButton;
     private Button mDisconnectButton;
@@ -44,15 +44,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        // TODO: don't let the client do this, should be somewhere in the framework
-        mInteractionView = new MultipleTouchView(findViewById(R.id.layout_main));
-
         mTextView = ((TextView) findViewById(R.id.textView));
         mPingButton = ((Button) findViewById(R.id.btn_ping));
         mPhotoButton = ((Button) findViewById(R.id.btn_send_photo));
         mDisconnectButton = ((Button) findViewById(R.id.btn_disconnect));
-        mTextView = ((EditText) findViewById(R.id.et_tosend));
-        mTextView.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
+        mEditText = ((EditText) findViewById(R.id.et_tosend));
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
@@ -67,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .buildAndRegister();
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
+        mEditText.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
     }
 
     @Override
@@ -96,8 +93,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     // IViewContext Stuff
 
     @Override
-    public MultipleTouchView getMultipleTouchView() {
-        return mInteractionView;
+    public ViewWrapper getView() {
+        return ViewWrapper.wrap(findViewById(R.id.layout_main));
     }
 
     @Override

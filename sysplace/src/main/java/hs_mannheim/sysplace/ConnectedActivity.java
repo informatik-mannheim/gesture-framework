@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -14,18 +13,15 @@ import android.widget.Toast;
 import java.io.InputStream;
 
 import hs_mannheim.gestureframework.animation.GestureAnimation;
-import hs_mannheim.gestureframework.animation.PostCardFlipAnimationSend;
-import hs_mannheim.gestureframework.animation.PostcardFlipAnimationReceive;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.ImagePacket;
 import hs_mannheim.gestureframework.messaging.Packet;
 import hs_mannheim.gestureframework.messaging.SerializableImage;
 import hs_mannheim.gestureframework.model.ILifecycleListener;
-import hs_mannheim.gestureframework.model.ISysplaceContext;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.model.LifecycleEvent;
-import hs_mannheim.gestureframework.model.MultipleTouchView;
+import hs_mannheim.gestureframework.model.ViewWrapper;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 
@@ -40,7 +36,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     //private SwipeDetector swipeDetector;
 
     private final String TAG = "[ConnectedActivity]";
-    private MultipleTouchView mViewContext;
+    private ViewWrapper mViewContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +44,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         setContentView(R.layout.activity_connected);
 
         imgView = (ImageView) findViewById(R.id.imgView);
-        mViewContext = new MultipleTouchView(findViewById(R.id.imgView));
+        mViewContext = new ViewWrapper(findViewById(R.id.imgView));
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
 
@@ -142,7 +138,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     }
 
     @Override
-    public MultipleTouchView getMultipleTouchView() {
+    public ViewWrapper getView() {
         return mViewContext;
     }
 

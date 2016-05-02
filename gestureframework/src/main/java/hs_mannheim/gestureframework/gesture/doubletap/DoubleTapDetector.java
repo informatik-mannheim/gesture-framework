@@ -26,7 +26,7 @@ public class DoubleTapDetector extends GestureDetector implements View.OnTouchLi
     @Override
     public void setViewContext(IViewContext viewContext) {
         super.setViewContext(viewContext);
-        mViewContext.getMultipleTouchView().registerObserver(this);
+        mViewContext.getView().registerObserver(this);
     }
 
     @Override

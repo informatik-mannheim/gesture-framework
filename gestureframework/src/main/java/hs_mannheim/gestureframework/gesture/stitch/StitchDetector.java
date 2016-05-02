@@ -75,9 +75,8 @@ public class StitchDetector extends GestureDetector
     }
 
     @Override
-    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
-        StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mViewContext.getDisplaySize());
-        mState.handle(stitchEvent);
+    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent swipeEvent) {
+        mState.handle(swipeEvent);
     }
 
     @Override
@@ -98,7 +97,7 @@ public class StitchDetector extends GestureDetector
     abstract class StitchState {
         abstract void handle(Packet packet);
 
-        abstract void handle(StitchEvent event);
+        abstract void handle(SwipeEvent event);
     }
 
     class IdleState extends StitchState {
@@ -112,12 +111,12 @@ public class StitchDetector extends GestureDetector
 
         @Override
         /* Send either a SYN or wait for an ACK */
-        void handle(StitchEvent event) {
-            if (event.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
-                mPostOffice.send(new StitchSynPacket(event.getBounding(), event.getOrientation()));
+        void handle(SwipeEvent event) {
+            if (event.getBounding().equals(SwipeEvent.Bounding.OUTBOUND)) {
+                mPostOffice.send(new StitchSynPacket());
                 startWait();
                 mState = new OutState();
-            } else if (event.getBounding().equals(StitchEvent.Bounding.INBOUND)) {
+            } else if (event.getBounding().equals(SwipeEvent.Bounding.INBOUND)) {
                 startWait();
                 mState = new InState();
             }
@@ -137,7 +136,7 @@ public class StitchDetector extends GestureDetector
 
         @Override
         /* We are waiting for an ACK, no need to process further StitchEvents */
-        void handle(StitchEvent event) {
+        void handle(SwipeEvent event) {
             // nothing
         }
     }
@@ -152,8 +151,8 @@ public class StitchDetector extends GestureDetector
 
         @Override
         /* Checks whether the StitchEvent is INBOUND, matching the already received SYN */
-        void handle(StitchEvent event) {
-            if (event.getBounding().equals(StitchEvent.Bounding.INBOUND)) {
+        void handle(SwipeEvent event) {
+            if (event.getBounding().equals(SwipeEvent.Bounding.INBOUND)) {
                 mPostOffice.send(new StitchAckPacket());
                 fireGestureDetected();
                 abortWaiting();
@@ -177,7 +176,7 @@ public class StitchDetector extends GestureDetector
 
         @Override
         /* In this state, do not process further StitchEvents */
-        void handle(StitchEvent event) {
+        void handle(SwipeEvent event) {
             // nothing
         }
     }

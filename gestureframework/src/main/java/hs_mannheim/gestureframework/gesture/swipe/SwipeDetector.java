@@ -78,7 +78,7 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
 
     private boolean handle_up(MotionEvent event) {
         TouchPoint end = new TouchPoint(event);
-        SwipeEvent swipeEvent = new SwipeEvent(mStart, end);
+        SwipeEvent swipeEvent = new SwipeEvent(mStart, end, mViewContext.getDisplaySize());
 
         boolean isSwipe = true;
 

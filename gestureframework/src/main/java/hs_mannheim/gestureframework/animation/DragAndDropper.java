@@ -1,11 +1,7 @@
 package hs_mannheim.gestureframework.animation;
 
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
 import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;

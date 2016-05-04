@@ -2,13 +2,10 @@ package hs_mannheim.gestureframework.animation;
 
 import android.animation.Animator;
 import android.graphics.Bitmap;
-import android.view.View;
 import android.widget.ImageView;
-
 
 import java.util.ArrayList;
 
-import hs_mannheim.gestureframework.animation.AnimationType;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
 

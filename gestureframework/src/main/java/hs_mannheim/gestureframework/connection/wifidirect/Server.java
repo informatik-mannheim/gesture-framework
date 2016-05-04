@@ -20,12 +20,10 @@ public class Server extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        Log.d(TAG, "Server started");
-
         try {
             ServerSocket serverSocket = new ServerSocket(mPort);
 
-            // blocks
+            // blocks until anyone connects
             Socket client = serverSocket.accept();
 
             new ConnectedThread(client, _channel).start();

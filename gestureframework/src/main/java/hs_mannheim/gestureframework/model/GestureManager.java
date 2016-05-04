@@ -39,21 +39,6 @@ public class GestureManager implements GestureDetector.GestureEventListener,
     private final List<ILifecycleListener> mLifeCycleEventListeners = new ArrayList<>();
     private boolean mConnected = false;
 
-    /**
-     * Builds a new instance of the {@link GestureManager} and registers a {@link GestureDetector}
-     * for every {@link LifecycleEvent}.
-     * @param connectDetector    nullable
-     * @param selectDetector     nullable
-     * @param transferDetector   nullable
-     * @param disconnectDetector nullable
-     */
-    public GestureManager(GestureDetector connectDetector, GestureDetector selectDetector, GestureDetector transferDetector, GestureDetector disconnectDetector) {
-        setGestureDetector(LifecycleEvent.CONNECT, connectDetector);
-        setGestureDetector(LifecycleEvent.SELECT, selectDetector);
-        setGestureDetector(LifecycleEvent.TRANSFER, transferDetector);
-        setGestureDetector(LifecycleEvent.DISCONNECT, disconnectDetector);
-    }
-
     public GestureManager() {
         setGestureDetector(LifecycleEvent.CONNECT, new VoidGestureDetector());
         setGestureDetector(LifecycleEvent.SELECT, new VoidGestureDetector());
@@ -86,6 +71,7 @@ public class GestureManager implements GestureDetector.GestureEventListener,
      * @param lifecycleEvent The queried {@link LifecycleEvent}
      * @return The desired {@link GestureDetector}. Might be a {@link VoidGestureDetector}!
      */
+    @SuppressWarnings("unused")
     public GestureDetector getGestureDetectorFor(LifecycleEvent lifecycleEvent) {
         return mDetectors.get(lifecycleEvent);
     }
@@ -122,6 +108,7 @@ public class GestureManager implements GestureDetector.GestureEventListener,
      *
      * @param lifecycleListener the listener to register
      */
+    @SuppressWarnings("unused")
     public void unregisterLifecycleListener(ILifecycleListener lifecycleListener) {
         if (mLifeCycleEventListeners.contains(lifecycleListener)) {
             mLifeCycleEventListeners.remove(lifecycleListener);
@@ -135,7 +122,7 @@ public class GestureManager implements GestureDetector.GestureEventListener,
             }
         }
 
-        return null; //WOOOHOOO
+        return LifecycleEvent.NONE;
     }
 
     @Override

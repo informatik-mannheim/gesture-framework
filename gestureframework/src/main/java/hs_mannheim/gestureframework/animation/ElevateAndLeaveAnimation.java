@@ -5,13 +5,9 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.R;
-import hs_mannheim.gestureframework.animation.AnimationType;
-import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
 

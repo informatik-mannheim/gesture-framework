@@ -4,10 +4,18 @@ import android.content.Intent;
 
 import hs_mannheim.gestureframework.connection.BluetoothPairingService;
 import hs_mannheim.gestureframework.connection.IConnection;
+import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.IPostOffice;
 import hs_mannheim.gestureframework.messaging.Packet;
 
+/**
+ * Manages the whole Lifecycle of a gesture enabled Application. It references an
+ * {@link IPostOffice} for messaging, connects an {@link IConnection} to it and also registers
+ * {@link android.view.GestureDetector} instances to {@link LifecycleEvent} events trough a
+ * {@link GestureManager}. It also knows about the current {@link Selection} and enforces certain
+ * Lifecycle rules (e.g. only send non-empty Selection, start device discovery on CONNECT etc).
+ */
 public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
 
     private final GestureManager mGestureManager;
@@ -39,10 +47,6 @@ public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
         select(selection);
     }
 
-    public IConnection getConnection() {
-        return this.mConnection;
-    }
-
     @SuppressWarnings("unused")
     public void updateViewContextAll(IViewContext viewContext) {
         mGestureManager.setViewContextAll(viewContext);
@@ -61,10 +65,6 @@ public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
     @Override
     public void unregisterPacketReceiver(IPacketReceiver packetReceiver) {
         mPostOffice.unregister(packetReceiver);
-    }
-
-    public GestureManager getGestureManager() {
-        return mGestureManager;
     }
 
     @Override
@@ -124,5 +124,13 @@ public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
 
     public void applicationResumed() {
         mApplication.toggleName(true);
+    }
+
+    public void connect(ConnectionInfo info) {
+        mConnection.connect(info);
+    }
+
+    public void disconnect() {
+        mConnection.disconnect();
     }
 }

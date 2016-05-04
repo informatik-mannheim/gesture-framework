@@ -27,11 +27,11 @@ public class BluetoothBroadcastReceiver extends BroadcastReceiver {
                         device.getName(),
                         device.getAddress());
 
+
                 // TODO: kind of a hack - maybe move it to the SysplaceContext
                 ((InteractionApplication) context
                         .getApplicationContext())
                         .getSysplaceContext()
-                        .getConnection()
                         .connect(info);
             }
         }

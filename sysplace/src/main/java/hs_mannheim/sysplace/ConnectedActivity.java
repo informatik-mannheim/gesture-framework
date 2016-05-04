@@ -50,8 +50,8 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
         mSysplaceContext.registerForLifecycleEvents(this);
         mSysplaceContext.registerPacketReceiver(this);
-        mSysplaceContext.getGestureManager().setViewContext(LifecycleEvent.SELECT, this);
-        mSysplaceContext.getGestureManager().setViewContext(LifecycleEvent.TRANSFER, this);
+        mSysplaceContext.updateViewContext(LifecycleEvent.SELECT, this);
+        mSysplaceContext.updateViewContext(LifecycleEvent.TRANSFER, this);
     }
 
     @Override

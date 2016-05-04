@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     public void disconnect(View view) {
-        mSysplaceContext.getConnection().disconnect();
+        mSysplaceContext.disconnect();
     }
 
     // IViewContext Stuff

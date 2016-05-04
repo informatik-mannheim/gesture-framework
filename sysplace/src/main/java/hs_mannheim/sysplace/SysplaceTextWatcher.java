@@ -8,7 +8,7 @@ import hs_mannheim.gestureframework.model.ISysplaceContext;
 import hs_mannheim.gestureframework.model.Selection;
 
 /**
- * Just a helper to class to update the {@link Selection} depending on an {@link EditText} element.
+ * Just a helper to class to update the {@link Selection} depending on an {@link android.widget.EditText} element.
  */
 public class SysplaceTextWatcher implements TextWatcher {
     private final ISysplaceContext mSysplaceContext;

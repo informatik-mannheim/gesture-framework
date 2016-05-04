@@ -7,6 +7,12 @@ import android.view.View;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Listens for TouchEvents on a View and distributes it to 0-n
+ * {@link android.view.View.OnTouchListener} instances as a normal {@link View} only allows one
+ * OnTouchListener at a time. I hope this isn't problematic in some cases? Is there a reason why
+ * you can have only one OnTouchListener per View?
+ */
 public class ViewWrapper extends Observable<View.OnTouchListener> implements View.OnTouchListener {
     private final View mView;
     private final static Set<ViewWrapper> mWrappers = new HashSet<>();

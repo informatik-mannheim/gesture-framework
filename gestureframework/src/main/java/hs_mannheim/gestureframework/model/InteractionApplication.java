@@ -39,8 +39,18 @@ public class InteractionApplication extends Application {
                 .getAdapter();
 
         enableBluetooth();
+
         mOldName = mBluetoothAdapter.getName();
-        mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
+
+
+        if(mOldName.contains("-sysplace-")) {
+            String[] nameArray = mOldName.split("-sysplace-");
+            mCurrentName = mOldName;
+            mOldName = nameArray[0];
+
+        } else {
+            mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
+        }
     }
 
     private void enableBluetooth() {

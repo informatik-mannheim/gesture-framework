@@ -3,9 +3,15 @@ package hs_mannheim.sysplace;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -31,12 +37,8 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     private ImageView imgView;
     private GestureAnimation sendAnimation, receiveAnimation;
     private SysplaceContext mSysplaceContext;
-
-    //private SwipeHandler swipeHandler;
-    //private SwipeDetector swipeDetector;
-
     private final String TAG = "[ConnectedActivity]";
-    private ViewWrapper mViewContext;
+    private ViewWrapper mViewWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         setContentView(R.layout.activity_connected);
 
         imgView = (ImageView) findViewById(R.id.imgView);
-        mViewContext = new ViewWrapper(findViewById(R.id.imgView));
+        mViewWrapper = new ViewWrapper(findViewById(R.id.imgView));
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
 
@@ -79,14 +81,9 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     }
 
     /**
-     * Fires image chooser intent. TODO: Shouldn't be activated by a button
+     * Fires image chooser intent.
      *
-     * @param view
      */
-    public void chooseImage(View view) {
-        chooseImage();
-    }
-
     public void chooseImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -95,7 +92,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     }
 
     /**
-     * Callback on image chooser Activity. Transforms to Bitmap and adds to imageview
+     * Callback on image chooser Activity. Transforms to Bitmap and adds to ImageView
      *
      * @param requestCode
      * @param resultCode
@@ -109,7 +106,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
             if (requestCode == PICK_IMAGE && resultCode == RESULT_OK) {
 
                 if (data == null) {
-                    Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Something went wrong... data returned null", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -131,15 +128,44 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         }
     }
 
-    private void updatePicture(Bitmap bitmap) {
-        imgView = (ImageView) findViewById(R.id.imgView);
-        imgView.setImageBitmap(bitmap);
-        mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(bitmap))));
+    /**
+     * Combines the chosen image file with the polaroid frame and displays the resulting Bitmap
+     * in the ImageView
+     * @param chosenImage
+     */
+    private void updatePicture(Bitmap chosenImage) {
+
+        ImageView imgView = (ImageView) mViewWrapper.getView();
+        Bitmap polaroid = ((BitmapDrawable)imgView.getDrawable()).getBitmap();
+        Bitmap polaroidFrame = BitmapFactory.decodeResource(getResources(), R.drawable.polaroid_frame);
+
+        ThumbnailUtils thumbnailUtils = new ThumbnailUtils();
+        Bitmap thumbnail = thumbnailUtils.extractThumbnail(chosenImage, polaroid.getWidth(), polaroid.getWidth());
+
+        Bitmap combinedBitmap = Bitmap.createBitmap(polaroidFrame.getWidth(), polaroidFrame.getHeight(), polaroidFrame.getConfig());
+        Canvas canvas = new Canvas(combinedBitmap);
+        canvas.drawBitmap(thumbnail, 0, 0, null);
+        canvas.drawBitmap(polaroidFrame, new Matrix(), null);
+
+        imgView.setImageDrawable(new BitmapDrawable(getResources(), combinedBitmap));
+        mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(chosenImage))));
+    }
+
+    private int pxToDp(int px) {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return dp;
+    }
+
+    private int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
     }
 
     @Override
     public ViewWrapper getView() {
-        return mViewContext;
+        return mViewWrapper;
     }
 
     @Override

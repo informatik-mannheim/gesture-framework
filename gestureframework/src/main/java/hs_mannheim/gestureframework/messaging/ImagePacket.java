@@ -1,5 +1,7 @@
 package hs_mannheim.gestureframework.messaging;
 
+import java.io.Serializable;
+
 import hs_mannheim.gestureframework.connection.IConnection;
 
 /**
@@ -8,7 +10,7 @@ import hs_mannheim.gestureframework.connection.IConnection;
  * right now.
  */
 @SuppressWarnings("unused")
-public class ImagePacket extends Packet {
+public class ImagePacket extends Packet implements Serializable {
     private SerializableImage mImage;
 
     public ImagePacket(SerializableImage image) {

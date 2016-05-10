@@ -20,8 +20,14 @@ public class PostOffice extends Observable<IPacketReceiver> implements IPostOffi
      * Sends a packet through the connection.
      * @param packet to transfer
      */
-    public void send(Packet packet) {
-        mConnection.transfer(packet);
+    public void send(final Packet packet) {
+        // Run the transfer in a new thread so it won't block the application.
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mConnection.transfer(packet);
+            }
+        }).start();
     }
 
     /**

@@ -14,10 +14,8 @@ import android.util.Log;
  */
 public class BluetoothPairingService extends IntentService {
 
-    private final String TAG = "[Bt Pairing Service]";
+    protected final String TAG = "[Bt Pairing Service]";
     private BluetoothAdapter mBluetoothAdapter;
-    private String mOldName;
-    private String mCurrentName;
 
     public BluetoothPairingService() {
         super("Bluetooth Pairing Service");

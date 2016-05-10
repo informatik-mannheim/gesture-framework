@@ -4,11 +4,19 @@ import android.content.Intent;
 
 import hs_mannheim.gestureframework.connection.BluetoothPairingService;
 import hs_mannheim.gestureframework.connection.IConnection;
+import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.IPostOffice;
 import hs_mannheim.gestureframework.messaging.Packet;
 
-public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISysplaceContext {
+/**
+ * Manages the whole Lifecycle of a gesture enabled Application. It references an
+ * {@link IPostOffice} for messaging, connects an {@link IConnection} to it and also registers
+ * {@link android.view.GestureDetector} instances to {@link LifecycleEvent} events trough a
+ * {@link GestureManager}. It also knows about the current {@link Selection} and enforces certain
+ * Lifecycle rules (e.g. only send non-empty Selection, start device discovery on CONNECT etc).
+ */
+public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
 
     private final GestureManager mGestureManager;
     private final IConnection mConnection;
@@ -25,7 +33,10 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
      * @param connection The underlying connection for Peer-To-Peer communication
      * @param postOffice The broker for messages between devices
      */
-    public SysplaceContext(GestureManager gestureManager, Selection selection, IConnection connection, IPostOffice postOffice) {
+    public SysplaceContext(GestureManager gestureManager,
+                           Selection selection,
+                           IConnection connection,
+                           IPostOffice postOffice) {
         mGestureManager = gestureManager;
         mConnection = connection;
         mPostOffice = postOffice; /* only PostOffice talks to the connection */
@@ -36,14 +47,12 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
         select(selection);
     }
 
-    public IConnection getConnection() {
-        return this.mConnection;
-    }
-
+    @SuppressWarnings("unused")
     public void updateViewContextAll(IViewContext viewContext) {
         mGestureManager.setViewContextAll(viewContext);
     }
 
+    @SuppressWarnings("unused")
     public void updateViewContext(LifecycleEvent lifecycleEvent, IViewContext viewContext) {
         mGestureManager.setViewContext(lifecycleEvent, viewContext);
     }
@@ -56,20 +65,6 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
     @Override
     public void unregisterPacketReceiver(IPacketReceiver packetReceiver) {
         mPostOffice.unregister(packetReceiver);
-    }
-
-    @Override
-    public void receive(Packet packet) {
-        //todo: register to postoffice and distribute stuff
-    }
-
-    @Override
-    public boolean accept(Packet.PacketType type) {
-        return false;
-    }
-
-    public GestureManager getGestureManager() {
-        return mGestureManager;
     }
 
     @Override
@@ -129,5 +124,13 @@ public class SysplaceContext implements IPacketReceiver, ILifecycleListener, ISy
 
     public void applicationResumed() {
         mApplication.toggleName(true);
+    }
+
+    public void connect(ConnectionInfo info) {
+        mConnection.connect(info);
+    }
+
+    public void disconnect() {
+        mConnection.disconnect();
     }
 }

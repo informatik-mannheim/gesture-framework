@@ -9,6 +9,11 @@ import android.util.Log;
 
 import java.util.Random;
 
+/**
+ * Subclasses {@link Application} to provide a SysplaceContext that manages the Lifecycle of a
+ * gesture enabled application. It also ensures that Bluetooth is enabled and the device naming
+ * works properly.
+ */
 public class InteractionApplication extends Application {
 
     private static final String TAG = "[InteractionApp]";
@@ -30,7 +35,8 @@ public class InteractionApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
+        mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE))
+                .getAdapter();
 
         enableBluetooth();
         mOldName = mBluetoothAdapter.getName();
@@ -38,9 +44,7 @@ public class InteractionApplication extends Application {
     }
 
     private void enableBluetooth() {
-        BluetoothAdapter bluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
-
-        if (bluetoothAdapter == null || !bluetoothAdapter.isEnabled()) {
+        if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             enableBtIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(enableBtIntent);

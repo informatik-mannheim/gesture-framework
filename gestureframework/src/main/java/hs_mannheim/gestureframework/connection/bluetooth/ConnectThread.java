@@ -15,7 +15,7 @@ public class ConnectThread extends Thread {
     private final BluetoothAdapter mBluetoothAdapter;
     private final BluetoothDevice mDevice;
 
-    private final int WAIT_TIME = 1000;
+    private static final int WAIT_TIME = 1000;
     private static int RETRIES = 3;
 
     public ConnectThread(BluetoothDevice device, BluetoothChannel channel, BluetoothAdapter bluetoothAdapter) {

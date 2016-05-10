@@ -24,7 +24,6 @@ public class BluetoothChannel extends Observable<IConnectionListener> implements
     private final String TAG = "[BluetoothChannel]";
 
     private final Handler mHandler;
-    private BluetoothDevice mConnectedDevice;
     private BluetoothAdapter mBluetoothAdapter;
 
     private boolean mIsConnected = false;
@@ -79,10 +78,6 @@ public class BluetoothChannel extends Observable<IConnectionListener> implements
         mHandler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
     }
 
-    public String getConnectedDevice() {
-        return this.isConnected() ? this.mConnectedDevice.getAddress() : "";
-    }
-
     public boolean isConnected() {
         return mIsConnected;
     }
@@ -106,16 +101,16 @@ public class BluetoothChannel extends Observable<IConnectionListener> implements
     public void connect(ConnectionInfo connectionInfo) {
         if (isConnected()) return;
 
-        mConnectedDevice = mBluetoothAdapter.getRemoteDevice(connectionInfo.getMacAddress());
+        BluetoothDevice remoteDevice = mBluetoothAdapter.getRemoteDevice(connectionInfo.getMacAddress());
 
-        Log.d(TAG, String.format("Device to connect to: %s", mConnectedDevice.getName()));
+        Log.d(TAG, String.format("Device to connect to: %s", remoteDevice.getName()));
 
         if (connectionInfo.isServer()) {
             Log.d(TAG, "Connecting as server.");
             new AcceptThread(this, mBluetoothAdapter).start();
         } else {
             Log.d(TAG, "Connecting as client.");
-            new ConnectThread(mConnectedDevice, this, mBluetoothAdapter).start();
+            new ConnectThread(remoteDevice, this, mBluetoothAdapter).start();
         }
     }
 

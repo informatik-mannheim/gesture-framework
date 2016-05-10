@@ -3,7 +3,7 @@ package hs_mannheim.gestureframework.gesture.bump;
 public enum Threshold {
     ZERO(0, 0, 0),
     LOW(7.5, 7.5, 4.5),
-    HORST(9, 9 , 5.5), // after some fiddling around, this worked best for the me.
+    HORST(9, 9 , 5.5), // works best on Horst's Nexus 5 Phone.
     MEDIUM(23, 23, 18),
     HIGH(40, 40, 27);
 

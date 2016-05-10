@@ -4,22 +4,23 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
+import hs_mannheim.gestureframework.gesture.GestureDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
-import hs_mannheim.gestureframework.gesture.GestureDetector;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.IPostOffice;
-import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.messaging.Packet;
+import hs_mannheim.gestureframework.model.IViewContext;
 
 /**
  * Detector for synchronous Stitch Gestures. Needs connection to another device to have a handshake
  * if the stitch succeeded.
  */
-public class StitchDetector extends GestureDetector implements SwipeDetector.SwipeEventListener, IPacketReceiver {
-    private final int WAIT_TIME = 2000;
+public class StitchDetector extends GestureDetector
+        implements SwipeDetector.SwipeEventListener, IPacketReceiver {
+    private static final int WAIT_TIME = 2000;
     private static final String TAG = "[StitchDetector]";
     private SwipeDetector mSwipeDetector;
     private IPostOffice mPostOffice;
@@ -74,9 +75,8 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
     }
 
     @Override
-    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
-        StitchEvent stitchEvent = new StitchEvent(event.getStartOfSwipe(), event.getEndOfSwipe(), mViewContext.getDisplaySize());
-        mState.handle(stitchEvent);
+    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent swipeEvent) {
+        mState.handle(swipeEvent);
     }
 
     @Override
@@ -96,7 +96,8 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
     abstract class StitchState {
         abstract void handle(Packet packet);
-        abstract void handle(StitchEvent event);
+
+        abstract void handle(SwipeEvent event);
     }
 
     class IdleState extends StitchState {
@@ -110,12 +111,12 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
         @Override
         /* Send either a SYN or wait for an ACK */
-        void handle(StitchEvent event) {
-            if (event.getBounding().equals(StitchEvent.Bounding.OUTBOUND)) {
-                mPostOffice.send(new StitchSynPacket(event.getBounding(), event.getOrientation()));
+        void handle(SwipeEvent event) {
+            if (event.getBounding().equals(SwipeEvent.Bounding.OUTBOUND)) {
+                mPostOffice.send(new StitchSynPacket());
                 startWait();
                 mState = new OutState();
-            } else if (event.getBounding().equals(StitchEvent.Bounding.INBOUND)) {
+            } else if (event.getBounding().equals(SwipeEvent.Bounding.INBOUND)) {
                 startWait();
                 mState = new InState();
             }
@@ -135,7 +136,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
         @Override
         /* We are waiting for an ACK, no need to process further StitchEvents */
-        void handle(StitchEvent event) {
+        void handle(SwipeEvent event) {
             // nothing
         }
     }
@@ -150,8 +151,8 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
         @Override
         /* Checks whether the StitchEvent is INBOUND, matching the already received SYN */
-        void handle(StitchEvent event) {
-            if (event.getBounding().equals(StitchEvent.Bounding.INBOUND)) {
+        void handle(SwipeEvent event) {
+            if (event.getBounding().equals(SwipeEvent.Bounding.INBOUND)) {
                 mPostOffice.send(new StitchAckPacket());
                 fireGestureDetected();
                 abortWaiting();
@@ -175,7 +176,7 @@ public class StitchDetector extends GestureDetector implements SwipeDetector.Swi
 
         @Override
         /* In this state, do not process further StitchEvents */
-        void handle(StitchEvent event) {
+        void handle(SwipeEvent event) {
             // nothing
         }
     }

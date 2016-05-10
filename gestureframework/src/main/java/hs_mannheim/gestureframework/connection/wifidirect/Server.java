@@ -9,7 +9,6 @@ import java.net.Socket;
 
 public class Server extends AsyncTask<Void, Void, Void> {
 
-    public final static String ACTION_DATA_RECEIVED = "hs_mannheim.pattern_interaction_model.DATA_RECEIVED";
     private static final String TAG = "[WifiP2P Server]";
     private final int mPort;
     private final WifiDirectChannel _channel;
@@ -21,12 +20,10 @@ public class Server extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        Log.d(TAG, "Server started");
-
         try {
             ServerSocket serverSocket = new ServerSocket(mPort);
 
-            // blocks
+            // blocks until anyone connects
             Socket client = serverSocket.accept();
 
             new ConnectedThread(client, _channel).start();

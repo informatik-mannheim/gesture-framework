@@ -1,11 +1,12 @@
 package hs_mannheim.sysplace;
 
-import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -18,46 +19,38 @@ import android.widget.Toast;
 import hs_mannheim.gestureframework.ConfigurationBuilder;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.Packet;
-import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionApplication;
-import hs_mannheim.gestureframework.model.MultipleTouchView;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
+import hs_mannheim.gestureframework.model.ViewWrapper;
 
-public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, ILifecycleListener {
-    private String TAG = "[Main Activity]";
+public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver {
+    private static final String TAG = "[Main Activity]";
 
-    private BluetoothAdapter mBluetoothAdapter;
-    private String mOldName;
-    private String mCurrentName;
-
-    private MultipleTouchView mInteractionView;
     private TextView mTextView;
+    private EditText mEditText;
     private Button mPingButton;
     private Button mPhotoButton;
     private Button mDisconnectButton;
-    private EditText mTextfield;
     private SysplaceContext mSysplaceContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         Log.d(TAG, "App starts");
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        // TODO: don't let the client do this, should be somewhere in the framework
-        mInteractionView = new MultipleTouchView(findViewById(R.id.layout_main));
-
         mTextView = ((TextView) findViewById(R.id.textView));
         mPingButton = ((Button) findViewById(R.id.btn_ping));
         mPhotoButton = ((Button) findViewById(R.id.btn_send_photo));
         mDisconnectButton = ((Button) findViewById(R.id.btn_disconnect));
-        mTextfield = ((EditText) findViewById(R.id.et_tosend));
+        mEditText = ((EditText) findViewById(R.id.et_tosend));
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
@@ -65,14 +58,14 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .toConnect(builder.swipeLeftRight())
                 .toSelect(builder.doubleTap())
                 .toTransfer(builder.swipeUpDown())
-                .toDisconnect(builder.bump())
+                .toDisconnect(builder.syncBump())
                 .select(Selection.Empty)
-                .registerForLifecycleEvents(this)
+                .registerForLifecycleEvents(new ToastLifecycleListener(this))
                 .registerPacketReceiver(this)
                 .buildAndRegister();
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
-        mTextfield.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
+        mEditText.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
     }
 
     @Override
@@ -96,14 +89,14 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     public void disconnect(View view) {
-        mSysplaceContext.getConnection().disconnect();
+        mSysplaceContext.disconnect();
     }
 
     // IViewContext Stuff
 
     @Override
-    public MultipleTouchView getMultipleTouchView() {
-        return mInteractionView;
+    public ViewWrapper getView() {
+        return ViewWrapper.wrap(findViewById(R.id.layout_main));
     }
 
     @Override
@@ -131,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 mPingButton.setEnabled(true);
                 mPhotoButton.setEnabled(true);
                 mDisconnectButton.setEnabled(true);
+                ((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(700);
                 break;
             case ConnectionLost:
                 mTextView.setText(R.string.not_connected_info);
@@ -138,36 +132,14 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 mPingButton.setEnabled(false);
                 mPhotoButton.setEnabled(false);
                 mDisconnectButton.setEnabled(false);
+                ((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(350);
                 break;
-            case Image:
-                // because the other View displays images
-                break;
-            default:
+            case PlainString:
                 Toast.makeText(this, packet.getMessage(), Toast.LENGTH_SHORT).show();
                 break;
+            default:
+                break;
         }
-    }
-
-    // ILifecycleListener Stuff
-
-    @Override
-    public void onConnect() {
-        Toast.makeText(this, "CONNECT", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onSelect() {
-        Toast.makeText(this, "SELECT", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onTransfer() {
-        Toast.makeText(this, "TRANSFER", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDisconnect() {
-        Toast.makeText(this, "DISCONNECT", Toast.LENGTH_SHORT).show();
     }
 }
 

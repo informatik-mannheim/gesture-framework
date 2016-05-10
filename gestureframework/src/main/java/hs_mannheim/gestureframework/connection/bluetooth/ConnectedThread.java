@@ -48,10 +48,7 @@ public class ConnectedThread extends Thread {
 
         ObjectInputStream objectInputStream = null;
         try {
-            // this blocks until first use; have in mind when canceling
             objectInputStream = new ObjectInputStream(mInStream);
-            objectInputStream.read(); // phantom read
-
         } catch (IOException e) {
             mChannel.disconnect();
             Log.e(TAG, "Error: " + e.getMessage());
@@ -59,7 +56,6 @@ public class ConnectedThread extends Thread {
 
         while (true) {
             try {
-                // this is also gonna crash
                 if (objectInputStream != null) {
                     mChannel.receive((Packet) objectInputStream.readObject());
                 }
@@ -81,7 +77,6 @@ public class ConnectedThread extends Thread {
 
     /**
      * Write data to socket through output stream.
-     *
      * @param message to send
      */
     public void write(Packet message) {
@@ -92,9 +87,10 @@ public class ConnectedThread extends Thread {
             }
 
             mObjectOutputStream.writeObject(message);
+            mObjectOutputStream.flush();
             mObjectOutputStream.reset();
         } catch (IOException e) {
-            Log.e(TAG, "Error sending data to remote device");
+            Log.e(TAG, "Error sending data to remote device: " + message.toString());
         }
     }
 

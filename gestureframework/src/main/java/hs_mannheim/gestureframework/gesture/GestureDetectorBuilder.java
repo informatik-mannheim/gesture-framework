@@ -20,13 +20,18 @@ import hs_mannheim.gestureframework.gesture.swipe.SwipeOrientationConstraint;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.model.IViewContext;
 
+/**
+ * Helps with the setup of example {@link GestureDetector} instances. This is just for testing and
+ * convenience and not really basic framework functionality.
+ */
 public class GestureDetectorBuilder {
-
     PostOffice mPostOffice;
     IViewContext mViewContext;
     Context mContext;
 
-    public GestureDetectorBuilder(PostOffice postOffice, IViewContext viewContext, Context context) {
+    public GestureDetectorBuilder(PostOffice postOffice,
+                                  IViewContext viewContext,
+                                  Context context) {
         this.mPostOffice = postOffice;
         this.mViewContext = viewContext;
         this.mContext = context;
@@ -59,12 +64,14 @@ public class GestureDetectorBuilder {
     }
 
     public ShakeDetector createShakeDetector() {
-        return new ShakeDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), mViewContext);
+        SensorManager sm = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+        return new ShakeDetector(sm, mViewContext);
     }
 
     //TODO: Add threshold as param?
     public BumpDetector createBumpDetector() {
-        return new BumpDetector((SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE), Threshold.HORST, mViewContext);
+        SensorManager sm = (SensorManager) mContext.getSystemService(Context.SENSOR_SERVICE);
+        return new BumpDetector(sm, Threshold.HORST, mViewContext);
     }
 
     public DoubleTapDetector createDoubleTapDetector() {

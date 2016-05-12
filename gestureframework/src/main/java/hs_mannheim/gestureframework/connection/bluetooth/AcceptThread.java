@@ -24,6 +24,11 @@ import android.util.Log;
 
 import java.io.IOException;
 
+/**
+ * Accepts incoming connections and arborts after the first successful connect.
+ *
+ * @author Horst Schneider
+ */
 public class AcceptThread extends Thread {
     private final String TAG = "[Bluetooth AccThread]";
     private final BluetoothServerSocket mmServerSocket;
@@ -37,7 +42,8 @@ public class AcceptThread extends Thread {
         BluetoothServerSocket tmp = null;
 
         try {
-            tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord("SysplaceApp", BluetoothChannel.MY_UUID);
+            tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord("SysplaceApp",
+                    BluetoothChannel.MY_UUID);
         } catch (IOException e) {
             Log.e(TAG, "Could not open Server Socket");
         }

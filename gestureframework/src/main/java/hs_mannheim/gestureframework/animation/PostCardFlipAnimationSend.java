@@ -147,14 +147,4 @@ public class PostCardFlipAnimationSend extends GestureAnimation{
             animatorQueue.remove(animatorQueue.get(0));
         }
     }
-
-    @Override
-    public void onAnimationCancel(Animator animation) {
-
-    }
-
-    @Override
-    public void onAnimationRepeat(Animator animation) {
-
-    }
 }

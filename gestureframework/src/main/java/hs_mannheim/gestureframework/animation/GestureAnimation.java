@@ -52,4 +52,14 @@ public abstract class GestureAnimation implements Animator.AnimatorListener{
     protected abstract void handleSwiping(TouchPoint touchPoint);
 
     protected abstract void registerAnimators();
+
+    @Override
+    public void onAnimationCancel(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {
+
+    }
 }

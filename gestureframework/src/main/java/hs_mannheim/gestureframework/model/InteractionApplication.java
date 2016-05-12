@@ -10,13 +10,14 @@ import android.util.Log;
 import java.util.Random;
 
 /**
- * Subclasses {@link Application} to provide a SysplaceContext that manages the Lifecycle of a
+ * Subclasses {@link Application} to provide a {@link SysplaceContext} that manages the Lifecycle of a
  * gesture enabled application. It also ensures that Bluetooth is enabled and the device naming
  * works properly.
  */
 public class InteractionApplication extends Application {
 
     private static final String TAG = "[InteractionApp]";
+    private static final String DEVICE_DESIGNATOR = "-sysplace-";
     private SysplaceContext mSysplaceContext;
     private BluetoothAdapter mBluetoothAdapter;
     private String mOldName;
@@ -37,19 +38,15 @@ public class InteractionApplication extends Application {
 
         mBluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE))
                 .getAdapter();
-
         enableBluetooth();
-
         mOldName = mBluetoothAdapter.getName();
 
-
-        if(mOldName.contains("-sysplace-")) {
-            String[] nameArray = mOldName.split("-sysplace-");
+        if (mOldName.contains(DEVICE_DESIGNATOR)) {
+            String[] nameArray = mOldName.split(DEVICE_DESIGNATOR);
             mCurrentName = mOldName;
             mOldName = nameArray[0];
-
         } else {
-            mCurrentName = mOldName + "-sysplace-" + Integer.toString(new Random().nextInt(10000));
+            mCurrentName = mOldName + DEVICE_DESIGNATOR + Integer.toString(new Random().nextInt(10000));
         }
     }
 
@@ -63,6 +60,6 @@ public class InteractionApplication extends Application {
 
     public void toggleName(boolean newName) {
         Log.d(TAG, String.format("Renaming to %s", newName ? mCurrentName : mOldName));
-        mBluetoothAdapter.setName(newName? mCurrentName : mOldName);
+        mBluetoothAdapter.setName(newName ? mCurrentName : mOldName);
     }
 }

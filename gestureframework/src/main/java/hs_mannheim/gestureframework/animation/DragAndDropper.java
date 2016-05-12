@@ -29,7 +29,8 @@ public class DragAndDropper {
 
     public void setDeltaPoint(TouchPoint touchPoint){
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
-        deltaPoint = new TouchPoint((int)touchPoint.getX() - layoutParams.leftMargin, (int) touchPoint.getY() - layoutParams.topMargin, touchPoint.getTime());
+        deltaPoint = new TouchPoint((int)touchPoint.getX() - layoutParams.leftMargin,
+                (int) touchPoint.getY() - layoutParams.topMargin, touchPoint.getTime());
     }
 
     public void dragDrop(TouchPoint touchPoint){

@@ -10,15 +10,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.InputStream;
 
-import hs_mannheim.gestureframework.animation.GestureAnimation;
+import hs_mannheim.gestureframework.animation.GestureAnimator;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.ImagePacket;
 import hs_mannheim.gestureframework.messaging.Packet;
@@ -30,22 +27,22 @@ import hs_mannheim.gestureframework.model.LifecycleEvent;
 import hs_mannheim.gestureframework.model.ViewWrapper;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
+import hs_mannheim.sysplace.animations.FlipSelectAnimator;
+import hs_mannheim.sysplace.animations.FlyInAndLowerAnimator;
 
 public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener, IPacketReceiver {
 
     private static int PICK_IMAGE = 1;
-    private ImageView imgView;
-    private GestureAnimation sendAnimation, receiveAnimation;
     private SysplaceContext mSysplaceContext;
     private final String TAG = "[ConnectedActivity]";
     private ViewWrapper mViewWrapper;
+    private GestureAnimator mReceiveAnimator, mSelectAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connected);
 
-        imgView = (ImageView) findViewById(R.id.imgView);
         mViewWrapper = new ViewWrapper(findViewById(R.id.imgView));
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
@@ -54,30 +51,19 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         mSysplaceContext.registerPacketReceiver(this);
         mSysplaceContext.updateViewContext(LifecycleEvent.SELECT, this);
         mSysplaceContext.updateViewContext(LifecycleEvent.TRANSFER, this);
+
+        mSelectAnimator = new FlipSelectAnimator(this, mViewWrapper.getView());
+        mReceiveAnimator = new FlyInAndLowerAnimator(this, mViewWrapper.getView());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        /*
-        SysplaceContext sysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
-
-        sysplaceContext.updateViewContextAll(this);
-
-        //TODO: UGLY AF.. Hardcode SwipeDetector in or let GestureDetector fire events with more information.
-        GestureDetector gestureDetector = sysplaceContext.getGestureManager().getGestureDetectorFor(LifecycleEvent.TRANSFER);
-        if(gestureDetector instanceof SwipeDetector){
-            swipeDetector = (SwipeDetector) gestureDetector;
-            swipeDetector.addSwipeListener(swipeHandler);
-        }
-        */
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // swipeDetector.removeSwipeListener(swipeHandler);
     }
 
     /**
@@ -131,11 +117,11 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     /**
      * Combines the chosen image file with the polaroid frame and displays the resulting Bitmap
      * in the ImageView
-     * @param chosenImage
+     * @param chosenBitmap
      */
-    private void updatePicture(Bitmap chosenImage) {
+    private void updatePicture(Bitmap chosenBitmap) {
 
-        ImageView imgView = (ImageView) mViewWrapper.getView();
+        /*ImageView imgView = (ImageView) mViewWrapper.getView();
         Bitmap polaroid = ((BitmapDrawable)imgView.getDrawable()).getBitmap();
         Bitmap polaroidFrame = BitmapFactory.decodeResource(getResources(), R.drawable.polaroid_frame);
 
@@ -147,24 +133,16 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         canvas.drawBitmap(thumbnail, 0, 0, null);
         canvas.drawBitmap(polaroidFrame, new Matrix(), null);
 
-        imgView.setImageDrawable(new BitmapDrawable(getResources(), combinedBitmap));
-        mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(chosenImage))));
-    }
-
-    private int pxToDp(int px) {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return dp;
-    }
-
-    private int dpToPx(int dp) {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
+        imgView.setImageDrawable(new BitmapDrawable(getResources(), combinedBitmap));*/
+        mSelectAnimator.setReplacementBitmap(chosenBitmap);
+        mSelectAnimator.play();
+        //mReceiveAnimator.setReplacementBitmap(chosenBitmap);
+        //mReceiveAnimator.play();
+        mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(chosenBitmap))));
     }
 
     @Override
-    public ViewWrapper getView() {
+    public ViewWrapper getViewWrapper() {
         return mViewWrapper;
     }
 
@@ -196,7 +174,10 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void receive(Packet packet) {
-        updatePicture(((ImagePacket) packet).getImage().getImage());
+        Bitmap receivedBitmap = ((ImagePacket) packet).getImage().getImage();
+        mReceiveAnimator.setReplacementBitmap(receivedBitmap);
+        mReceiveAnimator.play();
+        mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(receivedBitmap))));
     }
 
     @Override

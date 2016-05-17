@@ -1,21 +1,22 @@
 /*
  * Copyright (C) 2016 Insitute for User Experience and Interaction Design,
- *    Hochschule Mannheim University of Applied Sciences
+ *     Hochschule Mannheim University of Applied Sciences
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License
+ *
  */
 
-package hs_mannheim.gestureframework.animation;
+package hs_mannheim.sysplace.animations;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
@@ -27,12 +28,15 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.R;
+import hs_mannheim.gestureframework.animation.AnimationType;
+import hs_mannheim.gestureframework.animation.DragAndDropper;
+import hs_mannheim.gestureframework.animation.GestureAnimation;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
 /**
- * Simple SEND Animation
+ * SEND Animation
  */
-public class PostCardFlipAnimationSend extends GestureAnimation{
+public class PostCardFlipAnimationSend extends GestureAnimation {
 
     Activity context;
     Animator swipeStartAnimator, swipeEndAnimator, flipLeftInAnimator, flipRightInAnimator;
@@ -146,18 +150,6 @@ public class PostCardFlipAnimationSend extends GestureAnimation{
             view.setImageBitmap(origImage);
             flipRightInAnimator.start();
         }
-/*
-        //send animation finished. return to idle state
-        if (animation.equals(playAnimator)){
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
-            Log.d("Ys", "orig: " + originalY + ", current: " + view.getY());
-            Log.d("TopMargins", "orig: " + originalTopMargin + ", current: " + layoutParams.topMargin);
-            view.setElevation(2);
-            view.setImageBitmap(origImage);
-            layoutParams.topMargin = (int)originalTopMargin;
-            view.setY(originalY);
-        }
-*/
 
         if (!animatorQueue.isEmpty()) {
             animatorQueue.get(0).start();

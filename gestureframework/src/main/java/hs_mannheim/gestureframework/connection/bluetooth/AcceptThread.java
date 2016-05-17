@@ -25,7 +25,7 @@ import android.util.Log;
 import java.io.IOException;
 
 /**
- * Accepts incoming connections and arborts after the first successful connect.
+ * Accepts incoming connections and aborts after the first successful connect.
  *
  * @author Horst Schneider
  */

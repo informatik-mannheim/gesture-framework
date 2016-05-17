@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     // IViewContext Stuff
 
     @Override
-    public ViewWrapper getView() {
+    public ViewWrapper getViewWrapper() {
         return ViewWrapper.wrap(findViewById(R.id.layout_main));
     }
 

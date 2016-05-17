@@ -24,6 +24,6 @@ import android.graphics.Point;
  * which to connect {@link android.view.GestureDetector} instances (e.g. to listen for TouchEvents).
  */
 public interface IViewContext {
-    ViewWrapper getView();
+    ViewWrapper getViewWrapper();
     Point getDisplaySize();
 }

@@ -22,6 +22,7 @@ import android.content.Intent;
 import hs_mannheim.gestureframework.connection.BluetoothPairingService;
 import hs_mannheim.gestureframework.connection.IConnection;
 import hs_mannheim.gestureframework.connection.bluetooth.ConnectionInfo;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.IPostOffice;
 import hs_mannheim.gestureframework.messaging.Packet;
@@ -74,6 +75,8 @@ public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
         mGestureManager.setViewContext(lifecycleEvent, viewContext);
     }
 
+
+
     @Override
     public void registerPacketReceiver(IPacketReceiver packetReceiver) {
         mPostOffice.register(packetReceiver);
@@ -82,6 +85,11 @@ public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
     @Override
     public void unregisterPacketReceiver(IPacketReceiver packetReceiver) {
         mPostOffice.unregister(packetReceiver);
+    }
+
+    @Override
+    public void registerForSwipeEvents(SwipeDetector.SwipeEventListener swipeEventListener) {
+        mGestureManager.registerForSwipeEvents(swipeEventListener);
     }
 
     @Override

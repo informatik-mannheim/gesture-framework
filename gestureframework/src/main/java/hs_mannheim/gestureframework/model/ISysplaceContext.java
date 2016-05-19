@@ -17,6 +17,7 @@
 
 package hs_mannheim.gestureframework.model;
 
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.Packet;
 
@@ -26,4 +27,5 @@ public interface ISysplaceContext {
     void registerForLifecycleEvents(ILifecycleListener lifecycleListener);
     void registerPacketReceiver(IPacketReceiver packetReceiver);
     void unregisterPacketReceiver(IPacketReceiver packetReceiver);
+    void registerForSwipeEvents(SwipeDetector.SwipeEventListener swipeEventListener);
 }

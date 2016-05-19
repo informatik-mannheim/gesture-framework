@@ -184,7 +184,9 @@ public class ConfigurationBuilder {
      * @return A {@link SwipeDetector} instance.
      */
     public SwipeDetector swipeLeftRight() {
-        return mBuilder.createSwipeLeftRightDetector();
+        SwipeDetector swipeDetector = mBuilder.createSwipeLeftRightDetector();
+        swipeDetector.addSwipeListener(mGestureManager);
+        return swipeDetector;
     }
 
     /**
@@ -193,7 +195,9 @@ public class ConfigurationBuilder {
      * @return A {@link SwipeDetector} instance.
      */
     public SwipeDetector swipeUpDown() {
-        return mBuilder.createSwipeUpDownDetector();
+        SwipeDetector swipeDetector = mBuilder.createSwipeUpDownDetector();
+        swipeDetector.addSwipeListener(mGestureManager);
+        return swipeDetector;
     }
 
     /**

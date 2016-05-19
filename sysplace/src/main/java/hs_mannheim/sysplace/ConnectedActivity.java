@@ -10,12 +10,18 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.InputStream;
 
 import hs_mannheim.gestureframework.animation.GestureAnimator;
+import hs_mannheim.gestureframework.animation.GestureTransitionInfo;
+import hs_mannheim.gestureframework.animation.TransitionAnimator;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.ImagePacket;
 import hs_mannheim.gestureframework.messaging.Packet;
@@ -27,16 +33,18 @@ import hs_mannheim.gestureframework.model.LifecycleEvent;
 import hs_mannheim.gestureframework.model.ViewWrapper;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
+import hs_mannheim.sysplace.animations.ElevateAndLeaveAnimator;
 import hs_mannheim.sysplace.animations.FlipSelectAnimator;
 import hs_mannheim.sysplace.animations.FlyInAndLowerAnimator;
 
-public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener, IPacketReceiver {
+public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener, IPacketReceiver, SwipeDetector.SwipeEventListener {
 
     private static int PICK_IMAGE = 1;
     private SysplaceContext mSysplaceContext;
     private final String TAG = "[ConnectedActivity]";
     private ViewWrapper mViewWrapper;
     private GestureAnimator mReceiveAnimator, mSelectAnimator;
+    private TransitionAnimator mSendAnimator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +60,11 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         mSysplaceContext.updateViewContext(LifecycleEvent.SELECT, this);
         mSysplaceContext.updateViewContext(LifecycleEvent.TRANSFER, this);
 
+        mSendAnimator = new ElevateAndLeaveAnimator(this, mViewWrapper.getView());
         mSelectAnimator = new FlipSelectAnimator(this, mViewWrapper.getView());
         mReceiveAnimator = new FlyInAndLowerAnimator(this, mViewWrapper.getView());
+
+        mSysplaceContext.registerForSwipeEvents(this);
     }
 
     @Override
@@ -80,9 +91,6 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     /**
      * Callback on image chooser Activity. Transforms to Bitmap and adds to ImageView
      *
-     * @param requestCode
-     * @param resultCode
-     * @param data
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -99,13 +107,6 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                 updatePicture(bitmap);
-
-                // can not set animations before the picture data is ready.
-               // sendAnimation = new PostCardFlipAnimationSend(this, imgView);
-               // receiveAnimation = new PostcardFlipAnimationReceive(this, imgView);
-
-               // swipeHandler = new SwipeHandler(sendAnimation);
-
             } else {
                 Toast.makeText(this, "You haven't picked an Image", Toast.LENGTH_LONG).show();
             }
@@ -120,24 +121,8 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
      * @param chosenBitmap
      */
     private void updatePicture(Bitmap chosenBitmap) {
-
-        /*ImageView imgView = (ImageView) mViewWrapper.getView();
-        Bitmap polaroid = ((BitmapDrawable)imgView.getDrawable()).getBitmap();
-        Bitmap polaroidFrame = BitmapFactory.decodeResource(getResources(), R.drawable.polaroid_frame);
-
-        ThumbnailUtils thumbnailUtils = new ThumbnailUtils();
-        Bitmap thumbnail = thumbnailUtils.extractThumbnail(chosenImage, polaroid.getWidth(), polaroid.getWidth());
-
-        Bitmap combinedBitmap = Bitmap.createBitmap(polaroidFrame.getWidth(), polaroidFrame.getHeight(), polaroidFrame.getConfig());
-        Canvas canvas = new Canvas(combinedBitmap);
-        canvas.drawBitmap(thumbnail, 0, 0, null);
-        canvas.drawBitmap(polaroidFrame, new Matrix(), null);
-
-        imgView.setImageDrawable(new BitmapDrawable(getResources(), combinedBitmap));*/
         mSelectAnimator.setReplacementBitmap(chosenBitmap);
         mSelectAnimator.play();
-        //mReceiveAnimator.setReplacementBitmap(chosenBitmap);
-        //mReceiveAnimator.play();
         mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(chosenBitmap))));
     }
 
@@ -164,7 +149,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void onTransfer() {
-
+        mSendAnimator.play();
     }
 
     @Override
@@ -183,5 +168,26 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     @Override
     public boolean accept(Packet.PacketType type) {
         return type == Packet.PacketType.Image;
+    }
+
+    @Override
+    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
+        //TODO: Trigger animation here or grab the transfer lifecycleevent?
+
+    }
+
+    @Override
+    public void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint) {
+        mSendAnimator.handleGestureDuring(new GestureTransitionInfo(touchPoint));
+    }
+
+    @Override
+    public void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view) {
+        mSendAnimator.handleGestureStart(new GestureTransitionInfo(touchPoint));
+    }
+
+    @Override
+    public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
+        mSendAnimator.handleGestureEnd(new GestureTransitionInfo(touchPoint));
     }
 }

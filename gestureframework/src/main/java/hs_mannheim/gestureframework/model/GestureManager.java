@@ -54,6 +54,7 @@ public class GestureManager implements GestureDetector.GestureEventListener,
 
     private final Map<LifecycleEvent, GestureDetector> mDetectors = new HashMap<>();
     private final List<ILifecycleListener> mLifeCycleEventListeners = new ArrayList<>();
+    private final List<SwipeDetector.SwipeEventListener> mSwipeEventListeners = new ArrayList<>();
     private boolean mConnected = false;
 
     public GestureManager() {
@@ -180,17 +181,23 @@ public class GestureManager implements GestureDetector.GestureEventListener,
 
     @Override
     public void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint) {
-
+        for (SwipeDetector.SwipeEventListener swipeEventListener : mSwipeEventListeners) {
+            swipeEventListener.onSwiping(swipeDetector, touchPoint);
+        }
     }
 
     @Override
     public void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view) {
-
+        for (SwipeDetector.SwipeEventListener swipeEventListener : mSwipeEventListeners) {
+            swipeEventListener.onSwipeStart(swipeDetector, touchPoint, view);
+        }
     }
 
     @Override
     public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
-
+        for (SwipeDetector.SwipeEventListener swipeEventListener : mSwipeEventListeners) {
+            swipeEventListener.onSwipeEnd(swipeDetector, touchPoint);
+        }
     }
 
     @Override
@@ -201,5 +208,15 @@ public class GestureManager implements GestureDetector.GestureEventListener,
     @Override
     public boolean accept(Packet.PacketType type) {
         return type == Packet.PacketType.ConnectionEstablished || type == Packet.PacketType.ConnectionLost;
+    }
+
+    public void registerForSwipeEvents(SwipeDetector.SwipeEventListener swipeEventListener) {
+        mSwipeEventListeners.add(swipeEventListener);
+    }
+
+    public void unregisterForSwipeEvents(SwipeDetector.SwipeEventListener swipeEventListener) {
+        if (mSwipeEventListeners.contains(swipeEventListener)) {
+            mSwipeEventListeners.remove(swipeEventListener);
+        }
     }
 }

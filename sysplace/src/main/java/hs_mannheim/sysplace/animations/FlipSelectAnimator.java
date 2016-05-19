@@ -25,7 +25,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
 import android.widget.ImageView;
-
 import hs_mannheim.gestureframework.animation.GestureAnimator;
 import hs_mannheim.gestureframework.animation.ImageViewUpdater;
 import hs_mannheim.sysplace.R;

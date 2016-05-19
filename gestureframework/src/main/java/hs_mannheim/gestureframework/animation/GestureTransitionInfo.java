@@ -28,12 +28,12 @@ public class GestureTransitionInfo {
     SensorEvent mSensorEvent;
     boolean isTouchGesture, isSensorGesture;
 
-    GestureTransitionInfo(TouchPoint touchPoint) {
+    public GestureTransitionInfo(TouchPoint touchPoint) {
         mTouchPoint = touchPoint;
         isTouchGesture = true;
     }
 
-    GestureTransitionInfo(SensorEvent sensorEvent) {
+    public GestureTransitionInfo(SensorEvent sensorEvent) {
         mSensorEvent = sensorEvent;
         isSensorGesture = true;
     }
@@ -46,7 +46,7 @@ public class GestureTransitionInfo {
         return isSensorGesture;
     }
 
-    public TouchPoint getmTouchPoint() {
+    public TouchPoint getTouchPoint() {
         return mTouchPoint;
     }
 

@@ -52,8 +52,6 @@ public class DragAndDropper {
 
     public void dragDrop(TouchPoint touchPoint){
 
-        //RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
-
         if (shouldDragX){
             layoutParams.leftMargin = (int) (touchPoint.getX() - deltaPoint.getX());
         }

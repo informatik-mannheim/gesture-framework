@@ -20,17 +20,23 @@ package hs_mannheim.gestureframework.animation;
 
 import android.animation.Animator;
 import android.content.Context;
+import android.hardware.SensorEvent;
+import android.view.MotionEvent;
 import android.view.View;
 
-public abstract class TransitionAnimator extends GestureAnimator implements View.OnTouchListener {
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
+
+public abstract class TransitionAnimator extends GestureAnimator {
 
     public TransitionAnimator(Context context, View view) {
         super(context, view);
     }
 
-    public abstract void handleStart(GestureTransitionInfo info);
+    public abstract void handleGestureStart(GestureTransitionInfo info);
 
-    public abstract void handleDuring(GestureTransitionInfo info);
+    public abstract void handleGestureDuring(GestureTransitionInfo info);
 
-    public abstract void handleEnd(GestureTransitionInfo info);
+    public abstract void handleGestureEnd(GestureTransitionInfo info);
 }
+
+

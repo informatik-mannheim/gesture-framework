@@ -72,9 +72,10 @@ public class GestureDetectorBuilder {
                 .addSwipeListener(new GestureDetectorBuilder.DebugSwipeListener());
     }
 
-    //TODO: BUMPED UP SWIPEMINDISTANCECONSTRAINT FROM 200 TO 500 IN ORDER TO TEST ANIMATIONS!
+    //TODO: BUMPED UP SWIPEMINDISTANCECONSTRAINT FROM 200 TO 500 IN ORDER TO TEST ANIMATIONS!g
     public SwipeDetector createSwipeUpDownDetector() {
         return new SwipeDetector(mViewContext)
+                .addConstraint(new SwipeOrientationConstraint(SwipeEvent.Orientation.NORTH))
                 .addConstraint(new SwipeDirectionConstraint(SwipeEvent.Direction.VERTICAL))
                 .addConstraint(new SwipeDurationConstraint(1000))
                 .addConstraint(new SwipeMinDistanceConstraint(500))

@@ -124,7 +124,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 mPingButton.setEnabled(true);
                 mPhotoButton.setEnabled(true);
                 mDisconnectButton.setEnabled(true);
-                ((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(700);
+
+                //TODO: turn this on again. was getting on my nerves >:(
+                //((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(700);
+
                 break;
             case ConnectionLost:
                 mTextView.setText(R.string.not_connected_info);

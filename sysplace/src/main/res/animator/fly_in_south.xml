@@ -16,28 +16,22 @@
   ~  limitations under the License
   ~
   -->
-<set xmlns:android="http://schemas.android.com/apk/res/android">
+
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="together">
+
     <objectAnimator
-        android:interpolator="@android:interpolator/accelerate_decelerate"
-        android:propertyName="scaleX"
-        android:valueFrom="1.0"
-        android:valueTo="1.1"
+        android:propertyName="y"
+        android:valueFrom="3000"
+        android:valueTo="0"
         android:valueType="floatType"
-        android:duration="1000"
+        android:duration="2000"
+        android:startOffset="500"
+        android:interpolator="@android:interpolator/overshoot"
         />
     <objectAnimator
-        android:interpolator="@android:interpolator/accelerate_decelerate"
-        android:propertyName="scaleY"
-        android:valueFrom="1.0"
-        android:valueTo="1.1"
-        android:valueType="floatType"
-        android:duration="1000"
-        />
-    <objectAnimator
-        android:interpolator="@android:interpolator/accelerate_decelerate"
+        android:valueTo="16dp"
         android:propertyName="translationZ"
-        android:duration="1000"
-        android:valueTo="32"
-        android:valueType="floatType"
-        />
+        android:duration="1"/>
+
 </set>

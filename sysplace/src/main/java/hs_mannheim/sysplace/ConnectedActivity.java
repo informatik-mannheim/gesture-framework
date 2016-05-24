@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -90,7 +91,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     /**
      * Callback on image chooser Activity. Transforms to Bitmap and adds to ImageView
-     *
+     * //TODO: turn off Toasts for production version
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -149,7 +150,12 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void onTransfer() {
+
+
+
+        //TODO: don't play animation when selection is empty
         mSendAnimator.play();
+        mSysplaceContext.select(Selection.Empty);
     }
 
     @Override

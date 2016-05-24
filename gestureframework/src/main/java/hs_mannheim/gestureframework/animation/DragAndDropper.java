@@ -23,58 +23,64 @@ import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
-
 public class DragAndDropper {
 
-    boolean shouldDragX, shouldDragY;
-    View view;
-    TouchPoint deltaPoint;
-    int originalTopMargin, originalLeftMargin;
-    RelativeLayout.LayoutParams layoutParams;
+    boolean mShouldDragX, mShouldDragY;
+    View mView;
+    TouchPoint mDeltaPoint;
+    int mOriginalTopMargin, mOriginalLeftMargin;
+    RelativeLayout.LayoutParams mLayoutParams;
 
+    /**
+     * Enables Drag and Drop functionality on given View.
+     * @param shouldDragX Specifies if horizontal Drag and Drop should occur
+     * @param shouldDragY Specifies if vertical Drag and Drop should occur
+     * @param view The View that is to be Drag and Dropped
+     */
     public DragAndDropper(boolean shouldDragX, boolean shouldDragY, View view){
-        this.shouldDragX = shouldDragX;
-        this.shouldDragY = shouldDragY;
-        this.view = view;
+        mShouldDragX = shouldDragX;
+        mShouldDragY = shouldDragY;
+        mView = view;
 
-        layoutParams = (RelativeLayout.LayoutParams) view
+        mLayoutParams = (RelativeLayout.LayoutParams) view
                 .getLayoutParams();
-        originalTopMargin = layoutParams.topMargin;
-        originalLeftMargin = layoutParams.leftMargin;
+        mOriginalTopMargin = mLayoutParams.topMargin;
+        mOriginalLeftMargin = mLayoutParams.leftMargin;
 
     }
 
     public void setDeltaPoint(TouchPoint touchPoint){
-        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) view.getLayoutParams();
-        deltaPoint = new TouchPoint((int)touchPoint.getX() - layoutParams.leftMargin,
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mView.getLayoutParams();
+        mDeltaPoint = new TouchPoint((int)touchPoint.getX() - layoutParams.leftMargin,
                 (int) touchPoint.getY() - layoutParams.topMargin, touchPoint.getTime());
     }
 
     public void dragDrop(TouchPoint touchPoint){
 
-        if (shouldDragX){
-            layoutParams.leftMargin = (int) (touchPoint.getX() - deltaPoint.getX());
+        //TODO: still needs work
+        if (mShouldDragX){
+            mLayoutParams.leftMargin = (int) (touchPoint.getX() - mDeltaPoint.getX());
         }
 
-        if (shouldDragY){
+        if (mShouldDragY){
             //Restricts movement at top of screen
-            if (layoutParams.topMargin > 0) {
-                layoutParams.topMargin = (int) (touchPoint.getY() - deltaPoint.getY());
-            } else if ((int)(touchPoint.getY() - deltaPoint.getY()) > 0){
-                layoutParams.topMargin = (int) (touchPoint.getY() - deltaPoint.getY());
+            if (mLayoutParams.topMargin > 0) {
+                mLayoutParams.topMargin = (int) (touchPoint.getY() - mDeltaPoint.getY());
+            } else if ((int)(touchPoint.getY() - mDeltaPoint.getY()) > 0){
+                mLayoutParams.topMargin = (int) (touchPoint.getY() - mDeltaPoint.getY());
             }
         }
-        view.setLayoutParams(layoutParams);
+        mView.setLayoutParams(mLayoutParams);
     }
 
     public void returnToStart(){
-        ValueAnimator animator = ValueAnimator.ofInt(layoutParams.topMargin, originalTopMargin);
+        ValueAnimator animator = ValueAnimator.ofInt(mLayoutParams.topMargin, mOriginalTopMargin);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator)
             {
-                layoutParams.topMargin = (Integer) valueAnimator.getAnimatedValue();
-                view.requestLayout();
+                mLayoutParams.topMargin = (Integer) valueAnimator.getAnimatedValue();
+                mView.requestLayout();
             }
         });
         animator.setDuration(500);

@@ -49,7 +49,7 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
 
     @Override
     protected void registerAnimators() {
-        mElevateAnimator= AnimatorInflater.loadAnimator(mContext, R.animator.elevate);
+        mElevateAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.elevate);
         mElevateAnimator.addListener(this);
         mElevateAnimator.setTarget(mView);
 

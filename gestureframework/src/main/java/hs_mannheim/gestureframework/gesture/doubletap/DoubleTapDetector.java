@@ -74,20 +74,17 @@ public class DoubleTapDetector extends GestureDetector implements View.OnTouchLi
     private boolean isDoubleTap(MotionEvent firstDown, MotionEvent firstUp,
                                 MotionEvent secondDown) {
         if (mMovedOutOfTapRegion) {
-            Log.d(TAG, "Moved out of tap region!");
             return false;
         }
 
         final long deltaTime = secondDown.getEventTime() - firstUp.getEventTime();
         if (deltaTime > MAX_TIME_DELTA || deltaTime < MIN_TIME_DELTA) {
-            Log.d(TAG, "Tap timing bad!" + deltaTime);
             return false;
         }
 
         int deltaX = Math.abs((int) firstDown.getX() - (int) secondDown.getX());
         int deltaY = Math.abs((int) firstDown.getY() - (int) secondDown.getY());
         if (deltaX > MAX_DISTANCE || deltaY > MAX_DISTANCE) {
-            Log.d(TAG, "Tap distance too big!");
             return false;
         } else {
             return true;

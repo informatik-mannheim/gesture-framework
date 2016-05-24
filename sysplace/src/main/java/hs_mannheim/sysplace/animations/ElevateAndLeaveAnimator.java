@@ -21,7 +21,11 @@ package hs_mannheim.sysplace.animations;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.widget.ImageView;
 
 import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.animation.GestureTransitionInfo;
@@ -31,11 +35,18 @@ import hs_mannheim.sysplace.R;
 public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
     private DragAndDropper dragAndDropper;
-    private Animator mElevateAnimator, mLowerAnimator, mFlyOutNorthAnimator;
+    private Animator mElevateAnimator, mLowerAnimator, mFlyOutNorthAnimator, mFlyInSouthAnimator;
+    private Drawable
+            mPolaroid;
+    private ImageView mImageView;
 
     public ElevateAndLeaveAnimator(Context context, View view) {
         super(context, view);
         dragAndDropper = new DragAndDropper(false, true, view);
+        mPolaroid = mContext.getResources().getDrawable(R.drawable.polaroid);
+
+        //TODO: HACKYDIHACKHACK
+        mImageView = (ImageView) mView;
     }
 
     @Override
@@ -63,15 +74,20 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
             mAnimatorQueue.add(mLowerAnimator);
         } else {
             mLowerAnimator.start();
-            if (info.isTouchGesture()) {
-                dragAndDropper.returnToStart();
-            }
+        }
+
+        if (info.isTouchGesture()) {
+            dragAndDropper.returnToStart();
         }
     }
 
     @Override
     public void play() {
-
+        if (mIsAnimationRunning) {
+            mAnimatorQueue.add(mFlyOutNorthAnimator);
+        } else {
+            mFlyOutNorthAnimator.start();
+        }
     }
 
     @Override
@@ -89,6 +105,10 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
         mLowerAnimator.setDuration(400);
         mLowerAnimator.addListener(this);
         mLowerAnimator.setTarget(mView);
+
+        mFlyInSouthAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.fly_in_south);
+        mFlyInSouthAnimator.addListener(this);
+        mFlyInSouthAnimator.setTarget(mView);
     }
 
     @Override
@@ -97,8 +117,21 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
     }
 
     @Override
-    public void onAnimationEnd(Animator animation) {
+    public void onAnimationEnd(Animator animator) {
         mIsAnimationRunning = false;
+
+        if (animator == mFlyOutNorthAnimator) {
+            mImageView.setImageDrawable(mPolaroid);
+            mFlyInSouthAnimator.start();
+            return;
+        }
+
+        if (animator == mFlyInSouthAnimator) {
+            mLowerAnimator.start();
+            mView.requestLayout(); //TODO: does this help at all?
+            return;
+        }
+
         if (mAnimatorQueue.isEmpty()) {
             return;
         } else {

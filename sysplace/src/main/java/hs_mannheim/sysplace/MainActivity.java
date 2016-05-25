@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.gestureframework.ConfigurationBuilder;
+import hs_mannheim.gestureframework.gesture.approach.ApproachDetector;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.Packet;
 import hs_mannheim.gestureframework.model.IViewContext;

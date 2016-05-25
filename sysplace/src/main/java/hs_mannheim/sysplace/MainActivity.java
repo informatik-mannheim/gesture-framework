@@ -66,7 +66,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
         mEditText.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
+
+        mSysplaceContext.activate(this);
     }
+
 
     @Override
     protected void onResume() {

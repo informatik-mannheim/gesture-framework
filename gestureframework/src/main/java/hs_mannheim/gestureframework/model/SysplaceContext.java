@@ -17,7 +17,12 @@
 
 package hs_mannheim.gestureframework.model;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import hs_mannheim.gestureframework.connection.BluetoothPairingService;
 import hs_mannheim.gestureframework.connection.IConnection;
@@ -36,6 +41,7 @@ import hs_mannheim.gestureframework.messaging.Packet;
  */
 public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
 
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1377;
     private final GestureManager mGestureManager;
     private final IConnection mConnection;
     private final IPostOffice mPostOffice;
@@ -64,6 +70,21 @@ public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
 
         select(selection);
     }
+
+
+    /**
+     * TODO: document
+     * @param activity
+     */
+    public void activate(Activity activity) {
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+        }
+    }
+
 
     @SuppressWarnings("unused")
     public void updateViewContextAll(IViewContext viewContext) {

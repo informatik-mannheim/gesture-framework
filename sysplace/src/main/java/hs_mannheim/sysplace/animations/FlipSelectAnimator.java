@@ -51,6 +51,7 @@ public class FlipSelectAnimator extends GestureAnimator {
         mElevateAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.elevate);
         mElevateAnimator.addListener(this);
         mElevateAnimator.setTarget(mView);
+        mElevateAnimator.setDuration(500);
 
         mFlipLeftOutAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.flip_left_out);
         mFlipLeftOutAnimator.addListener(this);
@@ -63,6 +64,7 @@ public class FlipSelectAnimator extends GestureAnimator {
         mLowerAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.lower);
         mLowerAnimator.addListener(this);
         mLowerAnimator.setTarget(mView);
+        mLowerAnimator.setDuration(500);
     }
 
     @Override

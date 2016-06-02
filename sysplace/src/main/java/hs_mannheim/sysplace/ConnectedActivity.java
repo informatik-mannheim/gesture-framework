@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import java.io.InputStream;
 
+import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.animation.GestureAnimator;
 import hs_mannheim.gestureframework.animation.GestureTransitionInfo;
 import hs_mannheim.gestureframework.animation.TransitionAnimator;
@@ -60,6 +61,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         mSysplaceContext.registerPacketReceiver(this);
         mSysplaceContext.updateViewContext(LifecycleEvent.SELECT, this);
         mSysplaceContext.updateViewContext(LifecycleEvent.TRANSFER, this);
+
 
         mSendAnimator = new ElevateAndLeaveAnimator(this, mViewWrapper.getView());
         mSelectAnimator = new FlipSelectAnimator(this, mViewWrapper.getView());
@@ -178,8 +180,6 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
-        //TODO: Trigger animation here or grab the transfer lifecycleevent?
-
     }
 
     @Override

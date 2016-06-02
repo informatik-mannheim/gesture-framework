@@ -24,9 +24,9 @@
     <objectAnimator
         android:propertyName="y"
         android:valueFrom="-2500"
-        android:valueTo="200"
+        android:valueTo="0"
         android:valueType="floatType"
-        android:duration="1500"
+        android:duration="1000"
         android:interpolator="@android:interpolator/overshoot"
         />
     <objectAnimator

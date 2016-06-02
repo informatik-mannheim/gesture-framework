@@ -17,7 +17,10 @@
 
 package hs_mannheim.gestureframework.animation;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -25,11 +28,13 @@ import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 
 public class DragAndDropper {
 
-    boolean mShouldDragX, mShouldDragY;
-    View mView;
-    TouchPoint mDeltaPoint;
-    int mOriginalTopMargin, mOriginalLeftMargin;
-    RelativeLayout.LayoutParams mLayoutParams;
+    private boolean mShouldDragX, mShouldDragY;
+    private View mView;
+    private TouchPoint mDeltaPoint;
+    private int mOriginalTopMargin, mOriginalLeftMargin;
+    private RelativeLayout.LayoutParams mLayoutParams;
+    private static final int DEFAULT_DURATION = 500;
+    private static final String TAG = "[DragAndDropper]";
 
     /**
      * Enables Drag and Drop functionality on given View.
@@ -42,10 +47,12 @@ public class DragAndDropper {
         mShouldDragY = shouldDragY;
         mView = view;
 
+
         mLayoutParams = (RelativeLayout.LayoutParams) view
                 .getLayoutParams();
         mOriginalTopMargin = mLayoutParams.topMargin;
         mOriginalLeftMargin = mLayoutParams.leftMargin;
+
 
     }
 
@@ -56,6 +63,17 @@ public class DragAndDropper {
     }
 
     public void dragDrop(TouchPoint touchPoint){
+
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams
+                (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        params.removeRule(RelativeLayout.CENTER_VERTICAL);
+        mView.setLayoutParams(params);
+
+        //mView.requestLayout();
+        //RelativeLayout layout = (RelativeLayout) mView.getParent();
+        //layout.updateViewLayout(mView, params);
+
 
         //TODO: still needs work
         if (mShouldDragX){
@@ -71,9 +89,14 @@ public class DragAndDropper {
             }
         }
         mView.setLayoutParams(mLayoutParams);
+        mView.requestLayout();
     }
 
-    public void returnToStart(){
+    /**
+     * Animates the return of the moved View back to its origin
+     * @param duration Duration of the animation in ms
+     */
+    public void returnToStart(long duration){
         ValueAnimator animator = ValueAnimator.ofInt(mLayoutParams.topMargin, mOriginalTopMargin);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -83,7 +106,34 @@ public class DragAndDropper {
                 mView.requestLayout();
             }
         });
-        animator.setDuration(500);
+
+        if(duration >= 0) {
+            animator.setDuration(duration);
+        } else {
+            animator.setDuration(DEFAULT_DURATION);
+        }
+
+        animator.addListener(new AnimatorListenerAdapter()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                /*
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams
+                        (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.CENTER_VERTICAL);
+                mView.setLayoutParams(params);
+                mView.requestLayout();
+*/
+                Log.d(TAG, "return to start done");
+            }
+        });
         animator.start();
+    }
+
+    public void setOriginalMargins(){
+        mLayoutParams.topMargin = mOriginalTopMargin;
+        mLayoutParams.leftMargin = mOriginalLeftMargin;
+        mView.requestLayout();
     }
 }

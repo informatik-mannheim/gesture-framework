@@ -23,9 +23,12 @@ import android.animation.AnimatorInflater;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
+import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.animation.GestureAnimator;
 import hs_mannheim.gestureframework.animation.ImageViewUpdater;
 import hs_mannheim.sysplace.R;
@@ -34,12 +37,22 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
 
     private Animator mElevateAnimator, mFlyOutAnimator, mFlyInAnimator, mLowerAnimator;
     private ImageViewUpdater mImageViewUpdater;
+    private RelativeLayout.LayoutParams mLayoutParams;
+    private int mOriginalTopMargin;
+    private static final String TAG = "[FlyInAndLowerAnimator]";
 
     public FlyInAndLowerAnimator(Context context, View view) {
         super(context, view);
 
         Bitmap polaroidFrame = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.polaroid_frame);
         mImageViewUpdater = new ImageViewUpdater(mContext, (ImageView) view, polaroidFrame);
+
+        mLayoutParams = (RelativeLayout.LayoutParams) view
+                .getLayoutParams();
+        mOriginalTopMargin = mLayoutParams.topMargin;
+
+        Log.d(TAG, "topMargin: " + mOriginalTopMargin);
+        Log.d(TAG, "Y-Value: " + mView.getY());
     }
 
     @Override
@@ -84,6 +97,8 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         }
 
         if (animator == mFlyInAnimator) {
+            mLayoutParams.topMargin = mOriginalTopMargin;
+            mView.requestLayout();
             mLowerAnimator.start();
             registerAnimators();
         }

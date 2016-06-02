@@ -21,11 +21,10 @@ package hs_mannheim.sysplace.animations;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.animation.GestureTransitionInfo;
@@ -34,19 +33,24 @@ import hs_mannheim.sysplace.R;
 
 public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
-    private DragAndDropper dragAndDropper;
+    private DragAndDropper mDragAndDropper;
     private Animator mElevateAnimator, mLowerAnimator, mFlyOutNorthAnimator, mFlyInSouthAnimator;
     private Drawable
             mPolaroid;
     private ImageView mImageView;
+    private float mOriginalYValue, mOriginalTopMargin;
 
     public ElevateAndLeaveAnimator(Context context, View view) {
         super(context, view);
-        dragAndDropper = new DragAndDropper(false, true, view);
+        mDragAndDropper = new DragAndDropper(false, true, view);
         mPolaroid = mContext.getResources().getDrawable(R.drawable.polaroid);
 
         //TODO: HACKYDIHACKHACK
         mImageView = (ImageView) mView;
+
+        mOriginalYValue = mImageView.getY();
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mImageView.getLayoutParams();
+        mOriginalTopMargin = params.topMargin;
     }
 
     @Override
@@ -56,7 +60,12 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
         } else {
             mElevateAnimator.start();
             if (info.isTouchGesture()) {
-                dragAndDropper.setDeltaPoint(info.getTouchPoint());
+
+
+
+
+
+                mDragAndDropper.setDeltaPoint(info.getTouchPoint());
             }
         }
     }
@@ -64,7 +73,7 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
     @Override
     public void handleGestureDuring(GestureTransitionInfo info) {
         if (info.isTouchGesture()) {
-            dragAndDropper.dragDrop(info.getTouchPoint());
+            mDragAndDropper.dragDrop(info.getTouchPoint());
         }
     }
 
@@ -77,7 +86,12 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
         }
 
         if (info.isTouchGesture()) {
-            dragAndDropper.returnToStart();
+
+
+
+
+
+            mDragAndDropper.returnToStart(400);
         }
     }
 
@@ -128,7 +142,8 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
         if (animator == mFlyInSouthAnimator) {
             mLowerAnimator.start();
-            mView.requestLayout(); //TODO: does this help at all?
+            //mDragAndDropper.returnToStart(500);
+            mDragAndDropper.setOriginalMargins();
             return;
         }
 

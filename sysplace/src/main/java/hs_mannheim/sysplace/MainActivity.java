@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.gestureframework.ConfigurationBuilder;
+import hs_mannheim.gestureframework.gesture.approach.ApproachDetector;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.Packet;
 import hs_mannheim.gestureframework.model.IViewContext;
@@ -66,7 +67,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
         mEditText.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
+
+        mSysplaceContext.activate(this);
     }
+
 
     @Override
     protected void onResume() {

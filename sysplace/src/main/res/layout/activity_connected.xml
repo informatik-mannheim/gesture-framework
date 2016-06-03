@@ -9,6 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="#c0c0cc"
     android:clipToPadding="false"
+    android:gravity="center_vertical"
     tools:context="hs_mannheim.sysplace.ConnectedActivity">
 
     <ImageView

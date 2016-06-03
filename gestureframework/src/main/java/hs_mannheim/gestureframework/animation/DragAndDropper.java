@@ -64,17 +64,6 @@ public class DragAndDropper {
 
     public void dragDrop(TouchPoint touchPoint){
 
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams
-                (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.removeRule(RelativeLayout.CENTER_VERTICAL);
-        mView.setLayoutParams(params);
-
-        //mView.requestLayout();
-        //RelativeLayout layout = (RelativeLayout) mView.getParent();
-        //layout.updateViewLayout(mView, params);
-
-
         //TODO: still needs work
         if (mShouldDragX){
             mLayoutParams.leftMargin = (int) (touchPoint.getX() - mDeltaPoint.getX());
@@ -82,11 +71,11 @@ public class DragAndDropper {
 
         if (mShouldDragY){
             //Restricts movement at top of screen
-            if (mLayoutParams.topMargin > 0) {
+            //if (mLayoutParams.topMargin > 0) {
                 mLayoutParams.topMargin = (int) (touchPoint.getY() - mDeltaPoint.getY());
-            } else if ((int)(touchPoint.getY() - mDeltaPoint.getY()) > 0){
-                mLayoutParams.topMargin = (int) (touchPoint.getY() - mDeltaPoint.getY());
-            }
+           //} else if ((int)(touchPoint.getY() - mDeltaPoint.getY()) > 0){
+            //    mLayoutParams.topMargin = (int) (touchPoint.getY() - mDeltaPoint.getY());
+            //}
         }
         mView.setLayoutParams(mLayoutParams);
         mView.requestLayout();
@@ -118,13 +107,6 @@ public class DragAndDropper {
             @Override
             public void onAnimationEnd(Animator animation)
             {
-                /*
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams
-                        (RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                params.addRule(RelativeLayout.CENTER_VERTICAL);
-                mView.setLayoutParams(params);
-                mView.requestLayout();
-*/
                 Log.d(TAG, "return to start done");
             }
         });

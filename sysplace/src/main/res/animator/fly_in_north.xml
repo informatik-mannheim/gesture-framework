@@ -22,7 +22,7 @@
     android:ordering="together">
 
     <objectAnimator
-        android:propertyName="y"
+        android:propertyName="translationY"
         android:valueFrom="-2500"
         android:valueTo="0"
         android:valueType="floatType"

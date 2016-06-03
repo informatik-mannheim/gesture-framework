@@ -55,16 +55,11 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
     @Override
     public void handleGestureStart(GestureTransitionInfo info) {
-        if (mIsAnimationRunning) {
+        if (mIsAnimationRunning && !mAnimatorQueue.contains(mElevateAnimator)) {
             mAnimatorQueue.add(mElevateAnimator);
         } else {
             mElevateAnimator.start();
             if (info.isTouchGesture()) {
-
-
-
-
-
                 mDragAndDropper.setDeltaPoint(info.getTouchPoint());
             }
         }
@@ -79,18 +74,13 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
     @Override
     public void handleGestureEnd(GestureTransitionInfo info) {
-        if (mIsAnimationRunning) {
+        if (mIsAnimationRunning && !mAnimatorQueue.contains(mLowerAnimator)) {
             mAnimatorQueue.add(mLowerAnimator);
         } else {
             mLowerAnimator.start();
         }
 
         if (info.isTouchGesture()) {
-
-
-
-
-
             mDragAndDropper.returnToStart(400);
         }
     }

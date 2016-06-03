@@ -50,9 +50,6 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         mLayoutParams = (RelativeLayout.LayoutParams) view
                 .getLayoutParams();
         mOriginalTopMargin = mLayoutParams.topMargin;
-
-        Log.d(TAG, "topMargin: " + mOriginalTopMargin);
-        Log.d(TAG, "Y-Value: " + mView.getY());
     }
 
     @Override
@@ -97,8 +94,8 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         }
 
         if (animator == mFlyInAnimator) {
-            mLayoutParams.topMargin = mOriginalTopMargin;
-            mView.requestLayout();
+           // mLayoutParams.topMargin = mOriginalTopMargin;
+            //mView.requestLayout();
             mLowerAnimator.start();
             registerAnimators();
         }

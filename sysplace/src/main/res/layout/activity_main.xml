@@ -10,6 +10,12 @@
     android:id="@+id/layout_main"
     tools:context="hs_mannheim.sysplace.MainActivity">
 
+    <!--
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="test"/>
+    -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

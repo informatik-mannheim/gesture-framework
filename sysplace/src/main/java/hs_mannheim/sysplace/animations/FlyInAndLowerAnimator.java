@@ -45,7 +45,7 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         super(context, view);
 
         Bitmap polaroidFrame = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.polaroid_frame);
-        mImageViewUpdater = new ImageViewUpdater(mContext, (ImageView) view, polaroidFrame);
+        mImageViewUpdater = new ImageViewUpdater(mContext, polaroidFrame);
 
         mLayoutParams = (RelativeLayout.LayoutParams) view
                 .getLayoutParams();
@@ -89,7 +89,7 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         }
 
         if (animator == mFlyOutAnimator) {
-            mImageViewUpdater.updateImageView(mReplacementBitmap);
+            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap);
             mFlyInAnimator.start();
         }
 

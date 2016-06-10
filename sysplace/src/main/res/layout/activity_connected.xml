@@ -15,8 +15,24 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imgView"
+        android:id="@+id/imgViewCopy"
         android:src="@drawable/polaroid"
+        android:adjustViewBounds="true"
+        android:background="#00ff00"
+        android:clickable="true"
+        android:elevation="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgView"
+        android:src="@drawable/polaroid_pick"
         android:adjustViewBounds="true"
         android:background="#00ff00"
         android:clickable="true"
@@ -26,22 +42,4 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:layout_centerHorizontal="true"/>
-
-    <!--
-     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/imgView"
-        android:src="@drawable/polaroid"
-        android:layout_marginTop="64dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:adjustViewBounds="true"
-        android:background="#00ff00"
-        android:clickable="true"
-        android:elevation="2dp"
-        android:layout_centerHorizontal="true"/>
-     -->
-
 </RelativeLayout>

@@ -20,6 +20,7 @@ package hs_mannheim.sysplace.animations;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -31,14 +32,21 @@ import hs_mannheim.sysplace.R;
 
 public class FlipSelectAnimator extends GestureAnimator {
 
-    Animator mFlipLeftInAnimator, mFlipLeftOutAnimator, mElevateAnimator, mLowerAnimator;
-    ImageViewUpdater mImageViewUpdater;
+    private Animator mFlipLeftInAnimator, mFlipLeftOutAnimator, mElevateAnimator, mLowerAnimator;
+    private ImageViewUpdater mImageViewUpdater;
+    private ImageView mImageViewCopy;
+
 
     public FlipSelectAnimator(Context context, View view) {
         super(context, view);
 
         Bitmap polaroidFrame = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.polaroid_frame);
-        mImageViewUpdater = new ImageViewUpdater(mContext, (ImageView) view, polaroidFrame);
+        mImageViewUpdater = new ImageViewUpdater(mContext, polaroidFrame);
+
+
+        //TODO: Hacky
+        Activity activity = (Activity)mContext;
+        mImageViewCopy = (ImageView) activity.findViewById(R.id.imgViewCopy);
     }
 
     @Override
@@ -79,12 +87,15 @@ public class FlipSelectAnimator extends GestureAnimator {
         }
 
         if (animator == mFlipLeftOutAnimator) {
-            mImageViewUpdater.updateImageView(mReplacementBitmap);
+            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap);
+
+            
             mFlipLeftInAnimator.start();
         }
 
         if (animator == mFlipLeftInAnimator) {
-            mLowerAnimator.start();
+            mImageViewUpdater.updateImageView(mImageViewCopy, mReplacementBitmap);
+            //mLowerAnimator.start();
         }
     }
 

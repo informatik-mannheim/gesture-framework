@@ -20,11 +20,18 @@ package hs_mannheim.sysplace.animations;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.animation.ObjectAnimator;
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.animation.GestureTransitionInfo;
@@ -34,31 +41,28 @@ import hs_mannheim.sysplace.R;
 public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
     private DragAndDropper mDragAndDropper;
-    private Animator mElevateAnimator, mLowerAnimator, mFlyOutNorthAnimator, mFlyInSouthAnimator;
-    private Drawable
-            mPolaroid;
-    private ImageView mImageView;
-    private float mOriginalYValue, mOriginalTopMargin;
+    private Animator mElevateAnimator, mLowerAnimator, mFlyOutNorthAnimator, mGetNextPicAnimator, mTeleportBackAnimator, mAnticipateLeaveAnimator;
+    private ImageView mImageView, mImageViewCopy;
 
     public ElevateAndLeaveAnimator(Context context, View view) {
         super(context, view);
         mDragAndDropper = new DragAndDropper(false, true, view);
-        mPolaroid = mContext.getResources().getDrawable(R.drawable.polaroid);
 
         //TODO: HACKYDIHACKHACK
         mImageView = (ImageView) mView;
-
-        mOriginalYValue = mImageView.getY();
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mImageView.getLayoutParams();
-        mOriginalTopMargin = params.topMargin;
+        Activity activity = (Activity)mContext;
+        mImageViewCopy = (ImageView) activity.findViewById(R.id.imgViewCopy);
     }
 
     @Override
     public void handleGestureStart(GestureTransitionInfo info) {
+        mImageViewCopy.setVisibility(View.VISIBLE);
+        mImageViewCopy.setColorFilter(Color.argb(150, 200, 200, 200));
+
         if (mIsAnimationRunning && !mAnimatorQueue.contains(mElevateAnimator)) {
-            mAnimatorQueue.add(mElevateAnimator);
+            //mAnimatorQueue.add(mElevateAnimator);
         } else {
-            mElevateAnimator.start();
+            //mElevateAnimator.start();
             if (info.isTouchGesture()) {
                 mDragAndDropper.setDeltaPoint(info.getTouchPoint());
             }
@@ -74,12 +78,13 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
     @Override
     public void handleGestureEnd(GestureTransitionInfo info) {
+        /*
         if (mIsAnimationRunning && !mAnimatorQueue.contains(mLowerAnimator)) {
             mAnimatorQueue.add(mLowerAnimator);
         } else {
             mLowerAnimator.start();
         }
-
+        */
         if (info.isTouchGesture()) {
             mDragAndDropper.returnToStart(400);
         }
@@ -110,14 +115,38 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
         mLowerAnimator.addListener(this);
         mLowerAnimator.setTarget(mView);
 
-        mFlyInSouthAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.fly_in_south);
-        mFlyInSouthAnimator.addListener(this);
-        mFlyInSouthAnimator.setTarget(mView);
+        mGetNextPicAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.get_next_pic);
+        mGetNextPicAnimator.addListener(this);
+        mGetNextPicAnimator.setTarget(mView);
+
+        mTeleportBackAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.teleport_back);
+        mTeleportBackAnimator.addListener(this);
+        mTeleportBackAnimator.setTarget(mView);
+
+        mAnticipateLeaveAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.anticipate_leave_north);
+        mAnticipateLeaveAnimator.addListener(this);
+        mAnticipateLeaveAnimator.setTarget(mView);
     }
 
     @Override
-    public void onAnimationStart(Animator animation) {
+    public void onAnimationStart(Animator animator) {
         mIsAnimationRunning = true;
+
+        if (animator == mFlyOutNorthAnimator) {
+            resetColorFilter();
+        }
+    }
+
+    private void resetColorFilter() {
+        ValueAnimator grayAwayAnimator = ValueAnimator.ofInt(150, 0);
+        grayAwayAnimator.setDuration(2000);
+        grayAwayAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                mImageViewCopy.setColorFilter(Color.argb((int) valueAnimator.getAnimatedValue(), 200, 200, 200));
+            }
+        });
+        grayAwayAnimator.start();
     }
 
     @Override
@@ -125,16 +154,34 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
         mIsAnimationRunning = false;
 
         if (animator == mFlyOutNorthAnimator) {
-            mImageView.setImageDrawable(mPolaroid);
-            mFlyInSouthAnimator.start();
+            mDragAndDropper.setOriginalMargins();
+            mTeleportBackAnimator.start();
+            return;
+        }
+        if (animator == mTeleportBackAnimator) {
+            mImageViewCopy.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid_pick));
+            mGetNextPicAnimator.start();
             return;
         }
 
-        if (animator == mFlyInSouthAnimator) {
-            mLowerAnimator.start();
-            //mDragAndDropper.returnToStart(500);
-            mDragAndDropper.setOriginalMargins();
-            return;
+        if (animator == mGetNextPicAnimator) {
+            //mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid_pick_another_question));
+
+
+            mImageView.setElevation(2);
+            //mImageViewCopy.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid));
+
+/*
+            Animation wobbleAnimation = AnimationUtils.loadAnimation(mContext, R.anim.wobble);
+            wobbleAnimation.reset();
+            wobbleAnimation.setFillAfter(true);
+*/
+            AnimationsContainer.FramesSequenceAnimation animation = AnimationsContainer.getInstance().createSplashAnim(mImageView);
+            animation.start();
+
+            //mImageView.startAnimation(wobbleAnimation);
+
+
         }
 
         if (mAnimatorQueue.isEmpty()) {

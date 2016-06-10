@@ -3,21 +3,14 @@ package hs_mannheim.sysplace;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Point;
-import android.graphics.drawable.BitmapDrawable;
-import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.InputStream;
 
-import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.animation.GestureAnimator;
 import hs_mannheim.gestureframework.animation.GestureTransitionInfo;
 import hs_mannheim.gestureframework.animation.TransitionAnimator;
@@ -32,14 +25,16 @@ import hs_mannheim.gestureframework.model.ILifecycleListener;
 import hs_mannheim.gestureframework.model.IViewContext;
 import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.model.LifecycleEvent;
-import hs_mannheim.gestureframework.model.ViewWrapper;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
+import hs_mannheim.gestureframework.model.ViewWrapper;
+import hs_mannheim.sysplace.animations.AnimationsContainer;
 import hs_mannheim.sysplace.animations.ElevateAndLeaveAnimator;
 import hs_mannheim.sysplace.animations.FlipSelectAnimator;
 import hs_mannheim.sysplace.animations.FlyInAndLowerAnimator;
+import hs_mannheim.sysplace.animations.OnAnimationStoppedListener;
 
-public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener, IPacketReceiver, SwipeDetector.SwipeEventListener {
+public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener, IPacketReceiver, SwipeDetector.SwipeEventListener, OnAnimationStoppedListener {
 
     private static int PICK_IMAGE = 1;
     private SysplaceContext mSysplaceContext;
@@ -47,6 +42,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     private ViewWrapper mViewWrapper;
     private GestureAnimator mReceiveAnimator, mSelectAnimator;
     private TransitionAnimator mSendAnimator;
+    private boolean mShouldDragDrop = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +64,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         mReceiveAnimator = new FlyInAndLowerAnimator(this, mViewWrapper.getView());
 
         mSysplaceContext.registerForSwipeEvents(this);
+        AnimationsContainer.getInstance().registerListener(this);
     }
 
     @Override
@@ -82,7 +79,6 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     /**
      * Fires image chooser intent.
-     *
      */
     public void chooseImage() {
         Intent intent = new Intent();
@@ -121,6 +117,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     /**
      * Combines the chosen image file with the polaroid frame and displays the resulting Bitmap
      * in the ImageView
+     *
      * @param chosenBitmap
      */
     private void updatePicture(Bitmap chosenBitmap) {
@@ -147,14 +144,12 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void onSelect() {
+        mShouldDragDrop = true;
         chooseImage();
     }
 
     @Override
     public void onTransfer() {
-
-
-
         //TODO: don't play animation when selection is empty
         mSendAnimator.play();
         mSysplaceContext.select(Selection.Empty);
@@ -184,16 +179,27 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint) {
-        mSendAnimator.handleGestureDuring(new GestureTransitionInfo(touchPoint));
+        if (mShouldDragDrop) {
+            mSendAnimator.handleGestureDuring(new GestureTransitionInfo(touchPoint));
+        }
     }
 
     @Override
     public void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view) {
-        mSendAnimator.handleGestureStart(new GestureTransitionInfo(touchPoint));
+        if (mShouldDragDrop) {
+            mSendAnimator.handleGestureStart(new GestureTransitionInfo(touchPoint));
+        }
     }
 
     @Override
     public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
-        mSendAnimator.handleGestureEnd(new GestureTransitionInfo(touchPoint));
+        if (mShouldDragDrop) {
+            mSendAnimator.handleGestureEnd(new GestureTransitionInfo(touchPoint));
+        }
+    }
+
+    @Override
+    public void animationStopped() {
+        mShouldDragDrop = false;
     }
 }

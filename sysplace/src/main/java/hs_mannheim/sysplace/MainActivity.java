@@ -69,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mEditText.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
 
         mSysplaceContext.activate(this);
+
+        //TODO: take this out again. saves time on animation testing
+        mPhotoButton.setEnabled(true);
     }
 
 

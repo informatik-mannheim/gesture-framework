@@ -72,9 +72,9 @@ public class DragAndDropper {
         if (mShouldDragY){
             //Restricts movement at top of screen
             //if (mLayoutParams.topMargin > 0) {
-                mLayoutParams.topMargin = (int) (touchPoint.getY() - mDeltaPoint.getY());
-           //} else if ((int)(touchPoint.getY() - mDeltaPoint.getY()) > 0){
             //    mLayoutParams.topMargin = (int) (touchPoint.getY() - mDeltaPoint.getY());
+            //} else if ((int)(touchPoint.getY() - mDeltaPoint.getY()) > 0){
+                mLayoutParams.topMargin = (int) (touchPoint.getY() - mDeltaPoint.getY());
             //}
         }
         mView.setLayoutParams(mLayoutParams);

@@ -34,14 +34,15 @@ public class ImageViewUpdater {
     private Bitmap mOriginalBitmap, mBitmapFrame;
     private Context mContext;
 
-    public ImageViewUpdater(Context context, ImageView imageView, Bitmap bitmapFrame) {
+    public ImageViewUpdater(Context context, Bitmap bitmapFrame) {
         mContext = context;
-        mImageView = imageView;
-        mOriginalBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         mBitmapFrame = bitmapFrame;
     }
 
-    public void updateImageView(Bitmap newBitmap) {
+    public void updateImageView(ImageView imageView, Bitmap newBitmap) {
+        mImageView = imageView;
+        mOriginalBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
         ThumbnailUtils thumbnailUtils = new ThumbnailUtils();
         Bitmap thumbnail = thumbnailUtils.extractThumbnail(newBitmap, mOriginalBitmap.getWidth(), mOriginalBitmap.getWidth());
 

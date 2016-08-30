@@ -35,13 +35,14 @@ public class FlipSelectAnimator extends GestureAnimator {
     private Animator mFlipLeftInAnimator, mFlipLeftOutAnimator, mElevateAnimator, mLowerAnimator;
     private ImageViewUpdater mImageViewUpdater;
     private ImageView mImageViewCopy;
+    private Bitmap mPolaroidFrame;
 
 
     public FlipSelectAnimator(Context context, View view) {
         super(context, view);
 
-        Bitmap polaroidFrame = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.polaroid_frame);
-        mImageViewUpdater = new ImageViewUpdater(mContext, polaroidFrame);
+        mPolaroidFrame = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.polaroid_frame);
+        mImageViewUpdater = new ImageViewUpdater(mContext);
 
 
         //TODO: Hacky
@@ -87,14 +88,14 @@ public class FlipSelectAnimator extends GestureAnimator {
         }
 
         if (animator == mFlipLeftOutAnimator) {
-            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap);
+            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap, mPolaroidFrame);
 
             
             mFlipLeftInAnimator.start();
         }
 
         if (animator == mFlipLeftInAnimator) {
-            mImageViewUpdater.updateImageView(mImageViewCopy, mReplacementBitmap);
+            mImageViewUpdater.updateImageView(mImageViewCopy, mReplacementBitmap, mPolaroidFrame);
             //mLowerAnimator.start();
         }
     }

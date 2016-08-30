@@ -34,11 +34,7 @@ import hs_mannheim.sysplace.animations.SocketAnimator;
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, SwipeDetector.SwipeEventListener {
     private static final String TAG = "[Main Activity]";
 
-    private TextView mTextView;
-    private EditText mEditText;
-    private Button mPingButton;
     private Button mPhotoButton;
-    private Button mDisconnectButton;
     private SysplaceContext mSysplaceContext;
     private PlugAnimator mPlugAnimator;
     private SocketAnimator mSocketAnimator;
@@ -55,11 +51,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        mTextView = ((TextView) findViewById(R.id.textView));
-        mPingButton = ((Button) findViewById(R.id.btn_ping));
-        mPhotoButton = ((Button) findViewById(R.id.btn_send_photo));
-        mDisconnectButton = ((Button) findViewById(R.id.btn_disconnect));
-        mEditText = ((EditText) findViewById(R.id.et_tosend));
+        mPhotoButton = ((Button) findViewById(R.id.btn_send_photo)); //TODO: get rid of this after transition works
 
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
@@ -74,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .buildAndRegister();
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
-        mEditText.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
 
         //////////////////////////////////////
 
@@ -141,11 +132,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     public void receive(Packet packet) {
         switch (packet.getType()) {
             case ConnectionEstablished:
-                mTextView.setText(R.string.connected_info);
-                mTextView.setTextColor(Color.GREEN);
-                mPingButton.setEnabled(true);
+                //mTextView.setText(R.string.connected_info);
+                //mTextView.setTextColor(Color.GREEN);
                 mPhotoButton.setEnabled(true);
-                mDisconnectButton.setEnabled(true);
 
                 //TODO: turn this on again. was getting on my nerves >:(
                 //((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(700);
@@ -160,11 +149,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
                 break;
             case ConnectionLost:
-                mTextView.setText(R.string.not_connected_info);
-                mTextView.setTextColor(getResources().getColor(android.R.color.holo_red_light, null));
-                mPingButton.setEnabled(false);
+                //mTextView.setText(R.string.not_connected_info);
+                //mTextView.setTextColor(getResources().getColor(android.R.color.holo_red_light, null));
                 mPhotoButton.setEnabled(false);
-                mDisconnectButton.setEnabled(false);
                 ((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(350);
                 break;
             case PlainString:

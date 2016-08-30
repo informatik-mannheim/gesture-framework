@@ -31,25 +31,24 @@ import android.widget.ImageView;
 public class ImageViewUpdater {
 
     private ImageView mImageView;
-    private Bitmap mOriginalBitmap, mBitmapFrame;
+    private Bitmap mOriginalBitmap;
     private Context mContext;
 
-    public ImageViewUpdater(Context context, Bitmap bitmapFrame) {
+    public ImageViewUpdater(Context context) {
         mContext = context;
-        mBitmapFrame = bitmapFrame;
     }
 
-    public void updateImageView(ImageView imageView, Bitmap newBitmap) {
+    public void updateImageView(ImageView imageView, Bitmap newBitmap, Bitmap frame) {
         mImageView = imageView;
         mOriginalBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
         ThumbnailUtils thumbnailUtils = new ThumbnailUtils();
         Bitmap thumbnail = thumbnailUtils.extractThumbnail(newBitmap, mOriginalBitmap.getWidth(), mOriginalBitmap.getWidth());
 
-        Bitmap combinedBitmap = Bitmap.createBitmap(mBitmapFrame.getWidth(), mBitmapFrame.getHeight(), mBitmapFrame.getConfig());
+        Bitmap combinedBitmap = Bitmap.createBitmap(frame.getWidth(), frame.getHeight(), frame.getConfig());
         Canvas canvas = new Canvas(combinedBitmap);
         canvas.drawBitmap(thumbnail, 0, 0, null);
-        canvas.drawBitmap(mBitmapFrame, new Matrix(), null);
+        canvas.drawBitmap(frame, new Matrix(), null);
 
         mImageView.setImageDrawable(new BitmapDrawable(mContext.getResources(), combinedBitmap));
     }

@@ -33,7 +33,7 @@ import hs_mannheim.sysplace.R;
 
 public class SocketAnimator extends GestureAnimator {
 
-    private ObjectAnimator mPeekInAnimator, mPlugInAnimator, mRetreatAnimator;
+    private ObjectAnimator mPeekInAnimator, mPlugInAnimator, mRetreatAnimator, mPlugPeekAnimator;
     private static final String TAG = "[SocketAnimator]";
     private Point mScreenDims;
 
@@ -62,6 +62,12 @@ public class SocketAnimator extends GestureAnimator {
         Activity activity = (Activity) context;
         View plug = activity.findViewById(R.id.plug);
 
+        mPlugPeekAnimator = ObjectAnimator.ofFloat(plug, "translationX", -mScreenDims.x, -mScreenDims.x * .9f);
+        mPlugPeekAnimator.setDuration(100);
+        mPlugPeekAnimator.setStartDelay(900);
+        mPlugPeekAnimator.addListener(this);
+        mPlugPeekAnimator.setInterpolator(new AccelerateInterpolator(3f));
+
 
     }
 
@@ -72,6 +78,7 @@ public class SocketAnimator extends GestureAnimator {
 
     public void plugIn() {
         mPlugInAnimator.start();
+        mPlugPeekAnimator.start();
     }
 
     public void retreat() {

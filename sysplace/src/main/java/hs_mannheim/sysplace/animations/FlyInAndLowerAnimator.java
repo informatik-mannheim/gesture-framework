@@ -38,12 +38,13 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
     private ImageViewUpdater mImageViewUpdater;
     private static final String TAG = "[FlyInAndLowerAnimator]";
     private ImageView mImageViewCopy;
+    private Bitmap mPolaroidFrame;
 
     public FlyInAndLowerAnimator(Context context, View view) {
         super(context, view);
 
-        Bitmap polaroidFrame = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.polaroid_frame);
-        mImageViewUpdater = new ImageViewUpdater(mContext, polaroidFrame);
+        mPolaroidFrame = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.polaroid_frame_receive);
+        mImageViewUpdater = new ImageViewUpdater(mContext);
 
         //TODO: HACKY!
         Activity activity = (Activity) mContext;
@@ -93,7 +94,7 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
     public void onAnimationEnd(Animator animator) {
 
         if (animator == mTeleportOutAnimator) {
-            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap);
+            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap, mPolaroidFrame);
             mElevateAnimator.start();
         }
 
@@ -102,7 +103,7 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         }
 
         if (animator == mFlyOutAnimator) {
-            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap);
+            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap, mPolaroidFrame);
             mFlyInAnimator.start();
         }
 

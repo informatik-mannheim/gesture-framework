@@ -17,28 +17,21 @@
   ~
   -->
 
-<set xmlns:android="http://schemas.android.com/apk/res/android"
-    android:ordering="sequentially">
+<set xmlns:android="http://schemas.android.com/apk/res/android">
     <objectAnimator
-        android:propertyName="translationX"
-        android:valueFrom="0"
-        android:valueTo="-1000"
-        android:valueType="floatType"
-        android:duration="400"
         android:interpolator="@android:interpolator/accelerate_decelerate"
-        />
-    <objectAnimator
-        android:propertyName="elevation"
-        android:valueTo="0"
-        android:valueType="floatType"
+        android:propertyName="translationZ"
         android:duration="1"
-        />
-    <objectAnimator
-        android:propertyName="translationX"
-        android:valueFrom="-1000"
         android:valueTo="0"
         android:valueType="floatType"
-        android:duration="400"
+        android:startOffset="500"
+        />
+    <objectAnimator
         android:interpolator="@android:interpolator/accelerate_decelerate"
+        android:propertyName="translationY"
+        android:duration="1"
+        android:valueTo="-1500"
+        android:valueType="floatType"
+        android:startOffset="500"
         />
 </set>

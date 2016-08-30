@@ -66,7 +66,8 @@ public class DragAndDropper {
 
         //TODO: still needs work
         if (mShouldDragX){
-            mLayoutParams.leftMargin = (int) (touchPoint.getX() - mDeltaPoint.getX());
+            mView.setX(touchPoint.getX());
+            //mLayoutParams.leftMargin = (int) (touchPoint.getX() - mDeltaPoint.getX());
         }
 
         if (mShouldDragY){

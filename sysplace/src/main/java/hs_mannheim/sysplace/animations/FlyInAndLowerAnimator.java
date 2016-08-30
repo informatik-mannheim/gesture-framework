@@ -20,26 +20,24 @@ package hs_mannheim.sysplace.animations;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
-import hs_mannheim.gestureframework.animation.DragAndDropper;
 import hs_mannheim.gestureframework.animation.GestureAnimator;
 import hs_mannheim.gestureframework.animation.ImageViewUpdater;
 import hs_mannheim.sysplace.R;
 
 public class FlyInAndLowerAnimator extends GestureAnimator {
 
-    private Animator mElevateAnimator, mFlyOutAnimator, mFlyInAnimator, mLowerAnimator;
+    private Animator mElevateAnimator, mFlyOutAnimator, mFlyInAnimator, mLowerAnimator, mTeleportOutAnimator;
     private ImageViewUpdater mImageViewUpdater;
-    private RelativeLayout.LayoutParams mLayoutParams;
-    private int mOriginalTopMargin;
     private static final String TAG = "[FlyInAndLowerAnimator]";
+    private ImageView mImageViewCopy;
 
     public FlyInAndLowerAnimator(Context context, View view) {
         super(context, view);
@@ -47,14 +45,19 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         Bitmap polaroidFrame = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.polaroid_frame);
         mImageViewUpdater = new ImageViewUpdater(mContext, polaroidFrame);
 
-        mLayoutParams = (RelativeLayout.LayoutParams) view
-                .getLayoutParams();
-        mOriginalTopMargin = mLayoutParams.topMargin;
+        //TODO: HACKY!
+        Activity activity = (Activity) mContext;
+        mImageViewCopy = (ImageView) activity.findViewById(R.id.imgViewCopy);
     }
 
     @Override
     public void play() {
-        mElevateAnimator.start();
+        ImageView imageView = (ImageView) mView;
+        Bitmap currentBitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
+        mImageViewCopy.setVisibility(View.VISIBLE);
+        mImageViewCopy.setImageBitmap(currentBitmap.copy(currentBitmap.getConfig(), true));
+        mTeleportOutAnimator.start();
     }
 
     @Override
@@ -62,6 +65,7 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         mElevateAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.elevate);
         mElevateAnimator.addListener(this);
         mElevateAnimator.setTarget(mView);
+        mElevateAnimator.setDuration(1);
 
         mFlyOutAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.fly_out_south);
         mFlyOutAnimator.addListener(this);
@@ -74,6 +78,10 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         mLowerAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.lower);
         mLowerAnimator.addListener(this);
         mLowerAnimator.setTarget(mView);
+
+        mTeleportOutAnimator = AnimatorInflater.loadAnimator(mContext, R.animator.teleport_north);
+        mTeleportOutAnimator.addListener(this);
+        mTeleportOutAnimator.setTarget(mView);
     }
 
     @Override
@@ -84,8 +92,13 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
     @Override
     public void onAnimationEnd(Animator animator) {
 
+        if (animator == mTeleportOutAnimator) {
+            mImageViewUpdater.updateImageView((ImageView) mView, mReplacementBitmap);
+            mElevateAnimator.start();
+        }
+
         if (animator == mElevateAnimator) {
-            mFlyOutAnimator.start();
+            mFlyInAnimator.start();
         }
 
         if (animator == mFlyOutAnimator) {
@@ -94,8 +107,6 @@ public class FlyInAndLowerAnimator extends GestureAnimator {
         }
 
         if (animator == mFlyInAnimator) {
-           // mLayoutParams.topMargin = mOriginalTopMargin;
-            //mView.requestLayout();
             mLowerAnimator.start();
             registerAnimators();
         }

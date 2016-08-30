@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import hs_mannheim.gestureframework.ConfigurationBuilder;
-import hs_mannheim.gestureframework.gesture.approach.ApproachDetector;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
+import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
+import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
 import hs_mannheim.gestureframework.messaging.IPacketReceiver;
 import hs_mannheim.gestureframework.messaging.Packet;
 import hs_mannheim.gestureframework.model.IViewContext;
@@ -25,8 +28,10 @@ import hs_mannheim.gestureframework.model.InteractionApplication;
 import hs_mannheim.gestureframework.model.Selection;
 import hs_mannheim.gestureframework.model.SysplaceContext;
 import hs_mannheim.gestureframework.model.ViewWrapper;
+import hs_mannheim.sysplace.animations.PlugAnimator;
+import hs_mannheim.sysplace.animations.SocketAnimator;
 
-public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver {
+public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, SwipeDetector.SwipeEventListener {
     private static final String TAG = "[Main Activity]";
 
     private TextView mTextView;
@@ -35,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     private Button mPhotoButton;
     private Button mDisconnectButton;
     private SysplaceContext mSysplaceContext;
+    private PlugAnimator mPlugAnimator;
+    private SocketAnimator mSocketAnimator;
+    private boolean mIsConnectionEstablished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,10 +76,17 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
         mEditText.addTextChangedListener(new SysplaceTextWatcher(mSysplaceContext));
 
+        //////////////////////////////////////
+
+        View plugView = findViewById(R.id.plug), socketView = findViewById(R.id.socket);
+        mPlugAnimator = new PlugAnimator(this, plugView, getDisplaySize());
+        mSocketAnimator = new SocketAnimator(this, socketView, getDisplaySize());
+
+
+        //////////////////////////////////////
         mSysplaceContext.activate(this);
 
-        //TODO: take this out again. saves time on animation testing
-        mPhotoButton.setEnabled(true);
+        mSysplaceContext.registerForSwipeEvents(this);
     }
 
 
@@ -135,6 +150,14 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 //TODO: turn this on again. was getting on my nerves >:(
                 //((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(700);
 
+                mIsConnectionEstablished = true;
+
+                if (mSwipeOrientation == SwipeEvent.Orientation.WEST) {
+                    mSocketAnimator.plugIn();
+                } else if (mSwipeOrientation == SwipeEvent.Orientation.EAST) {
+                    mPlugAnimator.plugIn();
+                }
+
                 break;
             case ConnectionLost:
                 mTextView.setText(R.string.not_connected_info);
@@ -150,6 +173,53 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
             default:
                 break;
         }
+    }
+
+    private SwipeEvent.Orientation mSwipeOrientation;
+    private boolean isPeakedIn;
+
+    @Override
+    public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
+        mSwipeOrientation = event.getOrientation();
+
+        if (!isPeakedIn) {
+            if (mSwipeOrientation == SwipeEvent.Orientation.WEST) {
+                mSocketAnimator.play();
+            } else if (mSwipeOrientation == SwipeEvent.Orientation.EAST) {
+                mPlugAnimator.play();
+            }
+            isPeakedIn = true;
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!mIsConnectionEstablished) {
+                        if (mSwipeOrientation == SwipeEvent.Orientation.WEST) {
+                            mSocketAnimator.retreat();
+                        } else if (mSwipeOrientation == SwipeEvent.Orientation.EAST) {
+                            mPlugAnimator.retreat();
+                        }
+
+                        isPeakedIn = false;
+                    }
+                }
+            }, 5000);
+        }
+    }
+
+    @Override
+    public void onSwiping(SwipeDetector swipeDetector, TouchPoint touchPoint) {
+
+    }
+
+    @Override
+    public void onSwipeStart(SwipeDetector swipeDetector, TouchPoint touchPoint, View view) {
+
+    }
+
+    @Override
+    public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
+
     }
 }
 

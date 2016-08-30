@@ -1,12 +1,18 @@
 package hs_mannheim.sysplace;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.InputStream;
@@ -40,6 +46,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     private SysplaceContext mSysplaceContext;
     private final String TAG = "[ConnectedActivity]";
     private ViewWrapper mViewWrapper;
+    private ImageView mImageView;
     private GestureAnimator mReceiveAnimator, mSelectAnimator;
     private TransitionAnimator mSendAnimator;
     private boolean mShouldDragDrop = false;
@@ -58,13 +65,19 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         mSysplaceContext.updateViewContext(LifecycleEvent.SELECT, this);
         mSysplaceContext.updateViewContext(LifecycleEvent.TRANSFER, this);
 
-
         mSendAnimator = new ElevateAndLeaveAnimator(this, mViewWrapper.getView());
         mSelectAnimator = new FlipSelectAnimator(this, mViewWrapper.getView());
         mReceiveAnimator = new FlyInAndLowerAnimator(this, mViewWrapper.getView());
 
         mSysplaceContext.registerForSwipeEvents(this);
         AnimationsContainer.getInstance().registerListener(this);
+
+        //TODO: UGLY
+        mImageView = (ImageView) mViewWrapper.getView();
+        Drawable polaroid = ResourcesCompat.getDrawable(getResources(), R.drawable.polaroid, null);
+        RippleDrawable ripplePolaroid = new RippleDrawable(ColorStateList.valueOf(Color.argb(255, 62, 62, 62)), polaroid, null);
+        //mImageView.setImageDrawable(ripplePolaroid);
+
     }
 
     @Override

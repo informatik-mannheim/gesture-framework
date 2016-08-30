@@ -176,7 +176,9 @@ public class GestureManager implements GestureDetector.GestureEventListener,
 
     @Override
     public void onSwipeDetected(SwipeDetector swipeDetector, SwipeEvent event) {
-
+        for (SwipeDetector.SwipeEventListener swipeEventListener : mSwipeEventListeners) {
+            swipeEventListener.onSwipeDetected(swipeDetector, event);
+        }
     }
 
     @Override

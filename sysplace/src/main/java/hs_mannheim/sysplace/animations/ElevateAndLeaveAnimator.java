@@ -20,17 +20,11 @@ package hs_mannheim.sysplace.animations;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
-import android.animation.ObjectAnimator;
-import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.Drawable;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import hs_mannheim.gestureframework.animation.DragAndDropper;
@@ -39,6 +33,7 @@ import hs_mannheim.gestureframework.animation.TransitionAnimator;
 import hs_mannheim.sysplace.R;
 
 public class ElevateAndLeaveAnimator extends TransitionAnimator {
+
 
     private DragAndDropper mDragAndDropper;
     private Animator mElevateAnimator, mLowerAnimator, mFlyOutNorthAnimator, mGetNextPicAnimator, mTeleportBackAnimator, mAnticipateLeaveAnimator;
@@ -50,7 +45,7 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
         //TODO: HACKYDIHACKHACK
         mImageView = (ImageView) mView;
-        Activity activity = (Activity)mContext;
+        Activity activity = (Activity) mContext;
         mImageViewCopy = (ImageView) activity.findViewById(R.id.imgViewCopy);
     }
 
@@ -165,10 +160,10 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
         }
 
         if (animator == mGetNextPicAnimator) {
-            //mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid_pick_another_question));
+            mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid_pick_another_question));
 
 
-            mImageView.setElevation(2);
+            mImageView.setElevation(5);
             //mImageViewCopy.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid));
 
 /*

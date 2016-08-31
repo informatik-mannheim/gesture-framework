@@ -18,24 +18,34 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
-    <!--<ImageView
+    <ImageView
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:src="@drawable/connection_icon"
         android:id="@+id/connection_icon"
         android:scaleType="centerInside"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>-->
+        android:layout_centerHorizontal="true"/>
 
     <ImageView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/plug"
         android:elevation="32dp"
         android:id="@+id/plug"
         android:visibility="visible"
         android:scaleType="centerCrop"
-        android:adjustViewBounds="true"/>
+        android:layout_gravity="left"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/plug_pins"
+        android:elevation="32dp"
+        android:id="@+id/plug_pins"
+        android:visibility="visible"
+        android:scaleType="centerCrop"/>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -44,6 +54,5 @@
         android:id="@+id/socket"
         android:visibility="visible"
         android:scaleType="centerCrop"
-        android:adjustViewBounds="true"/>
-
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

@@ -67,19 +67,22 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
 
-        //////////////////////////////////////
-
-        View plugView = findViewById(R.id.plug), socketView = findViewById(R.id.socket);
-        mPlugAnimator = new PlugAnimator(this, plugView, getDisplaySize());
-        mSocketAnimator = new SocketAnimator(this, socketView, getDisplaySize());
 
 
-        //////////////////////////////////////
         mSysplaceContext.activate(this);
 
         mSysplaceContext.registerForSwipeEvents(this);
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        View plugView = findViewById(R.id.plug), plugPinsView = findViewById(R.id.plug_pins),
+                socketView = findViewById(R.id.socket);
+        mPlugAnimator = new PlugAnimator(this, plugView, getDisplaySize());
+        mSocketAnimator = new SocketAnimator(this, socketView, getDisplaySize());
+    }
 
     @Override
     protected void onResume() {
@@ -190,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                         isPeakedIn = false;
                     }
                 }
-            }, 5000);
+            }, 6000);
         }
     }
 

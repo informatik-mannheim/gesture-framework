@@ -63,8 +63,8 @@ public class SocketAnimator extends GestureAnimator {
         View plugPins = activity.findViewById(R.id.plug_pins);
 
         mPlugPeekAnimator = ObjectAnimator.ofFloat(plugPins, "translationX", -mScreenDims.x, 0);
-        mPlugPeekAnimator.setDuration(100);
-        mPlugPeekAnimator.setStartDelay(900);
+        mPlugPeekAnimator.setDuration(125);
+        mPlugPeekAnimator.setStartDelay(950);
         mPlugPeekAnimator.addListener(this);
         mPlugPeekAnimator.setInterpolator(new AccelerateInterpolator(3f));
 

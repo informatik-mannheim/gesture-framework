@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mSysplaceContext.send(new Packet("Ping!"));
     }
 
-    public void switchToConnectedActivity(View view) {
+    public void switchToConnectedActivity() {
         startActivity(new Intent(this, ConnectedActivity.class));
     }
 
@@ -146,8 +146,20 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
                 if (mSwipeOrientation == SwipeEvent.Orientation.WEST) {
                     mSocketAnimator.plugIn();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            switchToConnectedActivity();
+                        }
+                    }, 3000);
                 } else if (mSwipeOrientation == SwipeEvent.Orientation.EAST) {
                     mPlugAnimator.plugIn();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            switchToConnectedActivity();
+                        }
+                    }, 3000);
                 }
 
                 break;
@@ -193,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                         isPeakedIn = false;
                     }
                 }
-            }, 6000);
+            }, 7000);
         }
     }
 

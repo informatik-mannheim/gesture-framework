@@ -1,5 +1,8 @@
 package hs_mannheim.sysplace;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -11,7 +14,9 @@ import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Transition;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -39,6 +44,8 @@ import hs_mannheim.sysplace.animations.ElevateAndLeaveAnimator;
 import hs_mannheim.sysplace.animations.FlipSelectAnimator;
 import hs_mannheim.sysplace.animations.FlyInAndLowerAnimator;
 import hs_mannheim.sysplace.animations.OnAnimationStoppedListener;
+import hs_mannheim.sysplace.animations.PlugAnimator;
+import hs_mannheim.sysplace.animations.SocketAnimator;
 
 public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener, IPacketReceiver, SwipeDetector.SwipeEventListener, OnAnimationStoppedListener {
 
@@ -50,6 +57,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     private GestureAnimator mReceiveAnimator, mSelectAnimator;
     private TransitionAnimator mSendAnimator;
     private boolean mShouldDragDrop = false;
+    private Transition.TransitionListener mEnterTransitionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +85,13 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         Drawable polaroid = ResourcesCompat.getDrawable(getResources(), R.drawable.polaroid, null);
         RippleDrawable ripplePolaroid = new RippleDrawable(ColorStateList.valueOf(Color.argb(255, 62, 62, 62)), polaroid, null);
         //mImageView.setImageDrawable(ripplePolaroid);
+        getWindow().getEnterTransition().addListener(mEnterTransitionListener);
 
+    }
+
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        enterReveal();
     }
 
     @Override
@@ -214,5 +228,37 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     @Override
     public void animationStopped() {
         mShouldDragDrop = false;
+    }
+
+    private void enterReveal() {
+        final View myView = findViewById(R.id.reveal_frame);
+
+        // get the center for the clipping circle
+        int cx = myView.getMeasuredWidth() / 2;
+        int cy = myView.getMeasuredHeight() / 2;
+
+        // get the initial radius for the clipping circle
+        int initialRadius = myView.getWidth() / 2;
+
+        // create the animation (the final radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+        anim.setDuration(1000);
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                /*View mainLayout = findViewById(R.id.connected_activity_layout);
+                int marginHor = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
+                int marginVer = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
+                mainLayout.setPadding(marginHor, marginVer, marginHor, marginVer);*/
+
+                myView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        // start the animation
+        anim.start();
     }
 }

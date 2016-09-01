@@ -72,7 +72,7 @@ public class SocketAnimator extends GestureAnimator {
 
         mPlugPeekAnimator = ObjectAnimator.ofFloat(plugPins, "translationX", -mScreenDims.x, 0);
         mPlugPeekAnimator.setDuration(125);
-        mPlugPeekAnimator.setStartDelay(950);
+        mPlugPeekAnimator.setStartDelay(650);
         mPlugPeekAnimator.addListener(this);
         mPlugPeekAnimator.setInterpolator(new AccelerateInterpolator(3f));
     }
@@ -112,6 +112,9 @@ public class SocketAnimator extends GestureAnimator {
             Animation shakeAnim = AnimationUtils.loadAnimation(mContext, R.anim.shake);
             mView.startAnimation(shakeAnim);
             circleAnimation();
+        }
+        if (animation == mCircularRevealAnimator) {
+
         }
     }
 

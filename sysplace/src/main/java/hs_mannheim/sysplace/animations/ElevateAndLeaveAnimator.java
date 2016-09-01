@@ -166,11 +166,6 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
             mImageView.setElevation(5);
             //mImageViewCopy.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid));
 
-/*
-            Animation wobbleAnimation = AnimationUtils.loadAnimation(mContext, R.anim.wobble);
-            wobbleAnimation.reset();
-            wobbleAnimation.setFillAfter(true);
-*/
             AnimationsContainer.FramesSequenceAnimation animation = AnimationsContainer.getInstance().createSplashAnim(mImageView);
             animation.start();
 

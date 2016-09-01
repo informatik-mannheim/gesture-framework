@@ -46,6 +46,7 @@
         android:id="@+id/plug_pins"
         android:visibility="visible"
         android:scaleType="centerCrop"/>
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -55,4 +56,19 @@
         android:visibility="visible"
         android:scaleType="centerCrop"
         android:layout_centerHorizontal="true"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/reveal_frame"
+        android:elevation="64dp"
+        android:visibility="visible">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/reveal_view"
+            android:background="@color/colorAccent"
+            android:visibility="invisible"
+            />
+    </FrameLayout>
 </RelativeLayout>

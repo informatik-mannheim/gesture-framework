@@ -22,10 +22,14 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
 
 import hs_mannheim.gestureframework.animation.GestureAnimator;
@@ -33,9 +37,10 @@ import hs_mannheim.sysplace.R;
 
 public class SocketAnimator extends GestureAnimator {
 
-    private ObjectAnimator mPeekInAnimator, mPlugInAnimator, mRetreatAnimator, mPlugPeekAnimator;
+    private Animator mPeekInAnimator, mPlugInAnimator, mRetreatAnimator, mPlugPeekAnimator, mCircularRevealAnimator;
     private static final String TAG = "[SocketAnimator]";
     private Point mScreenDims;
+    private View mCircularRevealView, mMainLayout;
 
     public SocketAnimator(Context context, View view, Point dims) {
         super(context, view);
@@ -54,21 +59,22 @@ public class SocketAnimator extends GestureAnimator {
         mRetreatAnimator.setInterpolator(new OvershootInterpolator());
 
         mPlugInAnimator = ObjectAnimator.ofFloat(mView, "translationX", mScreenDims.x * .7f, 0);
-        mPlugInAnimator.setDuration(1000);
+        mPlugInAnimator.setDuration(700);
         mPlugInAnimator.addListener(this);
         mPlugInAnimator.setInterpolator(new AccelerateInterpolator(3f));
+        mPlugInAnimator.addListener(this);
 
         //TODO: HACKY...
         Activity activity = (Activity) context;
         View plugPins = activity.findViewById(R.id.plug_pins);
+        mCircularRevealView = activity.findViewById(R.id.reveal_frame);
+        mMainLayout = activity.findViewById(R.id.layout_main);
 
         mPlugPeekAnimator = ObjectAnimator.ofFloat(plugPins, "translationX", -mScreenDims.x, 0);
         mPlugPeekAnimator.setDuration(125);
         mPlugPeekAnimator.setStartDelay(950);
         mPlugPeekAnimator.addListener(this);
         mPlugPeekAnimator.setInterpolator(new AccelerateInterpolator(3f));
-
-
     }
 
     @Override
@@ -93,12 +99,20 @@ public class SocketAnimator extends GestureAnimator {
 
     @Override
     public void onAnimationStart(Animator animation) {
-
+        if (animation == mCircularRevealAnimator) {
+            mCircularRevealView.clearAnimation();
+            mCircularRevealView.setVisibility(View.VISIBLE);
+            mCircularRevealView.setBackgroundColor(Color.parseColor("#FFD740"));
+        }
     }
 
     @Override
     public void onAnimationEnd(Animator animation) {
-
+        if (animation == mPlugInAnimator) {
+            Animation shakeAnim = AnimationUtils.loadAnimation(mContext, R.anim.shake);
+            mView.startAnimation(shakeAnim);
+            circleAnimation();
+        }
     }
 
     @Override
@@ -113,5 +127,14 @@ public class SocketAnimator extends GestureAnimator {
 
     public void setScreenDimensions(Point dims) {
         mScreenDims = dims;
+    }
+
+    private void circleAnimation(){
+        long finalRadius = Math.round(Math.sqrt(((mScreenDims.y * mScreenDims.y)/4) + (mScreenDims.x * mScreenDims.x)));
+        mCircularRevealAnimator= ViewAnimationUtils.createCircularReveal(mCircularRevealView, 0, Math.round((mScreenDims.y/2) - (mScreenDims.y * .1f)), 0, finalRadius);
+        mCircularRevealAnimator.setDuration(1000);
+        mCircularRevealAnimator.setStartDelay(100);
+        mCircularRevealAnimator.addListener(this);
+        mCircularRevealAnimator.start();
     }
 }

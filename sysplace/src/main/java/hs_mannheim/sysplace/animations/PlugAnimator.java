@@ -19,15 +19,17 @@
 package hs_mannheim.sysplace.animations;
 
 import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.OvershootInterpolator;
 
 import hs_mannheim.gestureframework.animation.GestureAnimator;
@@ -37,9 +39,10 @@ import hs_mannheim.sysplace.R;
 public class PlugAnimator extends GestureAnimator {
 
     private Point mScreenDims;
-    private ObjectAnimator mPeekInAnimator, mPlugInAnimatorMove, mRetreatAnimator;
-    private ObjectAnimator mPinPeekInAnimator, mPinPlugInAnimatorMove, mPinRetreatAnimator;
+    private Animator mPeekInAnimator, mPlugInAnimatorMove, mRetreatAnimator, mCircularRevealAnimator;
+    private Animator mPinPeekInAnimator, mPinPlugInAnimatorMove, mPinRetreatAnimator;
     private static final String TAG = "[PlugAnimator]";
+    private View mCircularRevealView, mMainLayout, mPlugPins;
 
     public PlugAnimator(Context context, View view, Point dims) {
         super(context, view);
@@ -47,17 +50,19 @@ public class PlugAnimator extends GestureAnimator {
         Log.d(TAG, "dims: " + mScreenDims.x + ", " + mScreenDims.y);
 
         Activity activity = (Activity) context;
-        View plugPins = activity.findViewById(R.id.plug_pins);
-        mView.setTranslationX(-(mScreenDims.x + plugPins.getWidth()));
-        plugPins.setTranslationX(-plugPins.getWidth());
+        mPlugPins = activity.findViewById(R.id.plug_pins);
+        mView.setTranslationX(-(mScreenDims.x + mPlugPins.getWidth()));
+        mPlugPins.setTranslationX(-mPlugPins.getWidth());
+        mCircularRevealView = activity.findViewById(R.id.reveal_frame);
+        mMainLayout = activity.findViewById(R.id.layout_main);
 
-        mPeekInAnimator = ObjectAnimator.ofFloat(mView, "translationX", -(mScreenDims.x + plugPins.getWidth()), -mScreenDims.x * .6f);
+        mPeekInAnimator = ObjectAnimator.ofFloat(mView, "translationX", -(mScreenDims.x + mPlugPins.getWidth()), -mScreenDims.x * .6f);
         mPeekInAnimator.setDuration(400);
         mPeekInAnimator.addListener(this);
         mPeekInAnimator.setInterpolator(new OvershootInterpolator());
 
         mPlugInAnimatorMove = ObjectAnimator.ofFloat(mView, "translationX", -mScreenDims.x * .6f, 0);
-        mPlugInAnimatorMove.setDuration(1000);
+        mPlugInAnimatorMove.setDuration(700);
         mPlugInAnimatorMove.addListener(this);
         mPlugInAnimatorMove.setStartDelay(100);
         mPlugInAnimatorMove.setInterpolator(new AccelerateInterpolator(3f));
@@ -67,18 +72,18 @@ public class PlugAnimator extends GestureAnimator {
         mRetreatAnimator.addListener(this);
         mRetreatAnimator.setInterpolator(new OvershootInterpolator());
 
-        mPinPeekInAnimator = ObjectAnimator.ofFloat(plugPins, "translationX", -plugPins.getWidth(), (-mScreenDims.x * .6f + mScreenDims.x));
+        mPinPeekInAnimator = ObjectAnimator.ofFloat(mPlugPins, "translationX", -mPlugPins.getWidth(), (-mScreenDims.x * .6f + mScreenDims.x));
         mPinPeekInAnimator.setDuration(400);
         mPinPeekInAnimator.addListener(this);
         mPinPeekInAnimator.setInterpolator(new OvershootInterpolator());
 
-        mPinPlugInAnimatorMove = ObjectAnimator.ofFloat(plugPins, "translationX", (-mScreenDims.x * .6f + mScreenDims.x), mScreenDims.x);
-        mPinPlugInAnimatorMove.setDuration(1000);
+        mPinPlugInAnimatorMove = ObjectAnimator.ofFloat(mPlugPins, "translationX", (-mScreenDims.x * .6f + mScreenDims.x), mScreenDims.x);
+        mPinPlugInAnimatorMove.setDuration(700);
         mPinPlugInAnimatorMove.addListener(this);
         mPinPlugInAnimatorMove.setStartDelay(100);
         mPinPlugInAnimatorMove.setInterpolator(new AccelerateInterpolator(3f));
 
-        mPinRetreatAnimator = ObjectAnimator.ofFloat(plugPins, "translationX", (-mScreenDims.x * .6f + mScreenDims.x), -plugPins.getWidth());
+        mPinRetreatAnimator = ObjectAnimator.ofFloat(mPlugPins, "translationX", (-mScreenDims.x * .6f + mScreenDims.x), -mPlugPins.getWidth());
         mPinRetreatAnimator.setDuration(400);
         mPinRetreatAnimator.addListener(this);
         mPinRetreatAnimator.setInterpolator(new OvershootInterpolator());
@@ -107,12 +112,21 @@ public class PlugAnimator extends GestureAnimator {
 
     @Override
     public void onAnimationStart(Animator animation) {
-
+        if (animation == mCircularRevealAnimator) {
+            mCircularRevealView.clearAnimation();
+            mCircularRevealView.setVisibility(View.VISIBLE);
+            mCircularRevealView.setBackgroundColor(Color.parseColor("#FFD740"));
+        }
     }
 
     @Override
     public void onAnimationEnd(Animator animation) {
-
+        if (animation == mPlugInAnimatorMove) {
+            Animation shakeAnim = AnimationUtils.loadAnimation(mContext, R.anim.shake);
+            mView.startAnimation(shakeAnim);
+            mPlugPins.startAnimation(shakeAnim);
+            circleAnimation();
+        }
     }
 
     @Override
@@ -127,5 +141,14 @@ public class PlugAnimator extends GestureAnimator {
 
     public void setScreenDimensions(Point dims) {
         mScreenDims = dims;
+    }
+
+    public void circleAnimation(){
+        long finalRadius = Math.round(Math.sqrt(((mScreenDims.y * mScreenDims.y)/4) + (mScreenDims.x * mScreenDims.x)));
+        mCircularRevealAnimator= ViewAnimationUtils.createCircularReveal(mCircularRevealView, mScreenDims.x, Math.round((mScreenDims.y/2) - (mScreenDims.y * .1f)), 0, finalRadius);
+        mCircularRevealAnimator.setDuration(500);
+        mCircularRevealAnimator.setStartDelay(100);
+        mCircularRevealAnimator.addListener(this);
+        mCircularRevealAnimator.start();
     }
 }

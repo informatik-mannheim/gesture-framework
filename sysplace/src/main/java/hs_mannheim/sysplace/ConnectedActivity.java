@@ -247,7 +247,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
         // create the animation (the final radius is zero)
         Animator anim =
-                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 50);
         anim.setDuration(1000);
         // make the view invisible when the animation is done
         anim.addListener(new AnimatorListenerAdapter() {

@@ -100,8 +100,11 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mSysplaceContext.send(new Packet("Ping!"));
     }
 
-    public void switchToConnectedActivity() {
-        startActivity(new Intent(this, ConnectedActivity.class));
+    public void switchToConnectedActivity(SwipeEvent.Orientation orientation) {
+        Intent intent =new Intent(this, ConnectedActivity.class);
+        Log.d(TAG, "" + orientation);
+        intent.putExtra("orientation", "" + orientation);
+        startActivity(intent);
     }
 
     public void disconnect(View view) {
@@ -149,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            switchToConnectedActivity();
+                            switchToConnectedActivity(mSwipeOrientation);
                         }
                     }, 3000);
                 } else if (mSwipeOrientation == SwipeEvent.Orientation.EAST) {
@@ -157,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            switchToConnectedActivity();
+                            switchToConnectedActivity(mSwipeOrientation);
                         }
                     }, 3000);
                 }

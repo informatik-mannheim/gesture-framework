@@ -57,7 +57,6 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     private GestureAnimator mReceiveAnimator, mSelectAnimator;
     private TransitionAnimator mSendAnimator;
     private boolean mShouldDragDrop = false;
-    private Transition.TransitionListener mEnterTransitionListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,13 +84,12 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         Drawable polaroid = ResourcesCompat.getDrawable(getResources(), R.drawable.polaroid, null);
         RippleDrawable ripplePolaroid = new RippleDrawable(ColorStateList.valueOf(Color.argb(255, 62, 62, 62)), polaroid, null);
         //mImageView.setImageDrawable(ripplePolaroid);
-        getWindow().getEnterTransition().addListener(mEnterTransitionListener);
-
     }
 
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        enterReveal();
+        String orientation = getIntent().getStringExtra("orientation");
+        enterReveal(orientation);
     }
 
     @Override
@@ -230,15 +228,22 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         mShouldDragDrop = false;
     }
 
-    private void enterReveal() {
+    private void enterReveal(String orientation) {
         final View myView = findViewById(R.id.reveal_frame);
 
         // get the center for the clipping circle
-        int cx = myView.getMeasuredWidth() / 2;
-        int cy = myView.getMeasuredHeight() / 2;
+        int cx = 0, cy = 0;
+        if(orientation.equals("WEST")){
+            cx = 0;
+            cy = myView.getMeasuredHeight() / 2;
+        } else if (orientation.equals("EAST")) {
+            cx = myView.getMeasuredWidth();
+            cy = myView.getMeasuredHeight() / 2;
+        }
+
 
         // get the initial radius for the clipping circle
-        int initialRadius = myView.getWidth() / 2;
+        int initialRadius = myView.getHeight();
 
         // create the animation (the final radius is zero)
         Animator anim =

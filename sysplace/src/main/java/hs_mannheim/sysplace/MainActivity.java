@@ -34,7 +34,6 @@ import hs_mannheim.sysplace.animations.SocketAnimator;
 public class MainActivity extends AppCompatActivity implements IViewContext, IPacketReceiver, SwipeDetector.SwipeEventListener {
     private static final String TAG = "[Main Activity]";
 
-    private Button mPhotoButton;
     private SysplaceContext mSysplaceContext;
     private PlugAnimator mPlugAnimator;
     private SocketAnimator mSocketAnimator;
@@ -50,9 +49,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        mPhotoButton = ((Button) findViewById(R.id.btn_send_photo)); //TODO: get rid of this after transition works
-
         ConfigurationBuilder builder = new ConfigurationBuilder(getApplicationContext(), this);
         builder
                 .withBluetooth()
@@ -138,15 +134,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     public void receive(Packet packet) {
         switch (packet.getType()) {
             case ConnectionEstablished:
-                //mTextView.setText(R.string.connected_info);
-                //mTextView.setTextColor(Color.GREEN);
-                mPhotoButton.setEnabled(true);
-
-                //TODO: turn this on again. was getting on my nerves >:(
-                //((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(700);
-
                 mIsConnectionEstablished = true;
-
                 if (mSwipeOrientation == SwipeEvent.Orientation.WEST) {
                     mSocketAnimator.plugIn();
                     new Handler().postDelayed(new Runnable() {
@@ -154,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                         public void run() {
                             switchToConnectedActivity(mSwipeOrientation);
                         }
-                    }, 3000);
+                    }, 2000);
                 } else if (mSwipeOrientation == SwipeEvent.Orientation.EAST) {
                     mPlugAnimator.plugIn();
                     new Handler().postDelayed(new Runnable() {
@@ -162,14 +150,10 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                         public void run() {
                             switchToConnectedActivity(mSwipeOrientation);
                         }
-                    }, 3000);
+                    }, 2000);
                 }
-
                 break;
             case ConnectionLost:
-                //mTextView.setText(R.string.not_connected_info);
-                //mTextView.setTextColor(getResources().getColor(android.R.color.holo_red_light, null));
-                mPhotoButton.setEnabled(false);
                 ((Vibrator) this.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE)).vibrate(350);
                 break;
             case PlainString:

@@ -46,4 +46,11 @@
         android:valueType="floatType"
         android:startOffset="500"
         />
+    <objectAnimator
+        android:propertyName="translationZ"
+        android:duration="1"
+        android:valueTo="4"
+        android:valueType="floatType"
+        android:startOffset="530"
+        />
 </set>

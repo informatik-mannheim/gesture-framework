@@ -55,9 +55,7 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
         mImageViewCopy.setColorFilter(Color.argb(150, 200, 200, 200));
 
         if (mIsAnimationRunning && !mAnimatorQueue.contains(mElevateAnimator)) {
-            //mAnimatorQueue.add(mElevateAnimator);
         } else {
-            //mElevateAnimator.start();
             if (info.isTouchGesture()) {
                 mDragAndDropper.setDeltaPoint(info.getTouchPoint());
             }
@@ -73,13 +71,6 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
 
     @Override
     public void handleGestureEnd(GestureTransitionInfo info) {
-        /*
-        if (mIsAnimationRunning && !mAnimatorQueue.contains(mLowerAnimator)) {
-            mAnimatorQueue.add(mLowerAnimator);
-        } else {
-            mLowerAnimator.start();
-        }
-        */
         if (info.isTouchGesture()) {
             mDragAndDropper.returnToStart(400);
         }
@@ -163,7 +154,8 @@ public class ElevateAndLeaveAnimator extends TransitionAnimator {
             mImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid_pick_another_question));
 
 
-            mImageView.setElevation(5);
+            //mImageView.setElevation(5);
+            //mImageView.setTranslationZ(5);
             //mImageViewCopy.setImageDrawable(mContext.getResources().getDrawable(R.drawable.polaroid));
 
             AnimationsContainer.FramesSequenceAnimation animation = AnimationsContainer.getInstance().createSplashAnim(mImageView);

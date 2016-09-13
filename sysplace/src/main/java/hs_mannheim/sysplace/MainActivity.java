@@ -62,11 +62,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 .buildAndRegister();
 
         mSysplaceContext = ((InteractionApplication) getApplicationContext()).getSysplaceContext();
-
-
-
         mSysplaceContext.activate(this);
-
         mSysplaceContext.registerForSwipeEvents(this);
     }
 
@@ -124,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     }
 
     // IPacketReceiver Stuff
-
     @Override
     public boolean accept(Packet.PacketType type) {
         return true;
@@ -211,4 +206,3 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     }
 }
-

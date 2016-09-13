@@ -110,6 +110,11 @@ public class BumpDetector extends GestureDetector implements SensorEventListener
         int minPeaks = mSamples.size() - 10;
         int maxPeaks = mSamples.size() - 2;
 
+        for (Sample s : mSamples) {
+            Log.d(TAG, s.toString());
+        }
+
+
         return peaks.between(minPeaks, maxPeaks);
     }
 

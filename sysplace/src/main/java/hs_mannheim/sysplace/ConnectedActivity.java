@@ -2,7 +2,6 @@ package hs_mannheim.sysplace;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
@@ -14,7 +13,6 @@ import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Transition;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.ImageView;
@@ -43,9 +41,8 @@ import hs_mannheim.sysplace.animations.AnimationsContainer;
 import hs_mannheim.sysplace.animations.ElevateAndLeaveAnimator;
 import hs_mannheim.sysplace.animations.FlipSelectAnimator;
 import hs_mannheim.sysplace.animations.FlyInAndLowerAnimator;
+import hs_mannheim.sysplace.animations.MartiniAnimator;
 import hs_mannheim.sysplace.animations.OnAnimationStoppedListener;
-import hs_mannheim.sysplace.animations.PlugAnimator;
-import hs_mannheim.sysplace.animations.SocketAnimator;
 
 public class ConnectedActivity extends AppCompatActivity implements IViewContext, ILifecycleListener, IPacketReceiver, SwipeDetector.SwipeEventListener, OnAnimationStoppedListener {
 
@@ -54,9 +51,10 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     private final String TAG = "[ConnectedActivity]";
     private ViewWrapper mViewWrapper;
     private ImageView mImageView;
-    private GestureAnimator mReceiveAnimator, mSelectAnimator;
+    private GestureAnimator mReceiveAnimator, mSelectAnimator, mDisconnectAnimator;
     private TransitionAnimator mSendAnimator;
     private boolean mShouldDragDrop = false;
+    private String mConnectionOrientation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +87,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         String orientation = getIntent().getStringExtra("orientation");
+        mDisconnectAnimator = new MartiniAnimator(this, findViewById(R.id.martini_frame));
         enterReveal(orientation);
     }
 
@@ -175,14 +174,13 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void onTransfer() {
-        //TODO: don't play animation when selection is empty
         mSendAnimator.play();
         mSysplaceContext.select(Selection.Empty);
     }
 
     @Override
     public void onDisconnect() {
-
+        mDisconnectAnimator.play();
     }
 
     @Override
@@ -233,15 +231,13 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
         // get the center for the clipping circle
         int cx = 0, cy = 0;
-        if(orientation.equals("WEST")){
+        if (orientation.equals("WEST")) {
             cx = 0;
             cy = myView.getMeasuredHeight() / 2;
         } else if (orientation.equals("EAST")) {
             cx = myView.getMeasuredWidth();
             cy = myView.getMeasuredHeight() / 2;
         }
-
-
         // get the initial radius for the clipping circle
         int initialRadius = myView.getHeight();
 
@@ -254,11 +250,6 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                /*View mainLayout = findViewById(R.id.connected_activity_layout);
-                int marginHor = (int) getResources().getDimension(R.dimen.activity_horizontal_margin);
-                int marginVer = (int) getResources().getDimension(R.dimen.activity_vertical_margin);
-                mainLayout.setPadding(marginHor, marginVer, marginHor, marginVer);*/
-
                 myView.setVisibility(View.INVISIBLE);
             }
         });

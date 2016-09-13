@@ -103,14 +103,16 @@ public class DragAndDropper {
             animator.setDuration(DEFAULT_DURATION);
         }
 
+        //TODO: Make sure this is not needed somewhere and throw it out
         animator.addListener(new AnimatorListenerAdapter()
         {
             @Override
             public void onAnimationEnd(Animator animation)
             {
-                Log.d(TAG, "return to start done");
+                //Log.d(TAG, "return to start done");
             }
         });
+
         animator.start();
     }
 

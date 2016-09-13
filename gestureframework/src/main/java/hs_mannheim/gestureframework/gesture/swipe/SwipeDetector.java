@@ -17,6 +17,7 @@
 
 package hs_mannheim.gestureframework.gesture.swipe;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -30,8 +31,9 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
     //TODO: make this thread safe
     private final ArrayList<SwipeConstraint> mSwipeConstraints;
     private final ArrayList<SwipeEventListener> mListeners;
+    private static final int RESET_TIME = 150;
+    private static final String TAG = "[SwipeDetector]";
 
-    private SwipeEventListener mSwipeListener;
     private TouchPoint mStart;
 
     public SwipeDetector(IViewContext viewContext) {
@@ -80,16 +82,21 @@ public class SwipeDetector extends GestureDetector implements View.OnTouchListen
         }
     }
 
-    private void handle_move(MotionEvent event) {
-        for (SwipeEventListener listener : mListeners) {
-            listener.onSwiping(this, new TouchPoint(event));
-        }
-    }
-
     private void handle_down(MotionEvent event, View view) {
         mStart = new TouchPoint(event);
         for (SwipeEventListener listener : mListeners) {
             listener.onSwipeStart(this, new TouchPoint(event), view);
+        }
+    }
+
+    private void handle_move(MotionEvent event) {
+        TouchPoint current = new TouchPoint(event);
+        for (SwipeEventListener listener : mListeners) {
+            listener.onSwiping(this, current);
+        }
+        //Resets the startpoint to allow 'run-up' for the swipe
+        if (current.getTime() - mStart.getTime() > RESET_TIME) {
+            mStart = current;
         }
     }
 

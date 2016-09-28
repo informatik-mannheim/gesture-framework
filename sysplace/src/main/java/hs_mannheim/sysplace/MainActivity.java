@@ -1,8 +1,9 @@
 package hs_mannheim.sysplace;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,9 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.ViewAnimationUtils;
 import android.widget.Toast;
 
 import hs_mannheim.gestureframework.ConfigurationBuilder;
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     private PlugAnimator mPlugAnimator;
     private SocketAnimator mSocketAnimator;
     private boolean mIsConnectionEstablished;
+    private static final int TIME_BEFORE_RETREAT = 7000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,17 +74,26 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 socketView = findViewById(R.id.socket);
         mPlugAnimator = new PlugAnimator(this, plugView, getDisplaySize());
         mSocketAnimator = new SocketAnimator(this, socketView, getDisplaySize());
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume called");
         mSysplaceContext.applicationResumed();
+        View revealView = findViewById(R.id.reveal_view);
+        if(revealView.getVisibility() == View.VISIBLE) {
+            Log.d(TAG, "visible");
+            enterReveal();
+        }
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Log.d(TAG, "onStop called");
         mSysplaceContext.applicationPaused();
     }
 
@@ -187,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                         isPeakedIn = false;
                     }
                 }
-            }, 7000);
+            }, TIME_BEFORE_RETREAT);
         }
     }
 
@@ -204,5 +213,32 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
     @Override
     public void onSwipeEnd(SwipeDetector swipeDetector, TouchPoint touchPoint) {
 
+    }
+
+    private void enterReveal() {
+        final View revealFrame = findViewById(R.id.reveal_frame);
+        Log.d(TAG, "enterReveal called");
+        // get the center for the clipping circle
+        int cx = 0, cy = 0;
+        cx = revealFrame.getMeasuredWidth() / 2;
+        cy = revealFrame.getMeasuredHeight() / 2;
+
+        // get the initial radius for the clipping circle
+        int initialRadius = revealFrame.getHeight();
+
+        // create the animation (the final radius is zero)
+        Animator anim =
+                ViewAnimationUtils.createCircularReveal(revealFrame, cx, cy, initialRadius, 0);
+        anim.setDuration(1000);
+        // make the view invisible when the animation is done
+        anim.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                Log.d(TAG, "onEnterRevealEnded called");
+                revealFrame.setVisibility(View.INVISIBLE);
+            }
+        });
+        anim.start();
     }
 }

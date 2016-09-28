@@ -47,7 +47,6 @@ public class PlugAnimator extends GestureAnimator {
     public PlugAnimator(Context context, View view, Point dims) {
         super(context, view);
         mScreenDims = dims;
-        Log.d(TAG, "dims: " + mScreenDims.x + ", " + mScreenDims.y);
 
         Activity activity = (Activity) context;
         mPlugPins = activity.findViewById(R.id.plug_pins);
@@ -126,6 +125,11 @@ public class PlugAnimator extends GestureAnimator {
             mView.startAnimation(shakeAnim);
             mPlugPins.startAnimation(shakeAnim);
             circleAnimation();
+        }
+        if (animation == mCircularRevealAnimator) {
+            mCircularRevealView.setVisibility(View.VISIBLE);
+            View revealView = ((Activity)mContext).findViewById(R.id.reveal_view);
+            revealView.setVisibility(View.VISIBLE);
         }
     }
 

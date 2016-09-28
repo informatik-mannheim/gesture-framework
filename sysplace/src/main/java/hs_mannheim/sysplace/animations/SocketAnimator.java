@@ -45,7 +45,6 @@ public class SocketAnimator extends GestureAnimator {
     public SocketAnimator(Context context, View view, Point dims) {
         super(context, view);
         mScreenDims = dims;
-        Log.d(TAG, "dims: " + mScreenDims.x + ", " + mScreenDims.y);
         mView.setTranslationX(mScreenDims.x);
 
         mPeekInAnimator = ObjectAnimator.ofFloat(mView, "translationX", mScreenDims.x, mScreenDims.x * .7f);
@@ -114,7 +113,9 @@ public class SocketAnimator extends GestureAnimator {
             circleAnimation();
         }
         if (animation == mCircularRevealAnimator) {
-
+            mCircularRevealView.setVisibility(View.VISIBLE);
+            View revealView = ((Activity)mContext).findViewById(R.id.reveal_view);
+            revealView.setVisibility(View.VISIBLE);
         }
     }
 

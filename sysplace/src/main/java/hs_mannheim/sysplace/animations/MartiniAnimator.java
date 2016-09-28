@@ -40,7 +40,7 @@ public class MartiniAnimator extends GestureAnimator {
 
     public MartiniAnimator(Context context, View view) {
         super(context, view);
-        mRevealView = ((Activity) mContext).findViewById(R.id.reveal_frame);
+        mRevealView = ((Activity) mContext).findViewById(R.id.reveal_frame_con);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class MartiniAnimator extends GestureAnimator {
             mTransitionAnimator.addListener(this);
             mTransitionAnimator.start();
         } else if (animation == mTransitionAnimator){
-            //((Activity) mContext).finish();
+            ((Activity) mContext).finish();
         }
     }
 

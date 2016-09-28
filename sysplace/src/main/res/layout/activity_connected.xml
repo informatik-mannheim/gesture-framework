@@ -15,7 +15,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/reveal_frame"
+            android:id="@+id/reveal_frame_con"
             android:elevation="64dp"
             android:background="@color/colorAccent"
             android:visibility="visible">

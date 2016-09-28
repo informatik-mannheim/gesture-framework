@@ -230,7 +230,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     }
 
     private void enterReveal(String orientation) {
-        final View myView = findViewById(R.id.reveal_frame);
+        final View myView = findViewById(R.id.reveal_frame_con);
 
         // get the center for the clipping circle
         int cx = 0, cy = 0;

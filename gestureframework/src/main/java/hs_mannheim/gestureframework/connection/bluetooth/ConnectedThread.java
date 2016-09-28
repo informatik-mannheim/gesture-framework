@@ -70,7 +70,6 @@ public class ConnectedThread extends Thread {
             mChannel.disconnect();
             Log.e(TAG, "Error: " + e.getMessage());
         }
-
         while (true) {
             try {
                 if (objectInputStream != null) {

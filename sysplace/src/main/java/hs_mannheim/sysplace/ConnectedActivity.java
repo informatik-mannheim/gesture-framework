@@ -13,6 +13,7 @@ import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.ImageView;
@@ -51,7 +52,8 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     private final String TAG = "[ConnectedActivity]";
     private ViewWrapper mViewWrapper;
     private ImageView mImageView;
-    private GestureAnimator mReceiveAnimator, mSelectAnimator, mDisconnectAnimator;
+    private GestureAnimator mReceiveAnimator, mSelectAnimator;
+    private MartiniAnimator mDisconnectAnimator;
     private TransitionAnimator mSendAnimator;
     private boolean mShouldDragDrop = false;
     private String mConnectionOrientation;
@@ -88,6 +90,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
         super.onWindowFocusChanged(hasFocus);
         String orientation = getIntent().getStringExtra("orientation");
         mDisconnectAnimator = new MartiniAnimator(this, findViewById(R.id.martini_frame));
+        mDisconnectAnimator.setBumpDirection(orientation);
         enterReveal(orientation);
     }
 
@@ -243,7 +246,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
         // create the animation (the final radius is zero)
         Animator anim =
-                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 50);
+                ViewAnimationUtils.createCircularReveal(myView, cx, cy, initialRadius, 0);
         anim.setDuration(1000);
         // make the view invisible when the animation is done
         anim.addListener(new AnimatorListenerAdapter() {
@@ -256,5 +259,11 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
         // start the animation
         anim.start();
+    }
+
+    public void disconnectWithButton(View v){
+        Log.d(TAG, "disconnectButton clicked");
+        //mSysplaceContext.disconnect();
+        onDisconnect();
     }
 }

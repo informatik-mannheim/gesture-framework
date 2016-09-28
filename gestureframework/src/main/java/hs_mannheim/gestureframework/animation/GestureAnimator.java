@@ -47,4 +47,6 @@ public abstract class GestureAnimator implements Animator.AnimatorListener {
     public abstract void play();
 
     protected abstract void registerAnimators();
+
+
 }

@@ -17,15 +17,19 @@
             android:layout_height="match_parent"
             android:id="@+id/reveal_frame"
             android:elevation="64dp"
+            android:background="@color/colorAccent"
             android:visibility="visible">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/reveal_view"
-                android:elevation="64dp"
-                android:background="@color/colorAccent"
-                android:visibility="visible"
-                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:text="cheers!"
+                android:textAllCaps="true"
+                android:textSize="50sp"
+                android:textColor="#000000"
+                android:visibility="invisible"
+                android:id="@+id/cheers_view"/>
         </FrameLayout>
 
         <ImageView

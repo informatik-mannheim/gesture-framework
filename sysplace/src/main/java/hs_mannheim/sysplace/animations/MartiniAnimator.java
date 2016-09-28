@@ -74,6 +74,7 @@ public class MartiniAnimator extends GestureAnimator {
             mView.setVisibility(View.VISIBLE);
         } else if (animation == mTransitionAnimator) {
             mRevealView.clearAnimation();
+            ((Activity)mContext).findViewById(R.id.cheers_view).setVisibility(View.VISIBLE);
             mRevealView.setVisibility(View.VISIBLE);
         }
     }
@@ -102,7 +103,7 @@ public class MartiniAnimator extends GestureAnimator {
             mTransitionAnimator.addListener(this);
             mTransitionAnimator.start();
         } else if (animation == mTransitionAnimator){
-            ((Activity) mContext).finish();
+            //((Activity) mContext).finish();
         }
     }
 

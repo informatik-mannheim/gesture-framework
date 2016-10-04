@@ -24,6 +24,7 @@ import java.io.InputStream;
 import hs_mannheim.gestureframework.animation.GestureAnimator;
 import hs_mannheim.gestureframework.animation.GestureTransitionInfo;
 import hs_mannheim.gestureframework.animation.TransitionAnimator;
+import hs_mannheim.gestureframework.connection.IConnectionListener;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeEvent;
 import hs_mannheim.gestureframework.gesture.swipe.TouchPoint;
@@ -188,15 +189,19 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public void receive(Packet packet) {
-        Bitmap receivedBitmap = ((ImagePacket) packet).getImage().getImage();
-        mReceiveAnimator.setReplacementBitmap(receivedBitmap);
-        mReceiveAnimator.play();
-        mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(receivedBitmap))));
+        if(packet.getType() == Packet.PacketType.Image) {
+            Bitmap receivedBitmap = ((ImagePacket) packet).getImage().getImage();
+            mReceiveAnimator.setReplacementBitmap(receivedBitmap);
+            mReceiveAnimator.play();
+            mSysplaceContext.select(new Selection(new ImagePacket(new SerializableImage(receivedBitmap))));
+        } else if (packet.getType() == Packet.PacketType.ConnectionLost) {
+            onDisconnect();
+        }
     }
 
     @Override
     public boolean accept(Packet.PacketType type) {
-        return type == Packet.PacketType.Image;
+        return type == Packet.PacketType.Image || type == Packet.PacketType.ConnectionLost;
     }
 
     @Override
@@ -263,7 +268,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     public void disconnectWithButton(View v){
         Log.d(TAG, "disconnectButton clicked");
-        //mSysplaceContext.disconnect();
+        mSysplaceContext.disconnect();
         onDisconnect();
     }
 }

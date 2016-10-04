@@ -91,8 +91,8 @@ public class BluetoothChannel extends Observable<IConnectionListener> implements
         // this will close the socket, NOT the P2P connection
         mConnectionThread.cancel();
         mConnectionThread = null;
-
         mHandler.obtainMessage(MSG_CONNECTION_LOST).sendToTarget();
+
     }
 
     public boolean isConnected() {

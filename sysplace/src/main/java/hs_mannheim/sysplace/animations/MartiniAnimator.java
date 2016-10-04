@@ -45,7 +45,10 @@ public class MartiniAnimator extends GestureAnimator {
 
     @Override
     public void play() {
-        mRevealAnimator.start();
+        if (!mIsAnimationRunning) {
+            mRevealAnimator.start();
+            mIsAnimationRunning = true;
+        }
     }
 
     @Override
@@ -69,18 +72,20 @@ public class MartiniAnimator extends GestureAnimator {
 
     @Override
     public void onAnimationStart(Animator animation) {
+
         if (animation == mRevealAnimator) {
             mView.clearAnimation();
             mView.setVisibility(View.VISIBLE);
         } else if (animation == mTransitionAnimator) {
             mRevealView.clearAnimation();
-            ((Activity)mContext).findViewById(R.id.cheers_view).setVisibility(View.VISIBLE);
+            ((Activity) mContext).findViewById(R.id.cheers_view).setVisibility(View.VISIBLE);
             mRevealView.setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onAnimationEnd(Animator animation) {
+
         if (animation == mRevealAnimator) {
             if (mBumpDirection.equals("WEST")) {
                 mClinkAnimator = ObjectAnimator.ofFloat(mView, "rotation", 0f, -ANGLE);
@@ -102,7 +107,8 @@ public class MartiniAnimator extends GestureAnimator {
             mTransitionAnimator.setStartDelay(100);
             mTransitionAnimator.addListener(this);
             mTransitionAnimator.start();
-        } else if (animation == mTransitionAnimator){
+            mIsAnimationRunning = false;
+        } else if (animation == mTransitionAnimator) {
             ((Activity) mContext).finish();
         }
     }

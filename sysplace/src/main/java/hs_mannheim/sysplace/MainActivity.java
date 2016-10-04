@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
                 socketView = findViewById(R.id.socket);
         mPlugAnimator = new PlugAnimator(this, plugView, getDisplaySize());
         mSocketAnimator = new SocketAnimator(this, socketView, getDisplaySize());
-
     }
 
     @Override
@@ -84,10 +83,8 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
         mSysplaceContext.applicationResumed();
         View revealView = findViewById(R.id.reveal_view);
         if(revealView.getVisibility() == View.VISIBLE) {
-            Log.d(TAG, "visible");
             enterReveal();
         }
-
     }
 
     @Override
@@ -103,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     public void switchToConnectedActivity(SwipeEvent.Orientation orientation) {
         Intent intent =new Intent(this, ConnectedActivity.class);
-        Log.d(TAG, "" + orientation);
         intent.putExtra("orientation", "" + orientation);
         startActivity(intent);
     }
@@ -217,7 +213,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
 
     private void enterReveal() {
         final View revealFrame = findViewById(R.id.reveal_frame);
-        Log.d(TAG, "enterReveal called");
         // get the center for the clipping circle
         int cx = 0, cy = 0;
         cx = revealFrame.getMeasuredWidth() / 2;
@@ -235,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements IViewContext, IPa
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                Log.d(TAG, "onEnterRevealEnded called");
                 revealFrame.setVisibility(View.INVISIBLE);
             }
         });

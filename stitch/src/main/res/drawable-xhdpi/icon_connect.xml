@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright (C) 2016 Insitute for User Experience and Interaction Design,
+  ~     Hochschule Mannheim University of Applied Sciences
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+        android:width="113dp"
+        android:height="113dp"
+        android:viewportWidth="113.4"
+        android:viewportHeight="113.4">
+    <path
+        android:fillColor="#808080"
+        android:pathData="M56.9,6.1c28,0 50.7,22.7 50.7,50.7s-22.7,50.7 -50.7,50.7"/>
+    <path
+        android:fillColor="#9E9E9E"
+        android:pathData="M56.9,15.4c22.9,0 41.4,18.5 41.4,41.4S79.8,98.3 56.9,98.3"/>
+    <path
+        android:fillColor="#808080"
+        android:pathData="M56.8,34.2h21.9v13h-21.9z"/>
+    <path
+        android:fillColor="#808080"
+        android:pathData="M56.5,66.4h21.9v13h-21.9z"/>
+    <path
+        android:fillColor="#9E9E9E"
+        android:pathData="M56.9,107.6c-28,0 -50.7,-22.7 -50.7,-50.7S28.9,6.1 56.9,6.1"/>
+    <path
+        android:fillColor="#808080"
+        android:pathData="M57.2,15.4c-22.9,0 -41.4,18.5 -41.4,41.4s18.5,41.4 41.4,41.4"/>
+</vector>

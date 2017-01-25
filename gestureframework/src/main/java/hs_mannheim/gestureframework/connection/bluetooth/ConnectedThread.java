@@ -73,7 +73,9 @@ public class ConnectedThread extends Thread {
         while (true) {
             try {
                 if (objectInputStream != null) {
-                    mChannel.receive((Packet) objectInputStream.readObject());
+                    Object o = objectInputStream.readObject();
+                    Log.d(TAG, "Received: " + o.toString());
+                    mChannel.receive((Packet) o);
                 }
             } catch (IOException e) {
                 Log.e(TAG, "IO Exception: " + e.getMessage());

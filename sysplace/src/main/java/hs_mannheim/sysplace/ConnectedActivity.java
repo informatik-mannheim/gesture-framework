@@ -13,6 +13,7 @@ import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -161,8 +162,9 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
 
     @Override
     public Point getDisplaySize() {
-        //TODO: implement
-        return null;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return new Point(metrics.widthPixels, metrics.heightPixels);
     }
 
     @Override

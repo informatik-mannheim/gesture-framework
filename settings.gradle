@@ -1,1 +1,1 @@
-include ':gestureframework', ':sysplace'
+include ':gestureframework', ':sysplace', ':pinch', ':swipe', ':bump', ':stitch'

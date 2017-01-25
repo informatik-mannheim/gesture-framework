@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/layout_main"
+    android:background="#f9f9f9"
+    tools:context="hs_mannheim.pinch.MainActivity">
+
+    <ImageView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/connection_icon"
+        android:id="@+id/connection_icon"
+        android:scaleType="centerInside"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/plug"
+        android:elevation="32dp"
+        android:id="@+id/plug"
+        android:visibility="visible"
+        android:scaleType="centerCrop"
+        android:layout_gravity="left"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:src="@drawable/plug_pins"
+        android:elevation="32dp"
+        android:id="@+id/plug_pins"
+        android:visibility="visible"
+        android:scaleType="centerCrop"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/socket"
+        android:elevation="32dp"
+        android:id="@+id/socket"
+        android:visibility="visible"
+        android:scaleType="centerCrop"
+        android:layout_centerHorizontal="true"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/reveal_frame"
+        android:elevation="64dp"
+        android:visibility="visible">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/reveal_view"
+            android:background="@color/colorAccent"
+            android:visibility="invisible"
+            />
+    </FrameLayout>
+</RelativeLayout>

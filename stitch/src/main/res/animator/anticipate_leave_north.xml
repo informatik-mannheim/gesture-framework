@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2016 Insitute for User Experience and Interaction Design,
+  ~     Hochschule Mannheim University of Applied Sciences
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License
+  ~
+  -->
+
+<set android:shareInterpolator="false"
+    android:ordering="sequentially"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <set
+        android:ordering="together">
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:propertyName="scaleX"
+            android:valueTo="1.2"
+            android:valueType="floatType"
+            android:duration="500"
+            />
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:propertyName="scaleY"
+            android:valueTo="1.2"
+            android:valueType="floatType"
+            android:duration="500"
+            />
+
+        <objectAnimator
+            android:propertyName="y"
+            android:valueTo="100"
+            android:valueType="floatType"
+            android:duration="400"
+            android:startOffset="100"
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            />
+
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:propertyName="scaleY"
+            android:valueTo="0.8"
+            android:valueType="floatType"
+            android:duration="400"
+            android:startOffset="100"
+            />
+
+        <objectAnimator
+            android:interpolator="@android:interpolator/accelerate_decelerate"
+            android:propertyName="scaleX"
+            android:valueTo="1.2"
+            android:valueType="floatType"
+            android:duration="400"
+            android:startOffset="100"
+            />
+    </set>
+    <set android:ordering="together">
+
+        <objectAnimator
+            android:propertyName="scaleY"
+            android:valueTo="1.5"
+            android:valueType="floatType"
+            android:duration="300"
+            />
+        <objectAnimator
+            android:propertyName="scaleX"
+            android:valueTo="0.7"
+            android:valueType="floatType"
+            android:duration="300"
+            />
+        <objectAnimator
+            android:propertyName="y"
+            android:valueTo="-150"
+            android:valueType="floatType"
+            android:duration="300"
+            />
+
+        <objectAnimator
+            android:propertyName="y"
+            android:valueTo="-5000"
+            android:valueType="floatType"
+            android:duration="500"
+            android:startOffset="150"
+            />
+    </set>
+    <set android:ordering="together">
+
+        <objectAnimator
+            android:propertyName="scaleY"
+            android:valueTo="1"
+            android:valueType="floatType"
+            android:duration="1"
+            />
+        <objectAnimator
+            android:propertyName="scaleX"
+            android:valueTo="1"
+            android:valueType="floatType"
+            android:duration="1"
+            />
+    </set>
+</set>

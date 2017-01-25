@@ -165,8 +165,10 @@ public class SysplaceContext implements ILifecycleListener, ISysplaceContext {
     }
 
     public void applicationPaused() {
-        mApplication.toggleName(false);
+        //TODO: Put this back in!!! Quick and dirty fix for Emylie's master thesis experiments
+        //mApplication.toggleName(false);
     }
+
 
     public void applicationResumed() {
         mApplication.toggleName(true);

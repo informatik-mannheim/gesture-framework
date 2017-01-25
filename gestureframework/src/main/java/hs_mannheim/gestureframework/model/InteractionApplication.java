@@ -76,7 +76,7 @@ public class InteractionApplication extends Application {
     }
 
     public void toggleName(boolean newName) {
-        Log.d(TAG, String.format("Renaming to %s", newName ? mCurrentName : mOldName));
+        Log.d(TAG, newName + ", " + String.format("Renaming to %s", newName ? mCurrentName : mOldName));
         mBluetoothAdapter.setName(newName ? mCurrentName : mOldName);
     }
 }

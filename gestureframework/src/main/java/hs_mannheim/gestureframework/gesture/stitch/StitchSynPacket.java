@@ -24,6 +24,6 @@ import hs_mannheim.gestureframework.messaging.Packet;
 public class StitchSynPacket extends Packet implements Serializable {
 
     public StitchSynPacket() {
-        super(PacketType.StitchSyn, "Stitch SYN");
+        super(PacketType.StitchSynPacket, "Stitch SYN");
     }
 }

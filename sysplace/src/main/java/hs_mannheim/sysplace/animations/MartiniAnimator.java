@@ -109,6 +109,7 @@ public class MartiniAnimator extends GestureAnimator {
             mTransitionAnimator.start();
             mIsAnimationRunning = false;
         } else if (animation == mTransitionAnimator) {
+            //TODO: Put this somewhere else!!
             ((Activity) mContext).finish();
         }
     }

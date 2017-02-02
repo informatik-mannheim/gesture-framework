@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Bundle;
@@ -19,10 +20,14 @@ import android.view.ViewAnimationUtils;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
+import hs_mannheim.gestureframework.animation.BitmapHelper;
 import hs_mannheim.gestureframework.animation.GestureAnimator;
 import hs_mannheim.gestureframework.animation.GestureTransitionInfo;
+import hs_mannheim.gestureframework.animation.ImageDimensions;
 import hs_mannheim.gestureframework.animation.TransitionAnimator;
 import hs_mannheim.gestureframework.connection.IConnectionListener;
 import hs_mannheim.gestureframework.gesture.swipe.SwipeDetector;
@@ -58,6 +63,7 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     private TransitionAnimator mSendAnimator;
     private boolean mShouldDragDrop = false;
     private String mConnectionOrientation;
+    private int maxImageDimensions = 500;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +122,8 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
     }
 
     /**
-     * Callback on image chooser Activity. Transforms to Bitmap and adds to ImageView
-     * //TODO: turn off Toasts for production version
+     * Callback on image chooser Activity. Checks size of chosen image, scales down if needed and
+     * initiates animations.
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -130,9 +136,8 @@ public class ConnectedActivity extends AppCompatActivity implements IViewContext
                     Toast.makeText(this, "Something went wrong... data returned null", Toast.LENGTH_LONG).show();
                     return;
                 }
-
                 InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                Bitmap bitmap = BitmapHelper.decodeBitmapFromInputStream(inputStream, maxImageDimensions);
                 updatePicture(bitmap);
             } else {
                 Toast.makeText(this, "You haven't picked an Image", Toast.LENGTH_LONG).show();

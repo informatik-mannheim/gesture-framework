@@ -73,7 +73,8 @@ public class ConnectedThread extends Thread {
         while (true) {
             try {
                 if (objectInputStream != null) {
-                    mChannel.receive((Packet) objectInputStream.readObject());
+                    Packet packet = (Packet) objectInputStream.readObject();
+                    mChannel.receive(packet);
                 }
             } catch (IOException e) {
                 Log.e(TAG, "IO Exception: " + e.getMessage());
@@ -87,6 +88,8 @@ public class ConnectedThread extends Thread {
                 Log.e(TAG, "NullPointerException: " + e.getMessage());
                 mChannel.disconnect();
                 break;
+            } catch (ClassCastException e) {
+                Log.e(TAG, "ClassCastException: " + e.getMessage());
             }
         }
     }

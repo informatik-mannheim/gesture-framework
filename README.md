@@ -73,7 +73,7 @@ Make your application an `hs_mannheim.gestureframework.model.InteractionApplicat
 
 The application needs to be an `="hs_mannheim.gestureframework.model.InteractionApplication` to enable global state tracking of lifecycle events changes. Also make sure to grant Bluetooth permissions:
 
-```Android
+```Java
 <uses-permission android:name="android.permission.BLUETOOTH" />
 <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -85,7 +85,7 @@ Some `GestureDetectors` might need additional permissions.
 ## Build SysplaceContext in MainActivity
 In `onCreate` of your MainActivity, register gesture detection for lifecycle events like this: 
 
-```android
+```Java
  @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,7 +122,7 @@ To check if permissions are set, an additional call to `SysplaceContext.activate
 
 ## Stop and resume activity
 When an activity is stopped or resumed, the SysplaceContext should be informed:
-```Android
+```Java
 @Override
 protected void onResume() {
 	super.onResume();
@@ -144,7 +144,7 @@ protected void onStop() {
 
 ## Subscribe to lifecycle events
 To be notified when one of the lifecycle events was triggered by the configured gesture, an activity must implement the `ILifeCycleListener` interface and subscribe for events like this:
-```Android
+```Java
 public class SomeActivity extends AppCompatActivity implements IViewContext, ILifecycleListener 
 {
 	@Override
@@ -189,4 +189,3 @@ public class SomeActivity extends AppCompatActivity implements IViewContext, ILi
 ```
 
 The `ViewContext` must also be updated so that gesture detectors now which elements to monitor (e.g. the `SwipeDetector` has to monitor input events on elements in a view).
-

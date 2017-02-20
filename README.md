@@ -85,7 +85,7 @@ Some `GestureDetectors` might need additional permissions.
 ## Build SysplaceContext in MainActivity
 In `onCreate` of your MainActivity, register gesture detection for lifecycle events like this: 
 
-```Android
+```android
  @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

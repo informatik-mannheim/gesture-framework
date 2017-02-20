@@ -37,7 +37,7 @@ For more information about the lifecycle, check [the project page](http://multis
 ## Manifest
 Make your application an `hs_mannheim.gestureframework.model.InteractionApplication` application and register a `BluetoothParingService and a `BluetoothBroadcastReceiver` (needed for synchronous gesture detection) like this:
 
-```Android
+```Java
   <application
         android:name="hs_mannheim.gestureframework.model.InteractionApplication"
         android:allowBackup="true"
